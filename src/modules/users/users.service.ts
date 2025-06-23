@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  Logger,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -12,34 +13,47 @@ import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
-
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const { password, ...rest } = createUserDto;
+    this.logger.log(`Creating new user with email: ${createUserDto.email}`);
 
-    // Check if user already exists
-    const existingUser = await this.userModel.findOne({
-      $or: [
-        { email: createUserDto.email },
-        { username: createUserDto.username },
-      ],
-    });
+    try {
+      const { password, ...rest } = createUserDto;
 
-    if (existingUser) {
-      throw new ConflictException(
-        'User with this email or username already exists',
-      );
+      // Check if user already exists
+      const existingUser = await this.userModel.findOne({
+        $or: [
+          { email: createUserDto.email },
+          { username: createUserDto.username },
+        ],
+      });
+
+      if (existingUser) {
+        this.logger.warn(
+          `User creation failed: email or username already exists for ${createUserDto.email}`,
+        );
+        throw new ConflictException(
+          'User with this email or username already exists',
+        );
+      }
+
+      // Hash password
+      const hashedPassword = await bcrypt.hash(password, 12);
+
+      const user = new this.userModel({
+        ...rest,
+        password: hashedPassword,
+      });
+
+      const savedUser = await user.save();
+      this.logger.log(`User created successfully with ID: ${savedUser._id}`);
+      return savedUser;
+    } catch (error) {
+      this.logger.error(`Error creating user: ${error.message}`, error.stack);
+      throw error;
     }
-
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 12);
-
-    const user = new this.userModel({
-      ...rest,
-      password: hashedPassword,
-    });
-
-    return user.save();
   }
 
   async findAll(): Promise<User[]> {

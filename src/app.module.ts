@@ -15,6 +15,7 @@ import emailConfig from './config/email.config';
 // Modules
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
+import { MockingModule } from './modules/mocking/mocking.module';
 
 // Global filters and guards
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
@@ -46,6 +47,7 @@ import { ThrottlerGuard } from '@nestjs/throttler';
     // Feature modules
     AuthModule,
     UsersModule,
+    MockingModule,
   ],
   controllers: [AppController],
   providers: [
