@@ -1,14 +1,16 @@
-import { Controller, Post, Delete, Query, Logger, Body } from '@nestjs/common';
+import { Controller, Post, Delete, Query, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { MockingService } from './mocking.service';
 import { GenerateDataDto } from './dto/generate-data.dto';
+import { CustomLoggerService } from '../../common/services/custom-logger.service';
 
 @ApiTags('Mocking')
 @Controller('mocking')
 export class MockingController {
-  private readonly logger = new Logger(MockingController.name);
-
-  constructor(private readonly mockingService: MockingService) {}
+  constructor(
+    private readonly mockingService: MockingService,
+    private readonly logger: CustomLoggerService,
+  ) {}
 
   @Post('pets')
   @ApiOperation({
@@ -37,26 +39,45 @@ export class MockingController {
   })
   async generateMockPets(@Query('count') count?: string) {
     const requestedCount = count ? parseInt(count, 10) : 100;
-
-    this.logger.log(
+    this.logger.info(
       `Received request to generate mock pets. Count: ${requestedCount}`,
+      'MockingController',
     );
 
     try {
       // Validate count
       if (isNaN(requestedCount) || requestedCount <= 0) {
-        this.logger.warn(`Invalid count: ${count}. Must be a positive number.`);
+        this.logger.warn(
+          `Invalid count: ${count}. Must be a positive number.`,
+          'MockingController',
+        );
         throw new Error('Count must be a positive number');
       }
 
       if (requestedCount > 1000) {
-        this.logger.warn(`Count too high: ${requestedCount}. Maximum is 1000.`);
+        this.logger.warn(
+          `Count too high: ${requestedCount}. Maximum is 1000.`,
+          'MockingController',
+        );
         throw new Error('Maximum count is 1000');
       }
 
       const pets = await this.mockingService.generateMockPets(requestedCount);
 
-      this.logger.log(`Successfully generated ${pets.length} mock pets`);
+      this.logger.logBusinessEvent(
+        'mock_pets_generated',
+        {
+          count: pets.length,
+          requestedCount,
+          generatedAt: new Date().toISOString(),
+        },
+        'MockingController',
+      );
+
+      this.logger.info(
+        `Successfully generated ${pets.length} mock pets`,
+        'MockingController',
+      );
 
       return {
         success: true,

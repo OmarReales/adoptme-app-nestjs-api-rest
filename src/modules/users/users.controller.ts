@@ -22,13 +22,17 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { GetUser } from '../../common/decorators/get-user.decorator';
 import { UserRole } from '../../schemas/user.schema';
+import { CustomLoggerService } from '../../common/services/custom-logger.service';
 
 @ApiTags('users')
 @Controller('users')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly logger: CustomLoggerService,
+  ) {}
 
   @Post()
   @UseGuards(RolesGuard)
@@ -36,8 +40,26 @@ export class UsersController {
   @ApiOperation({ summary: 'Create a new user (Admin only)' })
   @ApiResponse({ status: 201, description: 'User created successfully' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    this.logger.info(
+      `Admin creating user: ${createUserDto.email}`,
+      'UsersController',
+    );
+
+    const result = await this.usersService.create(createUserDto);
+
+    this.logger.logBusinessEvent(
+      'admin_user_created',
+      {
+        userId: String(result._id),
+        email: createUserDto.email,
+        username: createUserDto.username,
+        role: createUserDto.role,
+      },
+      'UsersController',
+    );
+
+    return result;
   }
   @Get()
   @UseGuards(RolesGuard)
@@ -52,7 +74,12 @@ export class UsersController {
   @ApiOperation({ summary: 'Get current user profile' })
   @ApiResponse({ status: 200, description: 'Profile retrieved successfully' })
   getProfile(@GetUser() user: any) {
-    return this.usersService.findOne(user.userId);
+    const userId = user.userId as string;
+    this.logger.debug(
+      `User accessing own profile: ${userId}`,
+      'UsersController',
+    );
+    return this.usersService.findOne(userId);
   }
 
   @Get(':id')
@@ -77,7 +104,20 @@ export class UsersController {
   @ApiOperation({ summary: 'Delete user (Admin only)' })
   @ApiResponse({ status: 200, description: 'User deleted successfully' })
   @ApiResponse({ status: 404, description: 'User not found' })
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
+  async remove(@Param('id') id: string) {
+    this.logger.warn(`Admin deleting user: ${id}`, 'UsersController');
+
+    await this.usersService.remove(id);
+
+    this.logger.logBusinessEvent(
+      'admin_user_deleted',
+      {
+        deletedUserId: id,
+        action: 'delete_user',
+      },
+      'UsersController',
+    );
+
+    this.logger.warn(`User deleted successfully: ${id}`, 'UsersController');
   }
 }
