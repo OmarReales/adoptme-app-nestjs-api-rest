@@ -22,6 +22,7 @@ import { MockingModule } from './modules/mocking/mocking.module';
 // Global filters and guards
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { ThrottlerGuard } from '@nestjs/throttler';
     ]),
 
     // Feature modules
+    CommonModule,
     AuthModule,
     UsersModule,
     PetsModule,

@@ -4,13 +4,18 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
-  Logger,
+  Injectable,
+  Inject,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { CustomLoggerService } from '../services/custom-logger.service';
 
+@Injectable()
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  private readonly logger = new Logger(AllExceptionsFilter.name);
+  constructor(
+    @Inject(CustomLoggerService) private readonly logger: CustomLoggerService,
+  ) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
@@ -35,14 +40,38 @@ export class AllExceptionsFilter implements ExceptionFilter {
       message:
         typeof message === 'string'
           ? message
-          : (message as any).message || message,
+          : typeof message === 'object' &&
+              message !== null &&
+              'message' in message
+            ? (message as { message: string }).message
+            : 'Internal server error',
     };
 
-    this.logger.error(
-      `${request.method} ${request.url}`,
-      JSON.stringify(errorResponse),
+    // Log with appropriate level based on status code
+    const logLevel = status >= 500 ? 'error' : 'warning';
+    const errorString =
+      exception instanceof Error ? exception.stack : String(exception);
+
+    this.logger.logWithRequest(
+      logLevel,
+      `${request.method} ${request.url} - ${status}`,
+      (request.headers['x-request-id'] as string) || 'unknown',
       'AllExceptionsFilter',
+      {
+        statusCode: status,
+        errorDetails: errorResponse,
+        userAgent: request.headers['user-agent'],
+        ip: request.ip,
+      },
     );
+
+    if (logLevel === 'error') {
+      this.logger.error(
+        `Unhandled exception: ${errorResponse.message}`,
+        'AllExceptionsFilter',
+        errorString,
+      );
+    }
 
     response.status(status).json(errorResponse);
   }

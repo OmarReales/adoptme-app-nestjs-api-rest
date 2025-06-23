@@ -2,9 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { winstonConfig } from './config/winston.config';
+import { CustomLoggerService } from './common/services/custom-logger.service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: winstonConfig,
+  });
 
   // Global validation pipe
   app.useGlobalPipes(
@@ -35,13 +39,20 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
   await app.listen(port);
 
-  console.log(`🚀 Application running on: http://localhost:${port}`);
-  console.log(
+  // Use the Winston logger that's already configured for the app
+  const loggerService = app.get(CustomLoggerService);
+  loggerService.info(
+    `🚀 Application running on: http://localhost:${port}`,
+    'Bootstrap',
+  );
+  loggerService.info(
     `📚 Swagger docs available at: http://localhost:${port}/api/docs`,
+    'Bootstrap',
   );
 }
 
 bootstrap().catch((error) => {
+  // Use a basic console.error here since the app may not have started
   console.error('❌ Error starting server:', error);
   process.exit(1);
 });

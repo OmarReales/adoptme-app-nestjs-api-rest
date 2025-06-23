@@ -1,22 +1,25 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import { faker } from '@faker-js/faker';
 import { Pet, PetStatus } from '../../schemas/pet.schema';
 import { User, UserRole } from '../../schemas/user.schema';
+import { CustomLoggerService } from '../../common/services/custom-logger.service';
 
 @Injectable()
 export class MockingService {
-  private readonly logger = new Logger(MockingService.name);
-
   constructor(
     @InjectModel(Pet.name) private petModel: Model<Pet>,
     @InjectModel(User.name) private userModel: Model<User>,
+    private readonly logger: CustomLoggerService,
   ) {}
 
   async generateMockPets(count: number = 100): Promise<any[]> {
-    this.logger.log(`Starting generation of ${count} mock pets`);
+    this.logger.info(
+      `Starting generation of ${count} mock pets`,
+      'MockingService',
+    );
 
     try {
       const mockPets: any[] = [];
@@ -113,12 +116,22 @@ export class MockingService {
       // Insert all pets in batch
       const createdPets = await this.petModel.insertMany(mockPets);
 
-      this.logger.log(`Successfully created ${createdPets.length} mock pets`);
+      this.logger.logDatabaseOperation(
+        'create',
+        'Pet',
+        `Successfully created ${createdPets.length} mock pets`,
+        'MockingService',
+      );
       return createdPets;
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+
       this.logger.error(
-        `Failed to generate mock pets: ${error?.message || 'Unknown error'}`,
-        error?.stack,
+        `Failed to generate mock pets: ${errorMessage}`,
+        'MockingService',
+        errorStack,
       );
       throw error;
     }
@@ -126,19 +139,34 @@ export class MockingService {
 
   async clearAllPets(): Promise<void> {
     try {
+      this.logger.info('Starting deletion of all pets', 'MockingService');
       const result = await this.petModel.deleteMany({});
-      this.logger.log(`Cleared ${result.deletedCount} pets from database`);
-    } catch (error: any) {
+
+      this.logger.logDatabaseOperation(
+        'delete',
+        'Pet',
+        `Cleared ${result.deletedCount} pets from database`,
+        'MockingService',
+      );
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+
       this.logger.error(
-        `Failed to clear pets: ${error?.message || 'Unknown error'}`,
-        error?.stack,
+        `Failed to clear pets: ${errorMessage}`,
+        'MockingService',
+        errorStack,
       );
       throw error;
     }
   }
 
   async generateMockUsers(count: number = 50): Promise<any[]> {
-    this.logger.log(`Starting generation of ${count} mock users`);
+    this.logger.info(
+      `Starting generation of ${count} mock users`,
+      'MockingService',
+    );
 
     try {
       const mockUsers: any[] = [];
@@ -193,12 +221,22 @@ export class MockingService {
       // Insert all users in batch
       const createdUsers = await this.userModel.insertMany(mockUsers);
 
-      this.logger.log(`Successfully created ${createdUsers.length} mock users`);
+      this.logger.logDatabaseOperation(
+        'create',
+        'User',
+        `Successfully created ${createdUsers.length} mock users`,
+        'MockingService',
+      );
       return createdUsers;
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+
       this.logger.error(
-        `Failed to generate mock users: ${error?.message || 'Unknown error'}`,
-        error?.stack,
+        `Failed to generate mock users: ${errorMessage}`,
+        'MockingService',
+        errorStack,
       );
       throw error;
     }
@@ -206,10 +244,25 @@ export class MockingService {
 
   async clearAllUsers(): Promise<void> {
     try {
+      this.logger.info('Starting deletion of all users', 'MockingService');
       const result = await this.userModel.deleteMany({});
-      this.logger.log(`Cleared ${result.deletedCount} users from database`);
-    } catch (error: any) {
-      this.logger.error(`Failed to clear users: ${error.message}`, error.stack);
+
+      this.logger.logDatabaseOperation(
+        'delete',
+        'User',
+        `Cleared ${result.deletedCount} users from database`,
+        'MockingService',
+      );
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+
+      this.logger.error(
+        `Failed to clear users: ${errorMessage}`,
+        'MockingService',
+        errorStack,
+      );
       throw error;
     }
   }
