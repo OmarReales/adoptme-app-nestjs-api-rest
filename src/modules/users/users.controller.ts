@@ -4,9 +4,12 @@ import {
   Post,
   Body,
   Patch,
+  Put,
   Param,
   Delete,
   UseGuards,
+  ForbiddenException,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -66,14 +69,28 @@ export class UsersController {
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get all users (Admin only)' })
   @ApiResponse({ status: 200, description: 'Users retrieved successfully' })
-  findAll() {
-    return this.usersService.findAll();
+  async findAll(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('role') role?: string,
+  ) {
+    const pageNum = page ? parseInt(page, 10) : 1;
+    const limitNum = limit ? parseInt(limit, 10) : 10;
+
+    const result = await this.usersService.findAll({
+      page: pageNum,
+      limit: limitNum,
+      role,
+    });
+
+    return result;
   }
 
   @Get('profile/me')
   @ApiOperation({ summary: 'Get current user profile' })
   @ApiResponse({ status: 200, description: 'Profile retrieved successfully' })
   getProfile(@GetUser() user: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const userId = user.userId as string;
     this.logger.debug(
       `User accessing own profile: ${userId}`,
@@ -82,11 +99,58 @@ export class UsersController {
     return this.usersService.findOne(userId);
   }
 
+  @Get('me')
+  @ApiOperation({ summary: 'Get current user profile' })
+  @ApiResponse({ status: 200, description: 'Profile retrieved successfully' })
+  getCurrentUserProfile(@GetUser() user: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const userId = user.userId as string;
+    this.logger.debug(
+      `User accessing own profile: ${userId}`,
+      'UsersController',
+    );
+    return this.usersService.findOne(userId);
+  }
+
+  @Patch('me')
+  @ApiOperation({ summary: 'Update current user profile' })
+  @ApiResponse({ status: 200, description: 'Profile updated successfully' })
+  updateCurrentUserProfile(
+    @Body() updateUserDto: UpdateUserDto,
+    @GetUser() user: any,
+  ) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const userId = user.userId as string;
+    return this.usersService.update(userId, updateUserDto);
+  }
+
+  @Put('me')
+  @ApiOperation({ summary: 'Update current user profile (PUT)' })
+  @ApiResponse({ status: 200, description: 'Profile updated successfully' })
+  updateCurrentUserProfilePut(
+    @Body() updateUserDto: UpdateUserDto,
+    @GetUser() user: any,
+  ) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const userId = user.userId as string;
+    return this.usersService.update(userId, updateUserDto);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get user by ID' })
   @ApiResponse({ status: 200, description: 'User retrieved successfully' })
   @ApiResponse({ status: 404, description: 'User not found' })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string, @GetUser() user: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const currentUserId = user.userId as string;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const currentUserRole = user.role as string;
+
+    // Users can only access their own profile, admins can access any profile
+    if (currentUserRole !== 'admin' && currentUserId !== id) {
+      throw new ForbiddenException('You can only access your own profile');
+    }
+
     return this.usersService.findOne(id);
   }
 
@@ -94,7 +158,43 @@ export class UsersController {
   @ApiOperation({ summary: 'Update user' })
   @ApiResponse({ status: 200, description: 'User updated successfully' })
   @ApiResponse({ status: 404, description: 'User not found' })
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @GetUser() user: any,
+  ) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const currentUserId = user.userId as string;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const currentUserRole = user.role as string;
+
+    // Users can only update their own profile, admins can update any profile
+    if (currentUserRole !== 'admin' && currentUserId !== id) {
+      throw new ForbiddenException('You can only update your own profile');
+    }
+
+    return this.usersService.update(id, updateUserDto);
+  }
+
+  @Put(':id')
+  @ApiOperation({ summary: 'Update user (PUT)' })
+  @ApiResponse({ status: 200, description: 'User updated successfully' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  updatePut(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @GetUser() user: any,
+  ) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const currentUserId = user.userId as string;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const currentUserRole = user.role as string;
+
+    // Users can only update their own profile, admins can update any profile
+    if (currentUserRole !== 'admin' && currentUserId !== id) {
+      throw new ForbiddenException('You can only update your own profile');
+    }
+
     return this.usersService.update(id, updateUserDto);
   }
 
@@ -119,5 +219,10 @@ export class UsersController {
     );
 
     this.logger.warn(`User deleted successfully: ${id}`, 'UsersController');
+
+    return {
+      message: 'User deleted successfully',
+      id,
+    };
   }
 }

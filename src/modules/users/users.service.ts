@@ -76,11 +76,55 @@ export class UsersService {
     }
   }
 
-  async findAll(): Promise<User[]> {
+  async findAll(options?: {
+    page?: number;
+    limit?: number;
+    role?: string;
+  }): Promise<{
+    data: User[];
+    pagination: {
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    };
+  }> {
     this.logger.debug('Finding all users', 'UsersService');
-    const users = await this.userModel.find().select('-password').exec();
+
+    const page = options?.page || 1;
+    const limit = options?.limit || 10;
+    const skip = (page - 1) * limit;
+
+    // Build filter
+    const filter: Record<string, any> = {};
+    if (options?.role) {
+      filter.role = options.role;
+    }
+
+    // Get total count for pagination
+    const total = await this.userModel.countDocuments(filter).exec();
+
+    // Get users with pagination
+    const users = await this.userModel
+      .find(filter)
+      .select('-password')
+      .skip(skip)
+      .limit(limit)
+      .exec();
+
+    const totalPages = Math.ceil(total / limit);
+
     this.logger.debug(`Found ${users.length} users`, 'UsersService');
-    return users;
+
+    return {
+      data: users,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages,
+      },
+    };
   }
 
   async findOne(id: string): Promise<User> {
@@ -106,9 +150,34 @@ export class UsersService {
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     this.logger.info(`Updating user: ${id}`, 'UsersService');
-    const { password, ...rest } = updateUserDto;
+    const { password, email, username, ...rest } = updateUserDto;
+
+    // Check if email or username already exists (excluding the current user)
+    if (email || username) {
+      const existingUser = await this.userModel.findOne({
+        _id: { $ne: id },
+        $or: [
+          ...(email ? [{ email }] : []),
+          ...(username ? [{ username }] : []),
+        ],
+      });
+
+      if (existingUser) {
+        this.logger.warn(
+          `Update failed: email or username already exists for user ${id}`,
+          'UsersService',
+        );
+        throw new ConflictException(
+          'User with this email or username already exists',
+        );
+      }
+    }
 
     const updateData: Partial<User> = { ...rest };
+
+    // Add email and username to update data if provided
+    if (email) updateData.email = email;
+    if (username) updateData.username = username;
 
     // Hash password if provided
     if (password) {
