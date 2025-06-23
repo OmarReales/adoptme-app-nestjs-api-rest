@@ -15,6 +15,8 @@ import emailConfig from './config/email.config';
 // Modules
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
+import { PetsModule } from './modules/pets/pets.module';
+import { AdoptionsModule } from './modules/adoptions/adoptions.module';
 import { MockingModule } from './modules/mocking/mocking.module';
 
 // Global filters and guards
@@ -47,6 +49,8 @@ import { ThrottlerGuard } from '@nestjs/throttler';
     // Feature modules
     AuthModule,
     UsersModule,
+    PetsModule,
+    AdoptionsModule,
     MockingModule,
   ],
   controllers: [AppController],

@@ -58,7 +58,7 @@ export class CreatePetDto {
   })
   @IsOptional()
   @IsUrl()
-  imageUrl?: string;
+  image?: string;
 
   @ApiProperty({
     description: 'Status of the pet',

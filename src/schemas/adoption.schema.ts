@@ -24,7 +24,7 @@ export class Adoption extends Document {
   @Prop({ type: Types.ObjectId, ref: 'User' })
   adminApprover?: Types.ObjectId;
 
-  @Prop()
+  @Prop({ default: Date.now })
   requestDate: Date;
 
   @Prop()
