@@ -1,0 +1,78 @@
+import {
+  IsString,
+  IsEmail,
+  IsInt,
+  IsEnum,
+  MinLength,
+  Min,
+  Max,
+  IsNotEmpty,
+} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { UserRole } from '../../../schemas/user.schema';
+
+export class CreateUserDto {
+  @ApiProperty({
+    description: 'Unique username for the user',
+    example: 'john_doe',
+    minLength: 3,
+  })
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(3)
+  username: string;
+
+  @ApiProperty({
+    description: 'First name of the user',
+    example: 'John',
+  })
+  @IsString()
+  @IsNotEmpty()
+  firstname: string;
+
+  @ApiProperty({
+    description: 'Last name of the user',
+    example: 'Doe',
+  })
+  @IsString()
+  @IsNotEmpty()
+  lastname: string;
+
+  @ApiProperty({
+    description: 'Email address of the user',
+    example: 'john.doe@example.com',
+  })
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @ApiProperty({
+    description: 'Password for the user account',
+    example: 'SecurePassword123!',
+    minLength: 6,
+  })
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(6)
+  password: string;
+
+  @ApiProperty({
+    description: 'Age of the user',
+    example: 25,
+    minimum: 18,
+    maximum: 120,
+  })
+  @IsInt()
+  @Min(18)
+  @Max(120)
+  age: number;
+
+  @ApiProperty({
+    description: 'Role of the user',
+    enum: UserRole,
+    example: UserRole.USER,
+    default: UserRole.USER,
+  })
+  @IsEnum(UserRole)
+  role?: UserRole = UserRole.USER;
+}
