@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { MiddlewareConsumer, NestModule, RequestMethod } from '@nestjs/common';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -24,6 +25,7 @@ import { LoggerTestModule } from './modules/logger-test/logger-test.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { CommonModule } from './common/common.module';
+import { HttpLoggerMiddleware } from './common/middleware/http-logger.middleware';
 
 @Module({
   imports: [
@@ -70,4 +72,15 @@ import { CommonModule } from './common/common.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(HttpLoggerMiddleware)
+      .exclude(
+        // Exclude health check and static endpoints from logging
+        { path: 'health', method: RequestMethod.GET },
+        { path: 'favicon.ico', method: RequestMethod.GET },
+      )
+      .forRoutes('*'); // Apply to all routes
+  }
+}
