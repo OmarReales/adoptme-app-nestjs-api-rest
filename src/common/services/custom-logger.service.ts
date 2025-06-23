@@ -129,12 +129,14 @@ export class CustomLoggerService implements LoggerService {
   logDatabaseOperation(
     operation: 'create' | 'read' | 'update' | 'delete',
     entity: string,
+    message: string,
+    context?: string,
     entityId?: string,
     userId?: string,
     duration?: number,
   ): void {
-    this.logger.info(`Database ${operation}: ${entity}`, {
-      context: 'Database',
+    this.logger.info(message, {
+      context: context || 'Database',
       operation,
       entity,
       entityId,

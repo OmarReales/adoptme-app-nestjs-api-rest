@@ -18,6 +18,7 @@ import { UsersModule } from './modules/users/users.module';
 import { PetsModule } from './modules/pets/pets.module';
 import { AdoptionsModule } from './modules/adoptions/adoptions.module';
 import { MockingModule } from './modules/mocking/mocking.module';
+import { LoggerTestModule } from './modules/logger-test/logger-test.module';
 
 // Global filters and guards
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
@@ -54,6 +55,7 @@ import { CommonModule } from './common/common.module';
     PetsModule,
     AdoptionsModule,
     MockingModule,
+    LoggerTestModule,
   ],
   controllers: [AppController],
   providers: [
