@@ -150,7 +150,7 @@ export class MockingService {
         const lastName = faker.person.lastName();
 
         // Create username with some variation to avoid conflicts
-        const baseUsername = faker.internet.userName();
+        const baseUsername = faker.internet.username();
         const username = `${baseUsername}${faker.number.int({ min: 1, max: 999 })}`;
 
         // Generate email with different providers

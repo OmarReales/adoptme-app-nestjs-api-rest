@@ -1,6 +1,7 @@
-import { Controller, Post, Delete, Query, Logger } from '@nestjs/common';
+import { Controller, Post, Delete, Query, Logger, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { MockingService } from './mocking.service';
+import { GenerateDataDto } from './dto/generate-data.dto';
 
 @ApiTags('Mocking')
 @Controller('mocking')
@@ -189,6 +190,97 @@ export class MockingController {
     } catch (error: any) {
       this.logger.error(
         `Error clearing users: ${error?.message || 'Unknown error'}`,
+        error?.stack,
+      );
+      throw error;
+    }
+  }
+
+  @Post('generatedata')
+  @ApiOperation({
+    summary: 'Generate users and pets mock data',
+    description:
+      'Creates both users and pets mock data for testing purposes. This endpoint generates data in batch and provides summary information.',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Mock data generated successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        success: { type: 'boolean' },
+        message: { type: 'string' },
+        summary: {
+          type: 'object',
+          properties: {
+            usersGenerated: { type: 'number' },
+            petsGenerated: { type: 'number' },
+            totalRecords: { type: 'number' },
+          },
+        },
+        links: {
+          type: 'object',
+          properties: {
+            usersEndpoint: { type: 'string' },
+            petsEndpoint: { type: 'string' },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid input parameters',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error',
+  })
+  async generateData(@Body() generateDataDto: GenerateDataDto) {
+    const { users = 50, pets = 100 } = generateDataDto;
+
+    this.logger.log(
+      `Received request to generate mock data. Users: ${users}, Pets: ${pets}`,
+    );
+
+    try {
+      let generatedUsers: any[] = [];
+      let generatedPets: any[] = [];
+
+      // Generate users first
+      if (users > 0) {
+        this.logger.log(`Generating ${users} mock users...`);
+        generatedUsers = await this.mockingService.generateMockUsers(users);
+      }
+
+      // Then generate pets
+      if (pets > 0) {
+        this.logger.log(`Generating ${pets} mock pets...`);
+        generatedPets = await this.mockingService.generateMockPets(pets);
+      }
+
+      const summary = {
+        usersGenerated: generatedUsers.length,
+        petsGenerated: generatedPets.length,
+        totalRecords: generatedUsers.length + generatedPets.length,
+      };
+
+      this.logger.log(
+        `Successfully generated mock data: ${summary.usersGenerated} users, ${summary.petsGenerated} pets`,
+      );
+
+      return {
+        success: true,
+        message: `Successfully generated ${summary.totalRecords} records (${summary.usersGenerated} users, ${summary.petsGenerated} pets)`,
+        summary,
+        links: {
+          usersEndpoint: '/users',
+          petsEndpoint: '/pets',
+        },
+      };
+    } catch (error: any) {
+      this.logger.error(
+        `Error generating mock data: ${error?.message || 'Unknown error'}`,
         error?.stack,
       );
       throw error;
