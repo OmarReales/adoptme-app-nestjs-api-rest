@@ -61,10 +61,22 @@ export class AuthService {
     this.logger.logAuthentication('register', userId, email);
     this.logger.info(`User registered successfully: ${userId}`, 'AuthService');
 
-    // Return user without password
+    // Generate JWT token for the new user
+    const payload = {
+      sub: user._id,
+      username: user.username,
+      role: user.role,
+    };
+
+    const token = this.jwtService.sign(payload);
+
+    // Return user data and token
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _pwd, ...userWithoutPassword } = user.toObject();
-    return userWithoutPassword;
+    return {
+      user: userWithoutPassword,
+      access_token: token,
+    };
   }
 
   async login(loginDto: LoginDto) {

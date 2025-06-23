@@ -1,0 +1,9 @@
+{
+  "require": ["ts-node/register"],
+  "extensions": ["ts"],
+  "spec": "test/**/*.{spec,e2e-spec}.ts",
+  "timeout": 30000,
+  "slow": 5000,
+  "recursive": true,
+  "exit": true
+}

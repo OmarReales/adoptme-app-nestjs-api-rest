@@ -39,7 +39,7 @@ export class AuthController {
     this.logger.logBusinessEvent(
       'user_registered',
       {
-        userId: String(result._id),
+        userId: String(result.user._id),
         email: createUserDto.email,
         username: createUserDto.username,
         role: createUserDto.role,
@@ -50,7 +50,7 @@ export class AuthController {
     );
 
     this.logger.info(
-      `User registered successfully: ${String(result._id)}`,
+      `User registered successfully: ${String(result.user._id)}`,
       'AuthController',
     );
 
