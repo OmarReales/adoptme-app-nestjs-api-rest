@@ -44,3 +44,10 @@ export class TestDatabaseSetup {
     ];
   }
 }
+
+// Alias for backward compatibility
+export const TestDbSetup = {
+  connect: () => TestDatabaseSetup.setupTestDatabase(),
+  disconnect: () => TestDatabaseSetup.closeConnection(),
+  cleanup: () => TestDatabaseSetup.cleanupDatabase(),
+};

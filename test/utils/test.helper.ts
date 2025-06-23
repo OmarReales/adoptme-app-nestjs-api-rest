@@ -80,4 +80,12 @@ export class TestHelper {
   static wait(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
+
+  static expectBadRequest(response: any) {
+    expect(response.status).to.equal(400);
+  }
+
+  static expectConflict(response: any) {
+    expect(response.status).to.equal(409);
+  }
 }

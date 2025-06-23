@@ -57,8 +57,16 @@ export class PetsService {
     limit = 10,
     status?: PetStatus,
     breed?: string,
-  ): Promise<{ pets: Pet[]; total: number; page: number; limit: number }> {
-    const query: any = {};
+  ): Promise<{
+    data: Pet[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+    };
+  }> {
+    const query: Record<string, any> = {};
 
     if (status) {
       query.status = status;
@@ -81,11 +89,16 @@ export class PetsService {
       this.petModel.countDocuments(query),
     ]);
 
+    const totalPages = Math.ceil(total / limit);
+
     return {
-      pets,
-      total,
-      page,
-      limit,
+      data: pets,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+      },
     };
   }
 
@@ -121,11 +134,11 @@ export class PetsService {
       throw new NotFoundException('Pet not found');
     }
 
-    this.logger.log(`Pet updated successfully: ${pet._id}`);
+    this.logger.log(`Pet updated successfully: ${String(pet._id)}`);
     return pet;
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<{ message: string }> {
     if (!Types.ObjectId.isValid(id)) {
       throw new NotFoundException('Invalid pet ID');
     }
@@ -142,6 +155,7 @@ export class PetsService {
 
     await this.petModel.findByIdAndDelete(id);
     this.logger.log(`Pet deleted successfully: ${id}`);
+    return { message: 'Pet deleted successfully' };
   }
 
   async likePet(petId: string, userId: string): Promise<Pet> {

@@ -2,6 +2,7 @@
 import { UserRole } from '../../src/schemas/user.schema';
 import { PetStatus } from '../../src/schemas/pet.schema';
 import * as bcrypt from 'bcryptjs';
+import mongoose from 'mongoose';
 
 // Test user data - 1 admin + 5 users
 export const TEST_USERS = [
@@ -212,3 +213,31 @@ export const TEST_USER_2 = {
   password: 'User123!',
   id: '507f1f77bcf86cd799439013',
 };
+
+export const TEST_USER_3 = {
+  email: 'bob@test.com',
+  password: 'User123!',
+  id: '507f1f77bcf86cd799439014',
+};
+
+export const TEST_USER_4 = {
+  email: 'alice@test.com',
+  password: 'User123!',
+  id: '507f1f77bcf86cd799439015',
+};
+
+export class TestData {
+  static async insertTestData(): Promise<void> {
+    const User = mongoose.model('User');
+    const Pet = mongoose.model('Pet');
+
+    // Insert test users
+    const hashedUsers = await getHashedTestUsers();
+    await User.insertMany(hashedUsers);
+
+    // Insert test pets
+    await Pet.insertMany(TEST_PETS);
+
+    console.log('✅ Test data inserted');
+  }
+}

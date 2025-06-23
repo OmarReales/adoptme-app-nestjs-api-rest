@@ -4,7 +4,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import * as request from 'supertest';
 import { INestApplication } from '@nestjs/common';
-import { TEST_ADMIN, TEST_USER, TEST_USER_2 } from '../setup/test-data';
+import {
+  TEST_ADMIN,
+  TEST_USER,
+  TEST_USER_2,
+  TEST_USER_3,
+} from '../setup/test-data';
 
 export interface AuthTokens {
   adminToken: string;
@@ -80,5 +85,21 @@ export class AuthHelper {
       .expect(200);
 
     return response.body.access_token;
+  }
+
+  static async getAdminToken(app: INestApplication): Promise<string> {
+    return this.loginAndGetToken(app, TEST_ADMIN);
+  }
+
+  static async getUserToken(app: INestApplication): Promise<string> {
+    return this.loginAndGetToken(app, TEST_USER);
+  }
+
+  static async getSecondUserToken(app: INestApplication): Promise<string> {
+    return this.loginAndGetToken(app, TEST_USER_2);
+  }
+
+  static async getThirdUserToken(app: INestApplication): Promise<string> {
+    return this.loginAndGetToken(app, TEST_USER_3);
   }
 }

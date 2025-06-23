@@ -9,6 +9,7 @@ import {
   UseGuards,
   Query,
   ParseIntPipe,
+  HttpCode,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -28,6 +29,7 @@ import { GetUser } from '../../common/decorators/get-user.decorator';
 import { UserRole } from '../../schemas/user.schema';
 import { PetStatus } from '../../schemas/pet.schema';
 import { CustomLoggerService } from '../../common/services/custom-logger.service';
+import { ParseMongoIdPipe } from '../../common/pipes/parse-mongo-id.pipe';
 
 @ApiTags('pets')
 @Controller('pets')
@@ -125,7 +127,7 @@ export class PetsController {
   @ApiParam({ name: 'id', description: 'Pet ID' })
   @ApiResponse({ status: 200, description: 'Pet retrieved successfully' })
   @ApiResponse({ status: 404, description: 'Pet not found' })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseMongoIdPipe) id: string) {
     return this.petsService.findOne(id);
   }
 
@@ -138,7 +140,10 @@ export class PetsController {
   @ApiResponse({ status: 200, description: 'Pet updated successfully' })
   @ApiResponse({ status: 404, description: 'Pet not found' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
-  update(@Param('id') id: string, @Body() updatePetDto: UpdatePetDto) {
+  update(
+    @Param('id', ParseMongoIdPipe) id: string,
+    @Body() updatePetDto: UpdatePetDto,
+  ) {
     return this.petsService.update(id, updatePetDto);
   }
 
@@ -154,11 +159,12 @@ export class PetsController {
     status: 409,
     description: 'Conflict - Cannot delete adopted pet',
   })
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseMongoIdPipe) id: string) {
     return this.petsService.remove(id);
   }
 
   @Post(':id/like')
+  @HttpCode(200)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Like a pet' })
@@ -166,12 +172,15 @@ export class PetsController {
   @ApiResponse({ status: 200, description: 'Pet liked successfully' })
   @ApiResponse({ status: 404, description: 'Pet not found' })
   @ApiResponse({ status: 409, description: 'Pet already liked' })
-  async likePet(@Param('id') id: string, @GetUser() user: any) {
+  async likePet(
+    @Param('id', ParseMongoIdPipe) id: string,
+    @GetUser() user: any,
+  ) {
     const userId = user.userId as string;
 
     this.logger.info(`User ${userId} liking pet ${id}`, 'PetsController');
 
-    const result = await this.petsService.likePet(id, userId);
+    await this.petsService.likePet(id, userId);
 
     this.logger.logBusinessEvent(
       'pet_liked',
@@ -184,9 +193,13 @@ export class PetsController {
       userId,
     );
 
-    return result;
+    return {
+      message: 'Pet liked successfully',
+      success: true,
+    };
   }
   @Delete(':id/like')
+  @HttpCode(200)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Unlike a pet' })
@@ -194,12 +207,15 @@ export class PetsController {
   @ApiResponse({ status: 200, description: 'Pet unliked successfully' })
   @ApiResponse({ status: 404, description: 'Pet not found' })
   @ApiResponse({ status: 409, description: 'Pet not liked by user' })
-  async unlikePet(@Param('id') id: string, @GetUser() user: any) {
+  async unlikePet(
+    @Param('id', ParseMongoIdPipe) id: string,
+    @GetUser() user: any,
+  ) {
     const userId = user.userId as string;
 
     this.logger.info(`User ${userId} unliking pet ${id}`, 'PetsController');
 
-    const result = await this.petsService.unlikePet(id, userId);
+    await this.petsService.unlikePet(id, userId);
 
     this.logger.logBusinessEvent(
       'pet_unliked',
@@ -212,6 +228,9 @@ export class PetsController {
       userId,
     );
 
-    return result;
+    return {
+      message: 'Pet unliked successfully',
+      success: true,
+    };
   }
 }
