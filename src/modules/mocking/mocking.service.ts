@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
+import { faker } from '@faker-js/faker';
 import { Pet, PetStatus } from '../../schemas/pet.schema';
 import { User, UserRole } from '../../schemas/user.schema';
 
@@ -20,127 +21,91 @@ export class MockingService {
     try {
       const mockPets: any[] = [];
 
-      const dogBreeds = [
-        'Labrador Retriever',
-        'Golden Retriever',
-        'German Shepherd',
-        'Bulldog',
-        'Poodle',
-        'Beagle',
-        'Rottweiler',
-        'Yorkshire Terrier',
-        'Dachshund',
-        'Siberian Husky',
-        'Border Collie',
-        'Chihuahua',
-        'Boxer',
-        'Shih Tzu',
-        'Boston Terrier',
-        'Cocker Spaniel',
-        'Pomeranian',
-        'Australian Shepherd',
-      ];
-
-      const catBreeds = [
-        'Persian',
-        'Maine Coon',
-        'British Shorthair',
-        'Ragdoll',
-        'Bengal',
-        'Siamese',
-        'Abyssinian',
-        'Russian Blue',
-        'Scottish Fold',
-        'Sphynx',
-        'Norwegian Forest Cat',
-        'Birman',
-        'Oriental Shorthair',
-        'Devon Rex',
-      ];
-
-      const dogNames = [
-        'Max',
-        'Buddy',
-        'Charlie',
-        'Jack',
-        'Cooper',
-        'Rocky',
-        'Toby',
-        'Tucker',
-        'Jake',
-        'Bear',
-        'Duke',
-        'Teddy',
-        'Oliver',
-        'Riley',
-        'Bailey',
-        'Bentley',
-        'Milo',
-        'Buster',
-        'Cody',
-        'Dexter',
-        'Winston',
-        'Murphy',
-        'Leo',
-        'Lucky',
-      ];
-
-      const catNames = [
-        'Luna',
-        'Bella',
-        'Oliver',
-        'Charlie',
-        'Lucy',
-        'Max',
-        'Kitty',
-        'Jack',
-        'Lily',
-        'Sophie',
-        'Tiger',
-        'Princess',
-        'Callie',
-        'Shadow',
-        'Smokey',
-        'Molly',
-        'Buddy',
-        'Mittens',
-        'Whiskers',
-        'Angel',
-        'Ginger',
-        'Sammy',
-      ];
-
-      const descriptions = [
-        'A friendly and playful companion perfect for families.',
-        'Very energetic and loves to play fetch.',
-        'Calm and gentle, great with children.',
-        'Independent but affectionate when it wants to be.',
-        'Loves to cuddle and is very loyal.',
-        'Playful and curious, always exploring.',
-        'Well-behaved and easy to train.',
-        'Loves outdoor activities and long walks.',
-        'Perfect lap companion, very affectionate.',
-        'Great with other pets and very social.',
+      // Define pet types with their common breeds
+      const petTypes = [
+        {
+          type: 'dog',
+          breeds: [
+            'Labrador Retriever',
+            'Golden Retriever',
+            'German Shepherd',
+            'Bulldog',
+            'Poodle',
+            'Beagle',
+            'Rottweiler',
+            'Yorkshire Terrier',
+            'Dachshund',
+            'Siberian Husky',
+            'Border Collie',
+            'Chihuahua',
+            'Boxer',
+            'Shih Tzu',
+            'Boston Terrier',
+            'Cocker Spaniel',
+            'Pomeranian',
+            'Australian Shepherd',
+          ],
+        },
+        {
+          type: 'cat',
+          breeds: [
+            'Persian',
+            'Maine Coon',
+            'British Shorthair',
+            'Ragdoll',
+            'Bengal',
+            'Siamese',
+            'Abyssinian',
+            'Russian Blue',
+            'Scottish Fold',
+            'Sphynx',
+            'Norwegian Forest Cat',
+            'Birman',
+            'Oriental Shorthair',
+            'Devon Rex',
+          ],
+        },
       ];
 
       for (let i = 0; i < count; i++) {
-        const isdog = Math.random() > 0.5;
-        const breeds = isdog ? dogBreeds : catBreeds;
-        const names = isdog ? dogNames : catNames;
+        // Randomly choose pet type (70% dogs, 30% cats)
+        const petType = faker.datatype.boolean(0.7) ? petTypes[0] : petTypes[1];
 
-        const name = names[Math.floor(Math.random() * names.length)];
-        const breed = breeds[Math.floor(Math.random() * breeds.length)];
-        const age = Math.floor(Math.random() * 15) + 1; // 1-15 years
-        const description =
-          descriptions[Math.floor(Math.random() * descriptions.length)];
+        // Generate realistic pet data
+        const name = faker.person.firstName();
+        const breed = faker.helpers.arrayElement(petType.breeds);
+        const age = faker.number.int({ min: 1, max: 15 });
+
+        // Generate description based on personality traits
+        const personalities = [
+          'friendly and playful',
+          'calm and gentle',
+          'energetic and loves to play fetch',
+          'independent but affectionate',
+          'loyal and protective',
+          'curious and loves exploring',
+          'well-behaved and easy to train',
+          'loves outdoor activities and long walks',
+          'perfect lap companion, very affectionate',
+          'great with children and other pets',
+          'intelligent and quick to learn',
+          'gentle giant with a big heart',
+        ];
+
+        const description = `${name} is a ${personalities[faker.number.int({ min: 0, max: personalities.length - 1 })]} ${petType.type}. ${faker.lorem.sentence()}`;
 
         mockPets.push({
-          name: `${name}${i > names.length ? ` ${i}` : ''}`,
+          name,
           breed,
           age,
           owner: null,
           status: PetStatus.AVAILABLE,
           description,
+          image: faker.image.urlLoremFlickr({
+            category: petType.type,
+            width: 400,
+            height: 300,
+          }),
           likedBy: [],
         });
       }
@@ -177,93 +142,37 @@ export class MockingService {
 
     try {
       const mockUsers: any[] = [];
-
-      const firstNames = [
-        'John',
-        'Jane',
-        'Michael',
-        'Sarah',
-        'David',
-        'Emma',
-        'Chris',
-        'Lisa',
-        'Robert',
-        'Maria',
-        'James',
-        'Anna',
-        'William',
-        'Jessica',
-        'Richard',
-        'Ashley',
-        'Joseph',
-        'Amanda',
-        'Thomas',
-        'Stephanie',
-        'Charles',
-        'Melissa',
-        'Daniel',
-        'Nicole',
-        'Matthew',
-        'Elizabeth',
-        'Anthony',
-        'Helen',
-        'Mark',
-        'Sandra',
-        'Donald',
-        'Donna',
-        'Steven',
-        'Carol',
-        'Paul',
-        'Ruth',
-      ];
-
-      const lastNames = [
-        'Smith',
-        'Johnson',
-        'Williams',
-        'Brown',
-        'Jones',
-        'Garcia',
-        'Miller',
-        'Davis',
-        'Rodriguez',
-        'Martinez',
-        'Hernandez',
-        'Lopez',
-        'Gonzalez',
-        'Wilson',
-        'Anderson',
-        'Thomas',
-        'Taylor',
-        'Moore',
-        'Jackson',
-        'Martin',
-        'Lee',
-        'Perez',
-        'Thompson',
-        'White',
-        'Harris',
-        'Sanchez',
-        'Clark',
-        'Ramirez',
-        'Lewis',
-        'Robinson',
-        'Walker',
-        'Young',
-        'Allen',
-        'King',
-      ];
-
       const hashedPassword = await bcrypt.hash('password123', 12);
 
       for (let i = 0; i < count; i++) {
-        const firstName =
-          firstNames[Math.floor(Math.random() * firstNames.length)];
-        const lastName =
-          lastNames[Math.floor(Math.random() * lastNames.length)];
-        const age = Math.floor(Math.random() * 50) + 18; // 18-67 years
-        const username = `${firstName.toLowerCase()}${lastName.toLowerCase()}${i}`;
-        const email = `${username}@example.com`;
+        // Generate realistic user data with Faker
+        const firstName = faker.person.firstName();
+        const lastName = faker.person.lastName();
+
+        // Create username with some variation to avoid conflicts
+        const baseUsername = faker.internet.userName();
+        const username = `${baseUsername}${faker.number.int({ min: 1, max: 999 })}`;
+
+        // Generate email with different providers
+        const emailProviders = [
+          'gmail.com',
+          'yahoo.com',
+          'outlook.com',
+          'hotmail.com',
+        ];
+        const provider = faker.helpers.arrayElement(emailProviders);
+        const email = `${username.toLowerCase()}@${provider}`;
+
+        // Age between 18 and 80
+        const age = faker.number.int({ min: 18, max: 80 });
+
+        // 10% chance of being admin
+        const role = faker.datatype.boolean(0.1)
+          ? UserRole.ADMIN
+          : UserRole.USER;
+
+        // 80% chance of verified email
+        const isEmailVerified = faker.datatype.boolean(0.8);
 
         mockUsers.push({
           username,
@@ -272,8 +181,12 @@ export class MockingService {
           email,
           password: hashedPassword,
           age,
-          role: Math.random() > 0.9 ? UserRole.ADMIN : UserRole.USER, // 10% admins
-          isEmailVerified: true,
+          role,
+          isEmailVerified,
+          // Optional: Add some users with email verification tokens (unverified users)
+          emailVerificationToken: !isEmailVerified
+            ? faker.string.uuid()
+            : undefined,
         });
       }
 
@@ -284,8 +197,8 @@ export class MockingService {
       return createdUsers;
     } catch (error: any) {
       this.logger.error(
-        `Failed to generate mock users: ${error.message}`,
-        error.stack,
+        `Failed to generate mock users: ${error?.message || 'Unknown error'}`,
+        error?.stack,
       );
       throw error;
     }
