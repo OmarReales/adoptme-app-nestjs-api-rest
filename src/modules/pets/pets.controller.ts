@@ -27,11 +27,15 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { GetUser } from '../../common/decorators/get-user.decorator';
 import { UserRole } from '../../schemas/user.schema';
 import { PetStatus } from '../../schemas/pet.schema';
+import { CustomLoggerService } from '../../common/services/custom-logger.service';
 
 @ApiTags('pets')
 @Controller('pets')
 export class PetsController {
-  constructor(private readonly petsService: PetsService) {}
+  constructor(
+    private readonly petsService: PetsService,
+    private readonly logger: CustomLoggerService,
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -40,8 +44,26 @@ export class PetsController {
   @ApiOperation({ summary: 'Create a new pet (Admin only)' })
   @ApiResponse({ status: 201, description: 'Pet created successfully' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
-  create(@Body() createPetDto: CreatePetDto) {
-    return this.petsService.create(createPetDto);
+  async create(@Body() createPetDto: CreatePetDto) {
+    this.logger.info(
+      `Admin creating new pet: ${createPetDto.name} (${createPetDto.breed})`,
+      'PetsController',
+    );
+
+    const result = await this.petsService.create(createPetDto);
+
+    this.logger.logBusinessEvent(
+      'pet_created',
+      {
+        petId: String(result._id),
+        petName: createPetDto.name,
+        breed: createPetDto.breed,
+        age: createPetDto.age,
+      },
+      'PetsController',
+    );
+
+    return result;
   }
 
   @Get()
@@ -75,8 +97,10 @@ export class PetsController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get pets owned by current user' })
   @ApiResponse({ status: 200, description: 'User pets retrieved successfully' })
-  getUserPets(@GetUser() user: any) {
-    return this.petsService.getUserPets(user.userId);
+  async getUserPets(@GetUser() user: any) {
+    const userId = user.userId as string;
+    this.logger.debug(`Getting pets for user: ${userId}`, 'PetsController');
+    return this.petsService.getUserPets(userId);
   }
 
   @Get('my-liked')
@@ -87,8 +111,13 @@ export class PetsController {
     status: 200,
     description: 'User liked pets retrieved successfully',
   })
-  getUserLikedPets(@GetUser() user: any) {
-    return this.petsService.getUserLikedPets(user.userId);
+  async getUserLikedPets(@GetUser() user: any) {
+    const userId = user.userId as string;
+    this.logger.debug(
+      `Getting liked pets for user: ${userId}`,
+      'PetsController',
+    );
+    return this.petsService.getUserLikedPets(userId);
   }
 
   @Get(':id')
@@ -137,8 +166,25 @@ export class PetsController {
   @ApiResponse({ status: 200, description: 'Pet liked successfully' })
   @ApiResponse({ status: 404, description: 'Pet not found' })
   @ApiResponse({ status: 409, description: 'Pet already liked' })
-  likePet(@Param('id') id: string, @GetUser() user: any) {
-    return this.petsService.likePet(id, user.userId);
+  async likePet(@Param('id') id: string, @GetUser() user: any) {
+    const userId = user.userId as string;
+
+    this.logger.info(`User ${userId} liking pet ${id}`, 'PetsController');
+
+    const result = await this.petsService.likePet(id, userId);
+
+    this.logger.logBusinessEvent(
+      'pet_liked',
+      {
+        petId: id,
+        userId,
+        action: 'like',
+      },
+      'PetsController',
+      userId,
+    );
+
+    return result;
   }
   @Delete(':id/like')
   @UseGuards(JwtAuthGuard)
@@ -148,7 +194,24 @@ export class PetsController {
   @ApiResponse({ status: 200, description: 'Pet unliked successfully' })
   @ApiResponse({ status: 404, description: 'Pet not found' })
   @ApiResponse({ status: 409, description: 'Pet not liked by user' })
-  unlikePet(@Param('id') id: string, @GetUser() user: any) {
-    return this.petsService.unlikePet(id, user.userId);
+  async unlikePet(@Param('id') id: string, @GetUser() user: any) {
+    const userId = user.userId as string;
+
+    this.logger.info(`User ${userId} unliking pet ${id}`, 'PetsController');
+
+    const result = await this.petsService.unlikePet(id, userId);
+
+    this.logger.logBusinessEvent(
+      'pet_unliked',
+      {
+        petId: id,
+        userId,
+        action: 'unlike',
+      },
+      'PetsController',
+      userId,
+    );
+
+    return result;
   }
 }

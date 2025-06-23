@@ -2,7 +2,6 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
-  Logger,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -10,27 +9,45 @@ import { Pet, PetStatus } from '../../schemas/pet.schema';
 import { User } from '../../schemas/user.schema';
 import { CreatePetDto } from './dto/create-pet.dto';
 import { UpdatePetDto } from './dto/update-pet.dto';
+import { CustomLoggerService } from '../../common/services/custom-logger.service';
 
 @Injectable()
 export class PetsService {
-  private readonly logger = new Logger(PetsService.name);
-
   constructor(
     @InjectModel(Pet.name) private petModel: Model<Pet>,
     @InjectModel(User.name) private userModel: Model<User>,
+    private readonly logger: CustomLoggerService,
   ) {}
 
   async create(createPetDto: CreatePetDto): Promise<Pet> {
-    this.logger.log(`Creating new pet with name: ${createPetDto.name}`);
+    this.logger.info(
+      `Creating new pet with name: ${createPetDto.name}`,
+      'PetsService',
+    );
 
     try {
       const pet = new this.petModel(createPetDto);
       const savedPet = await pet.save();
+      const petId = String(savedPet._id);
 
-      this.logger.log(`Pet created successfully with ID: ${savedPet._id}`);
+      this.logger.logDatabaseOperation(
+        'create',
+        'Pet',
+        `Pet created successfully with ID: ${petId}`,
+        'PetsService',
+      );
+
       return savedPet;
-    } catch (error) {
-      this.logger.error(`Error creating pet: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+
+      this.logger.error(
+        `Error creating pet: ${errorMessage}`,
+        'PetsService',
+        errorStack,
+      );
       throw error;
     }
   }
