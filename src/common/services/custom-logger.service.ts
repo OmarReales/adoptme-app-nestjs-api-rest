@@ -147,7 +147,7 @@ export class CustomLoggerService implements LoggerService {
 
   logBusinessEvent(
     event: string,
-    details: any,
+    details: Record<string, unknown>,
     context?: string,
     userId?: string,
   ): void {

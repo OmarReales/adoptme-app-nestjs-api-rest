@@ -24,6 +24,17 @@ const customLevels = {
   },
 };
 
+// Interface for log info object extending winston's TransformableInfo
+interface LogInfo extends winston.Logform.TransformableInfo {
+  timestamp?: string;
+  level: string;
+  message: string;
+  context?: string;
+  requestId?: string;
+  userId?: string;
+  stack?: string;
+}
+
 // Add colors to winston
 winston.addColors(customLevels.colors);
 
@@ -35,7 +46,7 @@ const developmentFormat = winston.format.combine(
   winston.format.errors({ stack: true }),
   winston.format.colorize({ all: true }),
   winston.format.printf((info) => {
-    const infoObj = info as any;
+    const infoObj = info as LogInfo;
     const { timestamp, level, message, context, requestId, userId, stack } =
       infoObj;
 
@@ -59,16 +70,27 @@ const productionFormat = winston.format.combine(
   winston.format.errors({ stack: true }),
   winston.format.json(),
   winston.format.printf((info) => {
-    const infoObj = info as any;
+    const infoObj = info as LogInfo;
+    const {
+      timestamp,
+      level,
+      message,
+      context,
+      requestId,
+      userId,
+      stack,
+      ...rest
+    } = infoObj;
+
     return JSON.stringify({
-      timestamp: infoObj.timestamp,
-      level: infoObj.level,
-      message: infoObj.message,
-      context: infoObj.context || null,
-      requestId: infoObj.requestId || null,
-      userId: infoObj.userId || null,
-      stack: infoObj.stack || null,
-      ...infoObj,
+      timestamp,
+      level,
+      message,
+      context: context ?? null,
+      requestId: requestId ?? null,
+      userId: userId ?? null,
+      stack: stack ?? null,
+      ...rest,
     });
   }),
 );

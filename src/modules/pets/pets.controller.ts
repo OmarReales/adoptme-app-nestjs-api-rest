@@ -26,6 +26,7 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { GetUser } from '../../common/decorators/get-user.decorator';
+import { RequestUser } from '../../common/interfaces/common.interfaces';
 import { UserRole } from '../../schemas/user.schema';
 import { PetStatus } from '../../schemas/pet.schema';
 import { CustomLoggerService } from '../../common/services/custom-logger.service';
@@ -99,8 +100,8 @@ export class PetsController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get pets owned by current user' })
   @ApiResponse({ status: 200, description: 'User pets retrieved successfully' })
-  async getUserPets(@GetUser() user: any) {
-    const userId = user.userId as string;
+  async getUserPets(@GetUser() user: RequestUser) {
+    const userId = user.userId;
     this.logger.debug(`Getting pets for user: ${userId}`, 'PetsController');
     return this.petsService.getUserPets(userId);
   }
@@ -113,8 +114,8 @@ export class PetsController {
     status: 200,
     description: 'User liked pets retrieved successfully',
   })
-  async getUserLikedPets(@GetUser() user: any) {
-    const userId = user.userId as string;
+  async getUserLikedPets(@GetUser() user: RequestUser) {
+    const userId = user.userId;
     this.logger.debug(
       `Getting liked pets for user: ${userId}`,
       'PetsController',
@@ -174,9 +175,9 @@ export class PetsController {
   @ApiResponse({ status: 409, description: 'Pet already liked' })
   async likePet(
     @Param('id', ParseMongoIdPipe) id: string,
-    @GetUser() user: any,
+    @GetUser() user: RequestUser,
   ) {
-    const userId = user.userId as string;
+    const userId = user.userId;
 
     this.logger.info(`User ${userId} liking pet ${id}`, 'PetsController');
 
@@ -209,9 +210,9 @@ export class PetsController {
   @ApiResponse({ status: 409, description: 'Pet not liked by user' })
   async unlikePet(
     @Param('id', ParseMongoIdPipe) id: string,
-    @GetUser() user: any,
+    @GetUser() user: RequestUser,
   ) {
-    const userId = user.userId as string;
+    const userId = user.userId;
 
     this.logger.info(`User ${userId} unliking pet ${id}`, 'PetsController');
 

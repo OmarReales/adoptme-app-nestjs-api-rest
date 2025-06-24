@@ -2,15 +2,18 @@ import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { CustomLoggerService } from '../services/custom-logger.service';
+import { RequestUser } from '../interfaces/common.interfaces';
 
 interface ExtendedRequest extends Request {
   requestId?: string;
   startTime?: number;
+  user?: RequestUser;
 }
 
 @Injectable()
 export class HttpLoggerMiddleware implements NestMiddleware {
   constructor(private readonly logger: CustomLoggerService) {}
+
   use(req: ExtendedRequest, res: Response, next: NextFunction): void {
     // Generate unique request ID if not present
     const requestId = String(req.headers['x-request-id'] || uuidv4());
@@ -37,9 +40,9 @@ export class HttpLoggerMiddleware implements NestMiddleware {
         userAgent,
         clientIp,
         userId,
-        headers: this.sanitizeHeaders(req.headers),
+        headers: this.sanitizeHeaders(req.headers as Record<string, unknown>),
         query: req.query,
-        body: this.sanitizeBody(req.body),
+        body: this.sanitizeBody(req.body as Record<string, unknown>),
       },
     );
 
@@ -47,7 +50,7 @@ export class HttpLoggerMiddleware implements NestMiddleware {
     const originalSend = res.send;
     const logger = this.logger;
 
-    res.send = function (body?: any): Response {
+    res.send = function (body?: unknown): Response {
       const responseTime = Date.now() - (req.startTime || Date.now());
       const statusCode = res.statusCode;
 
@@ -69,21 +72,23 @@ export class HttpLoggerMiddleware implements NestMiddleware {
         },
       );
 
-      return originalSend.call(this, body);
+      return originalSend.call(this, body) as Response;
     };
 
     next();
   }
 
-  private extractUserId(req: any): string | null {
+  private extractUserId(req: ExtendedRequest): string | null {
     try {
-      return req.user?.sub || req.user?._id || req.user?.id || null;
+      return req.user?.userId || null;
     } catch {
       return null;
     }
   }
 
-  private sanitizeHeaders(headers: any): any {
+  private sanitizeHeaders(
+    headers: Record<string, unknown>,
+  ): Record<string, unknown> {
     const sanitized = { ...headers };
     // Remove sensitive headers
     delete sanitized.authorization;
@@ -92,8 +97,8 @@ export class HttpLoggerMiddleware implements NestMiddleware {
     return sanitized;
   }
 
-  private sanitizeBody(body: any): any {
-    if (!body || typeof body !== 'object') return body;
+  private sanitizeBody(body: Record<string, unknown>): Record<string, unknown> {
+    if (!body || typeof body !== 'object') return {};
 
     const sanitized = { ...body };
     // Remove sensitive fields

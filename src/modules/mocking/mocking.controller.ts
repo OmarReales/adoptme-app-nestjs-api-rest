@@ -85,10 +85,13 @@ export class MockingController {
         message: `Successfully generated ${pets.length} mock pets`,
         data: pets,
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
       this.logger.error(
-        `Error generating mock pets: ${error?.message || 'Unknown error'}`,
-        error?.stack,
+        `Error generating mock pets: ${errorMessage}`,
+        errorStack,
       );
       throw error;
     }
@@ -115,11 +118,11 @@ export class MockingController {
         success: true,
         message: 'All pets have been cleared from the database',
       };
-    } catch (error: any) {
-      this.logger.error(
-        `Error clearing pets: ${error?.message || 'Unknown error'}`,
-        error?.stack,
-      );
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Error clearing pets: ${errorMessage}`, errorStack);
       throw error;
     }
   }
@@ -178,10 +181,13 @@ export class MockingController {
         message: `Successfully generated ${users.length} mock users`,
         data: users,
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
       this.logger.error(
-        `Error generating mock users: ${error?.message || 'Unknown error'}`,
-        error?.stack,
+        `Error generating mock users: ${errorMessage}`,
+        errorStack,
       );
       throw error;
     }
@@ -208,11 +214,11 @@ export class MockingController {
         success: true,
         message: 'All users have been cleared from the database',
       };
-    } catch (error: any) {
-      this.logger.error(
-        `Error clearing users: ${error?.message || 'Unknown error'}`,
-        error?.stack,
-      );
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Error clearing users: ${errorMessage}`, errorStack);
       throw error;
     }
   }
@@ -299,10 +305,14 @@ export class MockingController {
           petsEndpoint: '/pets',
         },
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+
       this.logger.error(
-        `Error generating mock data: ${error?.message || 'Unknown error'}`,
-        error?.stack,
+        `Error generating mock data: ${errorMessage}`,
+        errorStack,
       );
       throw error;
     }

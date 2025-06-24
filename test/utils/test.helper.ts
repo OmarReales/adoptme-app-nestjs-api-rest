@@ -1,53 +1,66 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { expect } from 'chai';
+import {
+  TestErrorResponse,
+  TestPaginatedResponse,
+  TestPetResponse,
+  TestUserResponse,
+} from '../interfaces/test-types';
+
+interface TestResponse {
+  status: number;
+  body: unknown;
+}
 
 export class TestHelper {
-  static expectValidationError(response: any, field?: string) {
+  static expectValidationError(response: TestResponse, field?: string): void {
     expect(response.status).to.equal(400);
-    expect(response.body).to.have.property('message');
+    const body = response.body as TestErrorResponse;
+    expect(body).to.have.property('message');
     if (field) {
       // Check if message is an array (typical for class-validator)
-      if (Array.isArray(response.body.message)) {
-        const messageString = response.body.message.join(' ');
+      if (Array.isArray(body.message)) {
+        const messageString = body.message.join(' ');
         expect(messageString).to.include(field);
       } else {
-        expect(response.body.message).to.include(field);
+        expect(body.message).to.include(field);
       }
     }
   }
 
-  static expectUnauthorized(response: any) {
+  static expectUnauthorized(response: TestResponse): void {
     expect(response.status).to.equal(401);
   }
 
-  static expectForbidden(response: any) {
+  static expectForbidden(response: TestResponse): void {
     expect(response.status).to.equal(403);
   }
 
-  static expectNotFound(response: any) {
+  static expectNotFound(response: TestResponse): void {
     expect(response.status).to.equal(404);
   }
 
-  static expectSuccess(response: any, status = 200) {
+  static expectSuccess(response: TestResponse, status = 200): void {
     expect(response.status).to.equal(status);
   }
 
-  static expectPaginatedResponse(response: any, expectedData?: number) {
-    expect(response.body).to.have.property('data');
-    expect(response.body).to.have.property('pagination');
-    expect(response.body.pagination).to.have.property('page');
-    expect(response.body.pagination).to.have.property('limit');
-    expect(response.body.pagination).to.have.property('total');
-    expect(response.body.pagination).to.have.property('totalPages');
+  static expectPaginatedResponse<T>(
+    response: TestResponse,
+    expectedData?: number,
+  ): void {
+    const body = response.body as TestPaginatedResponse<T>;
+    expect(body).to.have.property('data');
+    expect(body).to.have.property('pagination');
+    expect(body.pagination).to.have.property('page');
+    expect(body.pagination).to.have.property('limit');
+    expect(body.pagination).to.have.property('total');
+    expect(body.pagination).to.have.property('totalPages');
 
     if (expectedData !== undefined) {
-      expect(response.body.data).to.have.length(expectedData);
+      expect(body.data).to.have.length(expectedData);
     }
   }
 
-  static expectUserStructure(user: any) {
+  static expectUserStructure(user: TestUserResponse): void {
     expect(user).to.have.property('_id');
     expect(user).to.have.property('username');
     expect(user).to.have.property('firstname');
@@ -58,7 +71,7 @@ export class TestHelper {
     expect(user).to.not.have.property('password'); // Password should not be returned
   }
 
-  static expectPetStructure(pet: any) {
+  static expectPetStructure(pet: TestPetResponse): void {
     expect(pet).to.have.property('_id');
     expect(pet).to.have.property('name');
     expect(pet).to.have.property('breed');
@@ -81,11 +94,11 @@ export class TestHelper {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  static expectBadRequest(response: any) {
+  static expectBadRequest(response: TestResponse): void {
     expect(response.status).to.equal(400);
   }
 
-  static expectConflict(response: any) {
+  static expectConflict(response: TestResponse): void {
     expect(response.status).to.equal(409);
   }
 }

@@ -24,6 +24,7 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { GetUser } from '../../common/decorators/get-user.decorator';
+import { RequestUser } from '../../common/interfaces/common.interfaces';
 import { UserRole } from '../../schemas/user.schema';
 import { AdoptionStatus } from '../../schemas/adoption.schema';
 
@@ -45,7 +46,10 @@ export class AdoptionsController {
     status: 409,
     description: 'Pet not available or duplicate request',
   })
-  create(@Body() createAdoptionDto: CreateAdoptionDto, @GetUser() user: any) {
+  create(
+    @Body() createAdoptionDto: CreateAdoptionDto,
+    @GetUser() user: RequestUser,
+  ) {
     return this.adoptionsService.create(createAdoptionDto, user.userId);
   }
 
@@ -86,7 +90,7 @@ export class AdoptionsController {
     status: 200,
     description: 'User adoption requests retrieved successfully',
   })
-  getUserAdoptions(@GetUser() user: any) {
+  getUserAdoptions(@GetUser() user: RequestUser) {
     return this.adoptionsService.getUserAdoptions(user.userId);
   }
 
@@ -143,7 +147,7 @@ export class AdoptionsController {
   updateStatus(
     @Param('id') id: string,
     @Body() updateAdoptionDto: UpdateAdoptionDto,
-    @GetUser() admin: any,
+    @GetUser() admin: RequestUser,
   ) {
     return this.adoptionsService.updateStatus(
       id,
@@ -168,7 +172,7 @@ export class AdoptionsController {
     status: 409,
     description: 'Can only delete pending adoption requests',
   })
-  remove(@Param('id') id: string, @GetUser() user: any) {
+  remove(@Param('id') id: string, @GetUser() user: RequestUser) {
     return this.adoptionsService.remove(id, user.userId, user.role);
   }
 }

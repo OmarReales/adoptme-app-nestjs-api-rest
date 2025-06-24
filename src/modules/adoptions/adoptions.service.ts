@@ -76,12 +76,17 @@ export class AdoptionsService {
         { path: 'pet', select: 'name breed age status' },
       ]);
 
-      this.logger.log(`Adoption request created with ID: ${savedAdoption._id}`);
+      this.logger.log(
+        `Adoption request created with ID: ${String(savedAdoption._id)}`,
+      );
       return savedAdoption;
-    } catch (error) {
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
       this.logger.error(
-        `Error creating adoption request: ${error.message}`,
-        error.stack,
+        `Error creating adoption request: ${errorMessage}`,
+        errorStack,
       );
       throw error;
     }
@@ -98,7 +103,7 @@ export class AdoptionsService {
     page: number;
     limit: number;
   }> {
-    const query: any = {};
+    const query: Record<string, unknown> = {};
 
     if (status) {
       query.status = status;
@@ -212,11 +217,11 @@ export class AdoptionsService {
       );
 
       this.logger.log(
-        `Adoption approved: Pet ${pet._id} adopted by user ${adoption.user}`,
+        `Adoption approved: Pet ${String(pet._id)} adopted by user ${String(adoption.user)}`,
       );
     } else if (updateAdoptionDto.status === AdoptionStatus.REJECTED) {
       adoption.rejectedDate = new Date();
-      this.logger.log(`Adoption request rejected: ${adoption._id}`);
+      this.logger.log(`Adoption request rejected: ${String(adoption._id)}`);
     }
 
     await adoption.save();
