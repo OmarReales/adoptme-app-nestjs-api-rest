@@ -23,15 +23,23 @@ describe('UsersService - Unit Tests', () => {
   let bcryptHashStub: sinon.SinonStub;
 
   beforeEach(async () => {
-    userModel = {
-      findOne: sinon.stub(),
-      findById: sinon.stub(),
-      findByIdAndUpdate: sinon.stub(),
-      findByIdAndDelete: sinon.stub(),
-      find: sinon.stub(),
-      countDocuments: sinon.stub(),
-      save: sinon.stub(),
-    };
+    // Mock del constructor del modelo User
+    userModel = sinon.stub().callsFake(() => ({
+      save: sinon.stub().resolves({
+        _id: '507f1f77bcf86cd799439011',
+        username: 'testuser',
+        email: 'test@example.com',
+        role: 'user',
+      }),
+    }));
+
+    // Agregamos métodos estáticos al constructor mock
+    userModel.findOne = sinon.stub();
+    userModel.findById = sinon.stub();
+    userModel.findByIdAndUpdate = sinon.stub();
+    userModel.findByIdAndDelete = sinon.stub();
+    userModel.find = sinon.stub();
+    userModel.countDocuments = sinon.stub();
 
     logger = {
       info: sinon.stub(),
@@ -77,22 +85,9 @@ describe('UsersService - Unit Tests', () => {
       };
 
       const hashedPassword = 'hashedPassword123';
-      const savedUser = {
-        _id: new Types.ObjectId(),
-        ...createUserDto,
-        password: hashedPassword,
-        save: sinon.stub().resolves({
-          _id: new Types.ObjectId(),
-          ...createUserDto,
-          password: hashedPassword,
-        }),
-      };
 
       userModel.findOne.resolves(null);
       bcryptHashStub.resolves(hashedPassword);
-
-      const UserConstructor = sinon.stub().returns(savedUser);
-      (service as any).userModel = UserConstructor;
 
       const result = await service.create(createUserDto);
 
@@ -145,11 +140,10 @@ describe('UsersService - Unit Tests', () => {
       userModel.findOne.resolves(null);
       bcryptHashStub.resolves('hashedPassword');
 
-      const mockUser = {
+      // Hacer que el constructor mock devuelva un objeto con save que falla
+      userModel.callsFake(() => ({
         save: sinon.stub().rejects(new Error('Database error')),
-      };
-      const UserConstructor = sinon.stub().returns(mockUser);
-      (service as any).userModel = UserConstructor;
+      }));
 
       try {
         await service.create(createUserDto);

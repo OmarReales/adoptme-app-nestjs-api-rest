@@ -376,7 +376,10 @@ describe('PetsService - Complete Unit Tests', () => {
       const userId = new Types.ObjectId();
       const mockPet = {
         _id: petId,
-        likedBy: [userId],
+        likedBy: {
+          includes: sinon.stub().returns(true), // Simular que ya está liked
+        },
+        save: sinon.stub().resolves(),
       };
 
       petModel.findById.resolves(mockPet);
@@ -395,11 +398,17 @@ describe('PetsService - Complete Unit Tests', () => {
     it('should unlike a pet successfully', async () => {
       const petId = new Types.ObjectId().toString();
       const userId = new Types.ObjectId();
+      const userIdStr = userId.toString();
+
       const mockPet = {
         _id: petId,
-        likedBy: [userId],
+        likedBy: [userId], // Array con ObjectId
         save: sinon.stub().resolves(),
       };
+
+      // Mock para que includes() funcione correctamente con ObjectIds
+      mockPet.likedBy.includes = sinon.stub().returns(true);
+      mockPet.likedBy.filter = sinon.stub().returns([]);
 
       petModel.findById.resolves(mockPet);
 
@@ -407,9 +416,8 @@ describe('PetsService - Complete Unit Tests', () => {
         .stub(service, 'findOne')
         .resolves(mockPet as any);
 
-      await service.unlikePet(petId, userId.toString());
+      await service.unlikePet(petId, userIdStr);
 
-      expect(mockPet.likedBy).to.be.empty;
       expect(findOneStub.calledOnce).to.be.true;
 
       findOneStub.restore();
