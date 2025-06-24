@@ -18,6 +18,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { PetsModule } from './modules/pets/pets.module';
 import { AdoptionsModule } from './modules/adoptions/adoptions.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 import { MockingModule } from './modules/mocking/mocking.module';
 import { LoggerTestModule } from './modules/logger-test/logger-test.module';
 
@@ -56,6 +57,7 @@ import { HttpLoggerMiddleware } from './common/middleware/http-logger.middleware
     UsersModule,
     PetsModule,
     AdoptionsModule,
+    NotificationsModule,
     MockingModule,
     LoggerTestModule,
   ],

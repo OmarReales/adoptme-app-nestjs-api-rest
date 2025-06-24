@@ -13,6 +13,7 @@ import { Pet, PetStatus } from '../../schemas/pet.schema';
 import { User, UserRole } from '../../schemas/user.schema';
 import { CreateAdoptionDto, UpdateAdoptionDto } from './dto/adoption.dto';
 import { PetsService } from '../pets/pets.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class AdoptionsService {
@@ -22,6 +23,7 @@ export class AdoptionsService {
     @InjectModel(Pet.name) private petModel: Model<Pet>,
     @InjectModel(User.name) private userModel: Model<User>,
     private petsService: PetsService,
+    private notificationsService: NotificationsService,
   ) {}
 
   async create(
@@ -76,9 +78,29 @@ export class AdoptionsService {
         { path: 'pet', select: 'name breed age status' },
       ]);
 
-      this.logger.log(
-        `Adoption request created with ID: ${String(savedAdoption._id)}`,
-      );
+      // Obtener información del usuario para las notificaciones
+      const userDoc = await this.userModel
+        .findById(userId)
+        .select('username')
+        .lean();
+
+      const adoptionId = (savedAdoption._id as Types.ObjectId).toString();
+
+      // Notificar a todos los administradores sobre la nueva solicitud
+      const admins = await this.userModel
+        .find({ role: UserRole.ADMIN })
+        .select('_id');
+
+      for (const admin of admins) {
+        await this.notificationsService.notifyAdoptionRequest(
+          adoptionId,
+          (admin._id as Types.ObjectId).toString(),
+          userDoc?.username || 'Usuario',
+          pet.name,
+        );
+      }
+
+      this.logger.log(`Adoption request created with ID: ${adoptionId}`);
       return savedAdoption;
     } catch (error: unknown) {
       const errorMessage =
@@ -201,7 +223,22 @@ export class AdoptionsService {
         adoption.user.toString(),
       );
 
+      // Notificar al usuario que su adopción fue aprobada
+      await this.notificationsService.notifyAdoptionApproved(
+        adoption.user.toString(),
+        pet.name,
+        (adoption._id as Types.ObjectId).toString(),
+      );
+
       // Reject all other pending adoption requests for this pet
+      const otherPendingAdoptions = await this.adoptionModel
+        .find({
+          pet: adoption.pet,
+          _id: { $ne: adoption._id },
+          status: AdoptionStatus.PENDING,
+        })
+        .select('user');
+
       await this.adoptionModel.updateMany(
         {
           pet: adoption.pet,
@@ -216,11 +253,34 @@ export class AdoptionsService {
         },
       );
 
+      // Notificar a los usuarios cuyas solicitudes fueron rechazadas automáticamente
+      for (const rejectedAdoption of otherPendingAdoptions) {
+        try {
+          await this.notificationsService.notifyAdoptionRejected(
+            rejectedAdoption.user.toString(),
+            pet.name,
+            'La mascota fue adoptada por otro usuario',
+          );
+        } catch (error) {
+          this.logger.warn(
+            `Failed to send rejection notification to user ${String(rejectedAdoption.user)}: ${error}`,
+          );
+        }
+      }
+
       this.logger.log(
         `Adoption approved: Pet ${String(pet._id)} adopted by user ${String(adoption.user)}`,
       );
     } else if (updateAdoptionDto.status === AdoptionStatus.REJECTED) {
       adoption.rejectedDate = new Date();
+
+      // Notificar al usuario que su adopción fue rechazada
+      await this.notificationsService.notifyAdoptionRejected(
+        adoption.user.toString(),
+        pet.name,
+        updateAdoptionDto.notes,
+      );
+
       this.logger.log(`Adoption request rejected: ${String(adoption._id)}`);
     }
 

@@ -6,6 +6,7 @@ import { Adoption, AdoptionSchema } from '../../schemas/adoption.schema';
 import { Pet, PetSchema } from '../../schemas/pet.schema';
 import { User, UserSchema } from '../../schemas/user.schema';
 import { PetsModule } from '../pets/pets.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { PetsModule } from '../pets/pets.module';
       { name: User.name, schema: UserSchema },
     ]),
     PetsModule,
+    NotificationsModule,
   ],
   controllers: [AdoptionsController],
   providers: [AdoptionsService],
