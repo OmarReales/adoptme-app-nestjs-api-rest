@@ -1,14 +1,54 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
+import { create } from 'express-handlebars';
 import { AppModule } from './app.module';
 import { winstonConfig } from './config/winston.config';
 import { CustomLoggerService } from './common/services/custom-logger.service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: winstonConfig,
   });
+
+  // Configure express-handlebars view engine
+  const hbs = create({
+    extname: '.hbs',
+    defaultLayout: 'main',
+    layoutsDir: join(__dirname, '..', 'views', 'layouts'),
+    partialsDir: join(__dirname, '..', 'views', 'partials'),
+    helpers: {
+      // Helper para formatear fechas
+      formatDate: (date: Date) => {
+        return new Date(date).toLocaleDateString('es-ES', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        });
+      },
+      // Helper para truncar texto
+      truncate: (text: string, length: number) => {
+        if (text && text.length > length) {
+          return text.substring(0, length) + '...';
+        }
+        return text;
+      },
+      // Helper para condicionales
+      eq: (a: any, b: any) => a === b,
+      // Helper para capitalizar
+      capitalize: (text: string) => {
+        if (!text) return '';
+        return text.charAt(0).toUpperCase() + text.slice(1);
+      },
+    },
+  });
+
+  app.engine('hbs', hbs.engine);
+  app.set('view engine', 'hbs');
+  app.set('views', join(__dirname, '..', 'views'));
+  app.useStaticAssets(join(__dirname, '..', 'public'));
 
   // Global validation pipe
   app.useGlobalPipes(

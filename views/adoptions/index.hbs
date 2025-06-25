@@ -1,0 +1,353 @@
+<!-- Adoptions Section -->
+<section class="adoptions-section py-5">
+  <div class="container">
+    <!-- Header -->
+    <div class="row mb-5">
+      <div class="col-12 text-center">
+        <h1 class="display-4 fw-bold text-primary">
+          <i class="fas fa-heart me-3"></i>Adopciones
+        </h1>
+        <p class="lead text-muted">
+          Conoce las historias de éxito de nuestras adopciones
+        </p>
+      </div>
+    </div>
+
+    <!-- Adoption Stats -->
+    <div class="row mb-5">
+      <div class="col-md-4">
+        <div class="card stats-card text-center">
+          <div class="card-body">
+            <h2 class="stats-number">{{stats.totalAdoptions}}</h2>
+            <p class="stats-label">Adopciones Exitosas</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card stats-card text-center">
+          <div class="card-body">
+            <h2 class="stats-number">{{stats.pendingAdoptions}}</h2>
+            <p class="stats-label">En Proceso</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card stats-card text-center">
+          <div class="card-body">
+            <h2 class="stats-number">{{stats.happyFamilies}}</h2>
+            <p class="stats-label">Familias Felices</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <select class="form-select">
+          <option value="">Todas las adopciones</option>
+          <option value="approved">Aprobadas</option>
+          <option value="pending">Pendientes</option>
+          <option value="rejected">Rechazadas</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select class="form-select">
+          <option value="">Todos los tipos</option>
+          <option value="dog">Perros</option>
+          <option value="cat">Gatos</option>
+          <option value="rabbit">Conejos</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <div class="input-group">
+          <span class="input-group-text">
+            <i class="fas fa-calendar"></i>
+          </span>
+          <input type="month" class="form-control" placeholder="Mes">
+        </div>
+      </div>
+    </div>
+
+    <!-- Adoptions List -->
+    <div class="row">
+      {{#each adoptions}}
+        <div class="col-lg-6 mb-4">
+          <div class="card adoption-card h-100">
+            <div class="card-body">
+              <!-- Adoption Header -->
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="d-flex align-items-center">
+                  <img src="{{pet.image}}" class="rounded-circle me-3" width="60" height="60" alt="{{pet.name}}"
+                       onerror="this.src='/images/placeholder-pet.jpg'">
+                  <div>
+                    <h5 class="card-title mb-1">{{pet.name}}</h5>
+                    <small class="text-muted">{{pet.breed}} • {{pet.age}} años</small>
+                  </div>
+                </div>
+                <span class="badge bg-{{#if (eq status 'approved')}}success{{else if (eq status 'pending')}}warning{{else}}danger{{/if}}">
+                  {{capitalize status}}
+                </span>
+              </div>
+
+              <!-- Adopter Info -->
+              <div class="adopter-info mb-3">
+                <h6 class="text-primary">
+                  <i class="fas fa-user me-2"></i>Adoptante
+                </h6>
+                <p class="mb-1">
+                  <strong>{{adopter.name}}</strong>
+                </p>
+                <p class="mb-1 text-muted">
+                  <i class="fas fa-envelope me-2"></i>{{adopter.email}}
+                </p>
+                <p class="mb-1 text-muted">
+                  <i class="fas fa-phone me-2"></i>{{adopter.phone}}
+                </p>
+              </div>
+
+              <!-- Adoption Details -->
+              <div class="adoption-details mb-3">
+                <h6 class="text-primary">
+                  <i class="fas fa-heart me-2"></i>Razón de Adopción
+                </h6>
+                <p class="small">{{truncate reason 150}}</p>
+              </div>
+
+              <!-- Timeline -->
+              <div class="adoption-timeline">
+                <h6 class="text-primary">
+                  <i class="fas fa-clock me-2"></i>Timeline
+                </h6>
+                <div class="timeline-item">
+                  <small class="text-muted">
+                    <i class="fas fa-calendar me-1"></i>
+                    Solicitud: {{formatDate createdAt}}
+                  </small>
+                </div>
+                {{#if approvedAt}}
+                  <div class="timeline-item">
+                    <small class="text-success">
+                      <i class="fas fa-check me-1"></i>
+                      Aprobada: {{formatDate approvedAt}}
+                    </small>
+                  </div>
+                {{/if}}
+                {{#if rejectedAt}}
+                  <div class="timeline-item">
+                    <small class="text-danger">
+                      <i class="fas fa-times me-1"></i>
+                      Rechazada: {{formatDate rejectedAt}}
+                    </small>
+                  </div>
+                {{/if}}
+              </div>
+
+              <!-- Actions -->
+              {{#if (eq status 'pending')}}
+                <div class="mt-3">
+                  <div class="btn-group w-100" role="group">
+                    <button class="btn btn-success btn-sm approve-adoption" data-id="{{_id}}">
+                      <i class="fas fa-check me-1"></i>Aprobar
+                    </button>
+                    <button class="btn btn-danger btn-sm reject-adoption" data-id="{{_id}}">
+                      <i class="fas fa-times me-1"></i>Rechazar
+                    </button>
+                  </div>
+                </div>
+              {{/if}}
+            </div>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+
+    <!-- Empty State -->
+    {{#unless adoptions}}
+      <div class="row">
+        <div class="col-12 text-center py-5">
+          <i class="fas fa-heart-broken fa-5x text-muted mb-3"></i>
+          <h3 class="text-muted">No hay adopciones</h3>
+          <p class="text-muted">Aún no se han registrado adopciones con los filtros seleccionados</p>
+          <a href="/pets" class="btn btn-primary">
+            <i class="fas fa-paw me-2"></i>Ver Mascotas Disponibles
+          </a>
+        </div>
+      </div>
+    {{/unless}}
+
+    <!-- Success Stories Section -->
+    {{#if successStories}}
+      <div class="row mt-5">
+        <div class="col-12">
+          <h2 class="text-center mb-4">
+            <i class="fas fa-star me-2"></i>Historias de Éxito
+          </h2>
+        </div>
+      </div>
+      <div class="row">
+        {{#each successStories}}
+          <div class="col-md-4 mb-4">
+            <div class="card success-story-card">
+              <img src="{{image}}" class="card-img-top" alt="{{petName}}" style="height: 200px; object-fit: cover;"
+                   onerror="this.src='/images/placeholder-success.jpg'">
+              <div class="card-body">
+                <h5 class="card-title">{{petName}} & {{familyName}}</h5>
+                <p class="card-text small">{{truncate story 100}}</p>
+                <small class="text-muted">{{formatDate adoptionDate}}</small>
+              </div>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    {{/if}}
+
+    <!-- Pagination -->
+    {{#if pagination}}
+      <div class="row mt-5">
+        <div class="col-12">
+          <nav aria-label="Paginación de adopciones">
+            <ul class="pagination justify-content-center">
+              {{#if pagination.hasPrev}}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{pagination.prevPage}}">
+                    <i class="fas fa-chevron-left"></i>
+                  </a>
+                </li>
+              {{/if}}
+              
+              {{#each pagination.pages}}
+                <li class="page-item {{#if isCurrent}}active{{/if}}">
+                  <a class="page-link" href="?page={{number}}">{{number}}</a>
+                </li>
+              {{/each}}
+              
+              {{#if pagination.hasNext}}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{pagination.nextPage}}">
+                    <i class="fas fa-chevron-right"></i>
+                  </a>
+                </li>
+              {{/if}}
+            </ul>
+          </nav>
+        </div>
+      </div>
+    {{/if}}
+  </div>
+</section>
+
+<!-- Custom Styles -->
+<style>
+.adoption-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: none;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.adoption-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+.adopter-info, .adoption-details {
+  padding: 1rem;
+  background: rgba(0,0,0,0.02);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.timeline-item {
+  padding: 0.25rem 0;
+  border-left: 3px solid #dee2e6;
+  padding-left: 1rem;
+  margin-left: 0.5rem;
+}
+
+.timeline-item:last-child {
+  border-left-color: transparent;
+}
+
+.success-story-card {
+  transition: transform 0.3s ease;
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.success-story-card:hover {
+  transform: scale(1.02);
+}
+
+.adoptions-section {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  min-height: 100vh;
+}
+
+.stats-card .stats-number {
+  color: #e91e63;
+  font-weight: 800;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 6px 12px;
+}
+</style>
+
+<!-- Custom JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Handle adoption approval
+  document.querySelectorAll('.approve-adoption').forEach(button => {
+    button.addEventListener('click', function() {
+      const adoptionId = this.dataset.id;
+      
+      if (confirm('¿Estás seguro de que quieres aprobar esta adopción?')) {
+        // Aquí iría la llamada a la API
+        console.log('Approving adoption:', adoptionId);
+        
+        // Simular respuesta exitosa
+        this.closest('.card').style.opacity = '0.7';
+        this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Procesando...';
+        
+        setTimeout(() => {
+          alert('¡Adopción aprobada exitosamente!');
+          location.reload();
+        }, 1000);
+      }
+    });
+  });
+
+  // Handle adoption rejection
+  document.querySelectorAll('.reject-adoption').forEach(button => {
+    button.addEventListener('click', function() {
+      const adoptionId = this.dataset.id;
+      
+      const reason = prompt('¿Cuál es la razón del rechazo?');
+      if (reason) {
+        // Aquí iría la llamada a la API
+        console.log('Rejecting adoption:', adoptionId, 'Reason:', reason);
+        
+        // Simular respuesta exitosa
+        this.closest('.card').style.opacity = '0.7';
+        this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Procesando...';
+        
+        setTimeout(() => {
+          alert('Adopción rechazada.');
+          location.reload();
+        }, 1000);
+      }
+    });
+  });
+
+  // Filter functionality
+  document.querySelectorAll('.form-select, .form-control').forEach(input => {
+    input.addEventListener('change', function() {
+      // Aquí iría la lógica de filtrado
+      console.log('Filter changed:', this.value);
+    });
+  });
+});
+</script>

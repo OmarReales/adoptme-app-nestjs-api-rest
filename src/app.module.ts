@@ -21,6 +21,7 @@ import { AdoptionsModule } from './modules/adoptions/adoptions.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { MockingModule } from './modules/mocking/mocking.module';
 import { LoggerTestModule } from './modules/logger-test/logger-test.module';
+import { ViewsModule } from './modules/views/views.module';
 
 // Global filters and guards
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
@@ -60,6 +61,7 @@ import { HttpLoggerMiddleware } from './common/middleware/http-logger.middleware
     NotificationsModule,
     MockingModule,
     LoggerTestModule,
+    ViewsModule,
   ],
   controllers: [AppController],
   providers: [
@@ -80,7 +82,7 @@ export class AppModule implements NestModule {
       .apply(HttpLoggerMiddleware)
       .exclude(
         // Exclude health check and static endpoints from logging
-        { path: 'health', method: RequestMethod.GET },
+        { path: 'api/health', method: RequestMethod.GET },
         { path: 'favicon.ico', method: RequestMethod.GET },
       )
       .forRoutes('*'); // Apply to all routes

@@ -99,6 +99,13 @@ AdoptMe API is a full-featured backend system designed for pet adoption platform
 - **Winston** - Logging
 - **Faker.js** - Mock data generation
 
+### Frontend Integration
+
+- **Express-Handlebars** - Modern templating engine for server-side rendering
+- **Bootstrap 5** - Responsive CSS framework
+- **Font Awesome** - Icon library
+- **Custom CSS** - Modern styling with CSS variables and gradients
+
 ---
 
 ## 🏗️ Architecture
@@ -128,6 +135,7 @@ src/
 │   ├── pets/                 # Pet management module
 │   ├── adoptions/            # Adoption system module
 │   ├── notifications/        # Notification system module
+│   ├── views/                # Server-side rendering module
 │   ├── mocking/              # Mock data generation module
 │   └── logger-test/          # Logging test module
 └── schemas/                  # Database schemas
@@ -135,6 +143,28 @@ src/
     ├── pet.schema.ts         # Pet document schema
     ├── adoption.schema.ts    # Adoption document schema
     └── notification.schema.ts # Notification document schema
+
+views/                        # Handlebars templates
+├── layouts/                  # Layout templates
+│   └── main.hbs             # Main layout with Bootstrap
+├── partials/                 # Reusable components
+│   ├── navbar.hbs           # Navigation component
+│   └── footer.hbs           # Footer component
+├── index.hbs                # Home page
+├── pets/                    # Pet-related views
+│   ├── index.hbs           # Pet listing page
+│   ├── detail.hbs          # Pet detail page
+│   └── create.hbs          # Pet creation form
+├── adoptions/               # Adoption-related views
+│   └── index.hbs           # Adoption listing page
+└── users/                   # User-related views
+
+public/                      # Static assets
+├── css/
+│   └── styles.css          # Custom CSS with modern styling
+├── js/
+│   └── main.js             # Frontend JavaScript
+└── images/                 # Image assets
 ```
 
 ### Design Patterns
@@ -249,6 +279,43 @@ The application uses NestJS ConfigModule for centralized configuration managemen
 - **jwt.config.ts**: JWT token configuration
 - **email.config.ts**: Email service configuration
 - **winston.config.ts**: Logging configuration
+
+### Web Views Configuration
+
+The application includes server-side rendering using Express-Handlebars:
+
+#### Available Routes
+
+- **`/`** - Home page with platform overview and statistics
+- **`/pets`** - Pet listing page with filtering and search
+- **`/adoptions`** - Adoption management page with status tracking
+- **`/api/docs`** - Interactive Swagger API documentation
+
+#### View Engine Setup
+
+```typescript
+// Express-Handlebars configuration in main.ts
+const hbs = create({
+  extname: '.hbs',
+  defaultLayout: 'main',
+  layoutsDir: join(__dirname, '..', 'views', 'layouts'),
+  partialsDir: join(__dirname, '..', 'views', 'partials'),
+  helpers: {
+    formatDate: (date: Date) => new Date(date).toLocaleDateString('es-ES'),
+    truncate: (text: string, length: number) =>
+      text?.substring(0, length) + '...',
+    eq: (a: any, b: any) => a === b,
+    capitalize: (text: string) => text?.charAt(0).toUpperCase() + text.slice(1),
+  },
+});
+```
+
+#### Features
+
+- **Responsive Design**: Bootstrap 5 with custom CSS variables
+- **Modern UI**: CSS gradients, animations, and modern typography
+- **Interactive Components**: Modal dialogs, form validation, and AJAX interactions
+- **Accessibility**: ARIA labels and semantic HTML structure
 
 ---
 

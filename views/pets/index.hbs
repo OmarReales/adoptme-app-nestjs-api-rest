@@ -1,0 +1,273 @@
+<!-- Pets List Page -->
+<section class="py-5">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1 class="display-5 fw-bold text-gradient">
+                        <i class="fas fa-paw me-3"></i>Mascotas Disponibles
+                    </h1>
+                    <a href="/pets/create" class="btn btn-primary btn-lg">
+                        <i class="fas fa-plus me-2"></i>Agregar Mascota
+                    </a>
+                </div>
+                <p class="lead text-muted">Encuentra tu compañero perfecto</p>
+            </div>
+        </div>
+
+        <!-- Filter and Search -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form class="row g-3">
+                            <div class="col-md-4">
+                                <label for="search" class="form-label">Buscar</label>
+                                <input type="text" class="form-control" id="search" placeholder="Nombre de la mascota...">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="species" class="form-label">Especie</label>
+                                <select class="form-select" id="species">
+                                    <option value="">Todas las especies</option>
+                                    <option value="dog">Perro</option>
+                                    <option value="cat">Gato</option>
+                                    <option value="rabbit">Conejo</option>
+                                    <option value="bird">Ave</option>
+                                    <option value="other">Otro</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="age" class="form-label">Edad</label>
+                                <select class="form-select" id="age">
+                                    <option value="">Todas las edades</option>
+                                    <option value="puppy">Cachorro (0-1 año)</option>
+                                    <option value="young">Joven (1-3 años)</option>
+                                    <option value="adult">Adulto (3-7 años)</option>
+                                    <option value="senior">Senior (7+ años)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">&nbsp;</label>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-search me-2"></i>Buscar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pets Grid -->
+        <div class="row g-4" id="pets-container">
+            {{#each pets}}
+            <div class="col-lg-4 col-md-6">
+                <div class="card pet-card h-100">
+                    <div class="pet-image-container">
+                        {{#if this.image}}
+                        <img src="{{this.image}}" class="card-img-top pet-image" alt="{{this.name}}">
+                        {{else}}
+                        <div class="pet-placeholder">
+                            <i class="fas fa-paw fa-3x text-muted"></i>
+                        </div>
+                        {{/if}}
+                        <div class="pet-status {{this.status}}">
+                            {{#if (eq this.status 'available')}}
+                                <i class="fas fa-heart me-1"></i>Disponible
+                            {{else if (eq this.status 'adopted')}}
+                                <i class="fas fa-home me-1"></i>Adoptado
+                            {{else if (eq this.status 'pending')}}
+                                <i class="fas fa-clock me-1"></i>Pendiente
+                            {{/if}}
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{this.name}}</h5>
+                        <div class="pet-info mb-3">
+                            <span class="badge bg-light text-dark me-2">
+                                <i class="fas fa-dog me-1"></i>{{this.species}}
+                            </span>
+                            <span class="badge bg-light text-dark me-2">
+                                <i class="fas fa-birthday-cake me-1"></i>{{this.age}} años
+                            </span>
+                            <span class="badge bg-light text-dark">
+                                <i class="fas fa-venus-mars me-1"></i>{{this.gender}}
+                            </span>
+                        </div>
+                        <p class="card-text text-muted">{{this.description}}</p>
+                        
+                        <!-- Characteristics -->
+                        {{#if this.characteristics}}
+                        <div class="characteristics mb-3">
+                            {{#each this.characteristics}}
+                            <span class="badge bg-secondary me-1">{{this}}</span>
+                            {{/each}}
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fas fa-calendar me-1"></i>
+                                Publicado {{formatDate this.createdAt}}
+                            </small>
+                            <div class="btn-group">
+                                <a href="/pets/{{this._id}}" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-eye me-1"></i>Ver
+                                </a>
+                                {{#if (eq this.status 'available')}}
+                                <a href="/adoptions/create?petId={{this._id}}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-heart me-1"></i>Adoptar
+                                </a>
+                                {{/if}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{else}}
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-paw fa-3x text-muted mb-3"></i>
+                    <h3 class="text-muted">No hay mascotas disponibles</h3>
+                    <p class="text-muted">¡Sé el primero en agregar una mascota!</p>
+                    <a href="/pets/create" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Agregar Primera Mascota
+                    </a>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+
+        <!-- Pagination -->
+        {{#if pagination}}
+        <div class="row mt-5">
+            <div class="col-12">
+                <nav aria-label="Navegación de mascotas">
+                    <ul class="pagination justify-content-center">
+                        {{#if pagination.hasPrevious}}
+                        <li class="page-item">
+                            <a class="page-link" href="/pets?page={{pagination.previousPage}}">
+                                <i class="fas fa-chevron-left me-1"></i>Anterior
+                            </a>
+                        </li>
+                        {{/if}}
+                        
+                        {{#each pagination.pages}}
+                        <li class="page-item {{#if this.active}}active{{/if}}">
+                            <a class="page-link" href="/pets?page={{this.number}}">{{this.number}}</a>
+                        </li>
+                        {{/each}}
+                        
+                        {{#if pagination.hasNext}}
+                        <li class="page-item">
+                            <a class="page-link" href="/pets?page={{pagination.nextPage}}">
+                                Siguiente<i class="fas fa-chevron-right ms-1"></i>
+                            </a>
+                        </li>
+                        {{/if}}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        {{/if}}
+    </div>
+</section>
+
+<style>
+.pet-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.pet-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.pet-image-container {
+    position: relative;
+    height: 250px;
+    overflow: hidden;
+}
+
+.pet-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.pet-card:hover .pet-image {
+    transform: scale(1.05);
+}
+
+.pet-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.pet-status {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.pet-status.available {
+    background: rgba(40, 167, 69, 0.9);
+    color: white;
+}
+
+.pet-status.adopted {
+    background: rgba(108, 117, 125, 0.9);
+    color: white;
+}
+
+.pet-status.pending {
+    background: rgba(255, 193, 7, 0.9);
+    color: #212529;
+}
+
+.characteristics .badge {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+}
+
+.pet-info .badge {
+    font-size: 0.75rem;
+    padding: 5px 10px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Search functionality
+    const searchForm = document.querySelector('form');
+    searchForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const search = document.getElementById('search').value;
+        const species = document.getElementById('species').value;
+        const age = document.getElementById('age').value;
+        
+        const params = new URLSearchParams();
+        if (search) params.append('search', search);
+        if (species) params.append('species', species);
+        if (age) params.append('age', age);
+        
+        window.location.href = `/pets?${params.toString()}`;
+    });
+});
+</script>

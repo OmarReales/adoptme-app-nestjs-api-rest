@@ -11,6 +11,7 @@ import * as sinon from 'sinon';
 
 import { AdoptionsService } from '../../../src/modules/adoptions/adoptions.service';
 import { PetsService } from '../../../src/modules/pets/pets.service';
+import { NotificationsService } from '../../../src/modules/notifications/notifications.service';
 import { Adoption, AdoptionStatus } from '../../../src/schemas/adoption.schema';
 import { Pet, PetStatus } from '../../../src/schemas/pet.schema';
 import { User, UserRole } from '../../../src/schemas/user.schema';
@@ -22,6 +23,7 @@ describe('AdoptionsService', () => {
   let petModel: any;
   let userModel: any;
   let petsService: any;
+  let notificationsService: any;
 
   const mockObjectId = new Types.ObjectId('507f1f77bcf86cd799439011');
   const mockPetId = new Types.ObjectId('507f1f77bcf86cd799439012');
@@ -66,11 +68,20 @@ describe('AdoptionsService', () => {
 
     userModel = {
       findById: sinon.stub(),
+      find: sinon.stub(),
     };
 
     petsService = {
       findOne: sinon.stub(),
       markAsAdopted: sinon.stub(),
+    };
+
+    notificationsService = {
+      create: sinon.stub(),
+      sendNotification: sinon.stub(),
+      notifyAdoptionRequest: sinon.stub(),
+      notifyAdoptionApproved: sinon.stub(),
+      notifyAdoptionRejected: sinon.stub(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -91,6 +102,10 @@ describe('AdoptionsService', () => {
         {
           provide: PetsService,
           useValue: petsService,
+        },
+        {
+          provide: NotificationsService,
+          useValue: notificationsService,
         },
       ],
     }).compile();
@@ -186,6 +201,16 @@ describe('AdoptionsService', () => {
       petModel.findById.resolves(mockPet);
       adoptionModel.updateMany.resolves({ modifiedCount: 0 });
       petsService.markAsAdopted.resolves();
+
+      // Mock para buscar administradores en notificaciones
+      userModel.find.returns({
+        select: sinon.stub().resolves([{ _id: mockAdminId }]),
+      });
+
+      // Mock para buscar otras adopciones pendientes
+      adoptionModel.find.returns({
+        select: sinon.stub().resolves([]),
+      });
 
       sinon.stub(service, 'findOne').resolves({
         ...mockAdoption,

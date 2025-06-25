@@ -1,0 +1,580 @@
+<!-- Create Pet Form -->
+<section class='py-5'>
+  <div class='container'>
+    <!-- Breadcrumb -->
+    <nav aria-label='breadcrumb' class='mb-4'>
+      <ol class='breadcrumb'>
+        <li class='breadcrumb-item'><a href='/'>Inicio</a></li>
+        <li class='breadcrumb-item'><a href='/pets'>Mascotas</a></li>
+        <li class='breadcrumb-item active' aria-current='page'>Agregar Mascota</li>
+      </ol>
+    </nav>
+
+    <div class='row justify-content-center'>
+      <div class='col-lg-8'>
+        <div class='card shadow-lg border-0'>
+          <div class='card-header bg-primary text-white text-center py-4'>
+            <h2 class='fw-bold mb-0'>
+              <i class='fas fa-paw me-3'></i>Agregar Nueva Mascota
+            </h2>
+            <p class='mb-0 opacity-75'>Ayuda a una mascota a encontrar su hogar</p>
+          </div>
+          <div class='card-body p-5'>
+            <form id='createPetForm' enctype='multipart/form-data'>
+              <!-- Basic Information -->
+              <div class='section-header'>
+                <h4 class='fw-bold text-primary mb-3'>
+                  <i class='fas fa-info-circle me-2'></i>Información Básica
+                </h4>
+              </div>
+
+              <div class='row g-3 mb-4'>
+                <div class='col-md-6'>
+                  <label for='name' class='form-label required'>Nombre</label>
+                  <input
+                    type='text'
+                    class='form-control'
+                    id='name'
+                    name='name'
+                    required
+                  />
+                  <div class='invalid-feedback'>
+                    Por favor, ingresa un nombre para la mascota.
+                  </div>
+                </div>
+                <div class='col-md-6'>
+                  <label
+                    for='species'
+                    class='form-label required'
+                  >Especie</label>
+                  <select
+                    class='form-select'
+                    id='species'
+                    name='species'
+                    required
+                  >
+                    <option value=''>Selecciona una especie</option>
+                    <option value='dog'>Perro</option>
+                    <option value='cat'>Gato</option>
+                    <option value='rabbit'>Conejo</option>
+                    <option value='bird'>Ave</option>
+                    <option value='other'>Otro</option>
+                  </select>
+                  <div class='invalid-feedback'>
+                    Por favor, selecciona una especie.
+                  </div>
+                </div>
+              </div>
+
+              <div class='row g-3 mb-4'>
+                <div class='col-md-4'>
+                  <label for='age' class='form-label required'>Edad (años)</label>
+                  <input
+                    type='number'
+                    class='form-control'
+                    id='age'
+                    name='age'
+                    min='0'
+                    max='25'
+                    step='0.5'
+                    required
+                  />
+                  <div class='invalid-feedback'>
+                    Por favor, ingresa una edad válida.
+                  </div>
+                </div>
+                <div class='col-md-4'>
+                  <label for='gender' class='form-label required'>Género</label>
+                  <select
+                    class='form-select'
+                    id='gender'
+                    name='gender'
+                    required
+                  >
+                    <option value=''>Selecciona el género</option>
+                    <option value='male'>Macho</option>
+                    <option value='female'>Hembra</option>
+                  </select>
+                  <div class='invalid-feedback'>
+                    Por favor, selecciona el género.
+                  </div>
+                </div>
+                <div class='col-md-4'>
+                  <label for='weight' class='form-label'>Peso (kg)</label>
+                  <input
+                    type='number'
+                    class='form-control'
+                    id='weight'
+                    name='weight'
+                    min='0.1'
+                    max='100'
+                    step='0.1'
+                  />
+                </div>
+              </div>
+
+              <div class='mb-4'>
+                <label
+                  for='description'
+                  class='form-label required'
+                >Descripción</label>
+                <textarea
+                  class='form-control'
+                  id='description'
+                  name='description'
+                  rows='4'
+                  required
+                  placeholder='Describe la personalidad, comportamiento y características especiales de la mascota...'
+                ></textarea>
+                <div class='invalid-feedback'>
+                  Por favor, proporciona una descripción de la mascota.
+                </div>
+              </div>
+
+              <!-- Characteristics -->
+              <div class='section-header'>
+                <h4 class='fw-bold text-primary mb-3'>
+                  <i class='fas fa-star me-2'></i>Características
+                </h4>
+              </div>
+
+              <div class='mb-4'>
+                <label class='form-label'>Características de Personalidad</label>
+                <div class='characteristics-grid'>
+                  <div class='form-check'>
+                    <input
+                      class='form-check-input'
+                      type='checkbox'
+                      value='friendly'
+                      id='char-friendly'
+                      name='characteristics'
+                    />
+                    <label
+                      class='form-check-label'
+                      for='char-friendly'
+                    >Amigable</label>
+                  </div>
+                  <div class='form-check'>
+                    <input
+                      class='form-check-input'
+                      type='checkbox'
+                      value='playful'
+                      id='char-playful'
+                      name='characteristics'
+                    />
+                    <label
+                      class='form-check-label'
+                      for='char-playful'
+                    >Juguetón</label>
+                  </div>
+                  <div class='form-check'>
+                    <input
+                      class='form-check-input'
+                      type='checkbox'
+                      value='calm'
+                      id='char-calm'
+                      name='characteristics'
+                    />
+                    <label
+                      class='form-check-label'
+                      for='char-calm'
+                    >Tranquilo</label>
+                  </div>
+                  <div class='form-check'>
+                    <input
+                      class='form-check-input'
+                      type='checkbox'
+                      value='energetic'
+                      id='char-energetic'
+                      name='characteristics'
+                    />
+                    <label
+                      class='form-check-label'
+                      for='char-energetic'
+                    >Enérgico</label>
+                  </div>
+                  <div class='form-check'>
+                    <input
+                      class='form-check-input'
+                      type='checkbox'
+                      value='good-with-kids'
+                      id='char-kids'
+                      name='characteristics'
+                    />
+                    <label class='form-check-label' for='char-kids'>Bueno con
+                      niños</label>
+                  </div>
+                  <div class='form-check'>
+                    <input
+                      class='form-check-input'
+                      type='checkbox'
+                      value='good-with-pets'
+                      id='char-pets'
+                      name='characteristics'
+                    />
+                    <label class='form-check-label' for='char-pets'>Bueno con
+                      otras mascotas</label>
+                  </div>
+                  <div class='form-check'>
+                    <input
+                      class='form-check-input'
+                      type='checkbox'
+                      value='trained'
+                      id='char-trained'
+                      name='characteristics'
+                    />
+                    <label
+                      class='form-check-label'
+                      for='char-trained'
+                    >Entrenado</label>
+                  </div>
+                  <div class='form-check'>
+                    <input
+                      class='form-check-input'
+                      type='checkbox'
+                      value='protective'
+                      id='char-protective'
+                      name='characteristics'
+                    />
+                    <label
+                      class='form-check-label'
+                      for='char-protective'
+                    >Protector</label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Health Information -->
+              <div class='section-header'>
+                <h4 class='fw-bold text-primary mb-3'>
+                  <i class='fas fa-heart me-2'></i>Información de Salud
+                </h4>
+              </div>
+
+              <div class='row g-3 mb-4'>
+                <div class='col-md-4'>
+                  <div class='form-check form-switch'>
+                    <input
+                      class='form-check-input'
+                      type='checkbox'
+                      id='vaccinated'
+                      name='vaccinated'
+                    />
+                    <label class='form-check-label' for='vaccinated'>
+                      <i class='fas fa-syringe me-1'></i>Vacunado
+                    </label>
+                  </div>
+                </div>
+                <div class='col-md-4'>
+                  <div class='form-check form-switch'>
+                    <input
+                      class='form-check-input'
+                      type='checkbox'
+                      id='sterilized'
+                      name='sterilized'
+                    />
+                    <label class='form-check-label' for='sterilized'>
+                      <i class='fas fa-check-circle me-1'></i>Esterilizado
+                    </label>
+                  </div>
+                </div>
+                <div class='col-md-4'>
+                  <div class='form-check form-switch'>
+                    <input
+                      class='form-check-input'
+                      type='checkbox'
+                      id='dewormed'
+                      name='dewormed'
+                    />
+                    <label class='form-check-label' for='dewormed'>
+                      <i class='fas fa-shield-alt me-1'></i>Desparasitado
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class='mb-4'>
+                <label for='healthNotes' class='form-label'>Notas de Salud
+                  Adicionales</label>
+                <textarea
+                  class='form-control'
+                  id='healthNotes'
+                  name='healthNotes'
+                  rows='3'
+                  placeholder='Cualquier información médica adicional, alergias, medicamentos, etc.'
+                ></textarea>
+              </div>
+
+              <!-- Images -->
+              <div class='section-header'>
+                <h4 class='fw-bold text-primary mb-3'>
+                  <i class='fas fa-camera me-2'></i>Fotos
+                </h4>
+              </div>
+
+              <div class='mb-4'>
+                <label for='images' class='form-label'>Subir Fotos de la Mascota</label>
+                <input
+                  type='file'
+                  class='form-control'
+                  id='images'
+                  name='images'
+                  multiple
+                  accept='image/*'
+                />
+                <div class='form-text'>Puedes subir múltiples fotos. Formatos
+                  permitidos: JPG, PNG, GIF</div>
+
+                <!-- Image Preview -->
+                <div id='imagePreview' class='mt-3'></div>
+              </div>
+
+              <!-- Contact Information -->
+              <div class='section-header'>
+                <h4 class='fw-bold text-primary mb-3'>
+                  <i class='fas fa-address-book me-2'></i>Información de
+                  Contacto
+                </h4>
+              </div>
+
+              <div class='row g-3 mb-4'>
+                <div class='col-md-6'>
+                  <label for='contactName' class='form-label required'>Nombre de
+                    Contacto</label>
+                  <input
+                    type='text'
+                    class='form-control'
+                    id='contactName'
+                    name='contactName'
+                    required
+                  />
+                  <div class='invalid-feedback'>
+                    Por favor, proporciona un nombre de contacto.
+                  </div>
+                </div>
+                <div class='col-md-6'>
+                  <label for='contactEmail' class='form-label required'>Email de
+                    Contacto</label>
+                  <input
+                    type='email'
+                    class='form-control'
+                    id='contactEmail'
+                    name='contactEmail'
+                    required
+                  />
+                  <div class='invalid-feedback'>
+                    Por favor, proporciona un email válido.
+                  </div>
+                </div>
+              </div>
+
+              <div class='row g-3 mb-4'>
+                <div class='col-md-6'>
+                  <label for='contactPhone' class='form-label'>Teléfono de
+                    Contacto</label>
+                  <input
+                    type='tel'
+                    class='form-control'
+                    id='contactPhone'
+                    name='contactPhone'
+                  />
+                </div>
+                <div class='col-md-6'>
+                  <label for='location' class='form-label'>Ubicación</label>
+                  <input
+                    type='text'
+                    class='form-control'
+                    id='location'
+                    name='location'
+                    placeholder='Ciudad, Estado'
+                  />
+                </div>
+              </div>
+
+              <!-- Submit Buttons -->
+              <div class='d-flex justify-content-between pt-4'>
+                <a href='/pets' class='btn btn-outline-secondary btn-lg'>
+                  <i class='fas fa-arrow-left me-2'></i>Cancelar
+                </a>
+                <button
+                  type='submit'
+                  class='btn btn-primary btn-lg'
+                  id='submitBtn'
+                >
+                  <span
+                    class='spinner-border spinner-border-sm me-2 d-none'
+                    role='status'
+                    aria-hidden='true'
+                  ></span>
+                  <i class='fas fa-heart me-2'></i>Publicar Mascota
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .required::after {
+    content: ' *';
+    color: #dc3545;
+  }
+
+  .section-header {
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+  }
+
+  .section-header h4 {
+    margin-bottom: 0;
+  }
+
+  .characteristics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+  }
+
+  .form-check-label {
+    font-weight: 500;
+  }
+
+  .form-check-input:checked {
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+
+  .form-switch .form-check-label {
+    padding-left: 0.5rem;
+  }
+
+  .image-preview-item {
+    position: relative;
+    display: inline-block;
+    margin: 10px;
+  }
+
+  .image-preview-img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid #dee2e6;
+  }
+
+  .image-remove-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .image-remove-btn:hover {
+    background: #c82333;
+  }
+
+  .card {
+    border-radius: 15px;
+  }
+
+  .card-header {
+    border-radius: 15px 15px 0 0 !important;
+  }
+
+  .btn-lg {
+    padding: 12px 24px;
+    font-size: 1.1rem;
+  }
+
+  @media (max-width: 768px) {
+    .characteristics-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() { const form =
+  document.getElementById('createPetForm'); const imagesInput =
+  document.getElementById('images'); const imagePreview =
+  document.getElementById('imagePreview'); let selectedFiles = []; // Image
+  preview functionality imagesInput.addEventListener('change', function(e) {
+  const files = Array.from(e.target.files); selectedFiles = files;
+  displayImagePreviews(); }); function displayImagePreviews() {
+  imagePreview.innerHTML = ''; selectedFiles.forEach((file, index) => { const
+  reader = new FileReader(); reader.onload = function(e) { const previewItem =
+  document.createElement('div'); previewItem.className = 'image-preview-item';
+  previewItem.innerHTML = ` <img src="${e.target.result}"
+  class="image-preview-img" alt="Preview"> <button type="button"
+  class="image-remove-btn" onclick="removeImage(${index})"> <i class="fas
+  fa-times"></i> </button> `; imagePreview.appendChild(previewItem); };
+  reader.readAsDataURL(file); }); } window.removeImage = function(index) {
+  selectedFiles.splice(index, 1); displayImagePreviews(); // Update the file
+  input const dt = new DataTransfer(); selectedFiles.forEach(file =>
+  dt.items.add(file)); imagesInput.files = dt.files; }; // Form validation and
+  submission form.addEventListener('submit', function(e) { e.preventDefault();
+  if (!form.checkValidity()) { e.stopPropagation();
+  form.classList.add('was-validated'); return; } const submitBtn =
+  document.getElementById('submitBtn'); const spinner =
+  submitBtn.querySelector('.spinner-border'); // Show loading state
+  submitBtn.disabled = true; spinner.classList.remove('d-none'); // Prepare form
+  data const formData = new FormData(); // Basic information
+  formData.append('name', document.getElementById('name').value);
+  formData.append('species', document.getElementById('species').value);
+  formData.append('age', document.getElementById('age').value);
+  formData.append('gender', document.getElementById('gender').value);
+  formData.append('weight', document.getElementById('weight').value);
+  formData.append('description', document.getElementById('description').value);
+  // Characteristics const characteristics = [];
+  document.querySelectorAll('input[name="characteristics"]:checked').forEach(checkbox
+  => { characteristics.push(checkbox.value); });
+  formData.append('characteristics', JSON.stringify(characteristics)); // Health
+  information const healthInfo = { vaccinated:
+  document.getElementById('vaccinated').checked, sterilized:
+  document.getElementById('sterilized').checked, dewormed:
+  document.getElementById('dewormed').checked, notes:
+  document.getElementById('healthNotes').value }; formData.append('healthInfo',
+  JSON.stringify(healthInfo)); // Contact information
+  formData.append('contactName', document.getElementById('contactName').value);
+  formData.append('contactEmail',
+  document.getElementById('contactEmail').value);
+  formData.append('contactPhone',
+  document.getElementById('contactPhone').value); formData.append('location',
+  document.getElementById('location').value); // Images
+  selectedFiles.forEach(file => { formData.append('images', file); }); // Submit
+  to API fetch('/api/pets', { method: 'POST', body: formData }) .then(response
+  => response.json()) .then(data => { if (data.success) { // Show success
+  message showNotification('¡Mascota publicada exitosamente!', 'success'); //
+  Redirect to pet detail page after a short delay setTimeout(() => {
+  window.location.href = `/pets/${data.pet._id}`; }, 2000); } else { throw new
+  Error(data.message || 'Error al crear la mascota'); } }) .catch(error => {
+  console.error('Error:', error); showNotification('Error al publicar la
+  mascota. Inténtalo de nuevo.', 'error'); }) .finally(() => { // Hide loading
+  state submitBtn.disabled = false; spinner.classList.add('d-none'); }); });
+  function showNotification(message, type) { // Create notification element
+  const notification = document.createElement('div'); notification.className =
+  `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible
+  fade show position-fixed`; notification.style.cssText = 'top: 20px; right:
+  20px; z-index: 1055; min-width: 300px;'; notification.innerHTML = ` ${message}
+  <button type="button" class="btn-close" data-bs-dismiss="alert"
+  aria-label="Close"></button> `; document.body.appendChild(notification); //
+  Auto remove after 5 seconds setTimeout(() => { if (notification.parentNode) {
+  notification.remove(); } }, 5000); } });
+</script>
