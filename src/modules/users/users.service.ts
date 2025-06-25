@@ -10,6 +10,7 @@ import { User } from '../../schemas/user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CustomLoggerService } from '../../common/services/custom-logger.service';
+import { ErrorHandlerUtil } from '../../common/utils/error-handler.util';
 
 @Injectable()
 export class UsersService {
@@ -63,16 +64,13 @@ export class UsersService {
       );
       return savedUser;
     } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Unknown error';
-      const errorStack = error instanceof Error ? error.stack : undefined;
-
-      this.logger.error(
-        `Error creating user: ${errorMessage}`,
+      ErrorHandlerUtil.handleDatabaseError(
+        error,
+        'create',
+        'User',
         'UsersService',
-        errorStack,
+        this.logger,
       );
-      throw error;
     }
   }
 

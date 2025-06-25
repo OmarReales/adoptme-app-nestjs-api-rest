@@ -1,0 +1,123 @@
+<!-- Login Page -->
+<section class='auth-section'>
+  <div class='container'>
+    <div class='row justify-content-center'>
+      <div class='col-md-6 col-lg-5'>
+        <div class='auth-card'>
+          <div class='auth-header text-center mb-4'>
+            <div class='auth-logo mb-3'>
+              <i class='fas fa-paw fa-3x text-primary'></i>
+            </div>
+            <h2 class='fw-bold'>Iniciar Sesión</h2>
+            <p class='text-muted'>Accede a tu cuenta de AdoptMe</p>
+          </div>
+
+          <!-- Login Form -->
+          <form id='loginForm' class='auth-form'>
+            <div class='mb-3'>
+              <label for='email' class='form-label'>
+                <i class='fas fa-envelope me-2'></i>Correo Electrónico
+              </label>
+              <input
+                type='email'
+                class='form-control'
+                id='email'
+                name='email'
+                required
+                placeholder='tu@email.com'
+              />
+              <div class='invalid-feedback'></div>
+            </div>
+
+            <div class='mb-3'>
+              <label for='password' class='form-label'>
+                <i class='fas fa-lock me-2'></i>Contraseña
+              </label>
+              <div class='password-input-wrapper'>
+                <input
+                  type='password'
+                  class='form-control'
+                  id='password'
+                  name='password'
+                  required
+                  minlength='8'
+                  placeholder='Tu contraseña'
+                />
+                <button
+                  type='button'
+                  class='password-toggle'
+                  data-target='password'
+                >
+                  <i class='fas fa-eye'></i>
+                </button>
+              </div>
+              <div class='invalid-feedback'></div>
+            </div>
+
+            <div class='mb-3 form-check'>
+              <input
+                type='checkbox'
+                class='form-check-input'
+                id='remember'
+                name='remember'
+              />
+              <label class='form-check-label' for='remember'>
+                Recordarme
+              </label>
+            </div>
+
+            <button type='submit' class='btn btn-primary w-100 btn-lg mb-3'>
+              <i class='fas fa-sign-in-alt me-2'></i>Iniciar Sesión
+            </button>
+          </form>
+
+          <!-- Auth Links -->
+          <div class='auth-links text-center'>
+            <p class='mb-2'>
+              <a href='/forgot-password' class='text-decoration-none'>
+                ¿Olvidaste tu contraseña?
+              </a>
+            </p>
+            <p class='mb-0'>
+              ¿No tienes cuenta?
+              <a href='/register' class='text-decoration-none fw-bold'>
+                Regístrate aquí
+              </a>
+            </p>
+          </div>
+
+          <!-- Demo Credentials -->
+          <div class='demo-credentials mt-4'>
+            <h6 class='text-muted mb-2'>
+              <i class='fas fa-info-circle me-2'></i>Credenciales de prueba:
+            </h6>
+            <div class='demo-user mb-2'>
+              <small class='text-muted'>
+                <strong>Usuario:</strong>
+                user@adoptme.com / User123!
+              </small>
+              <button
+                class='btn btn-sm btn-outline-secondary ms-2'
+                onclick="fillDemoCredentials('user@adoptme.com', 'User123!')"
+              >
+                Usar
+              </button>
+            </div>
+            <div class='demo-user'>
+              <small class='text-muted'>
+                <strong>Admin:</strong>
+                admin@adoptme.com / Admin123!
+              </small>
+              <button
+                class='btn btn-sm btn-outline-secondary ms-2'
+                onclick="fillDemoCredentials('admin@adoptme.com', 'Admin123!')"
+              >
+                Usar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

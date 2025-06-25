@@ -22,6 +22,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 import { MockingModule } from './modules/mocking/mocking.module';
 import { LoggerTestModule } from './modules/logger-test/logger-test.module';
 import { ViewsModule } from './modules/views/views.module';
+import { StatsModule } from './modules/stats/stats.module';
 
 // Global filters and guards
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
@@ -62,6 +63,7 @@ import { HttpLoggerMiddleware } from './common/middleware/http-logger.middleware
     MockingModule,
     LoggerTestModule,
     ViewsModule,
+    StatsModule,
   ],
   controllers: [AppController],
   providers: [

@@ -11,6 +11,7 @@ import { User } from '../../schemas/user.schema';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { CustomLoggerService } from '../../common/services/custom-logger.service';
+import { ErrorHandlerUtil } from '../../common/utils/error-handler.util';
 
 @Injectable()
 export class AuthService {
@@ -61,21 +62,11 @@ export class AuthService {
     this.logger.logAuthentication('register', userId, email);
     this.logger.info(`User registered successfully: ${userId}`, 'AuthService');
 
-    // Generate JWT token for the new user
-    const payload = {
-      sub: user._id,
-      username: user.username,
-      role: user.role,
-    };
-
-    const token = this.jwtService.sign(payload);
-
-    // Return user data and token
+    // Return user data without password
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _pwd, ...userWithoutPassword } = user.toObject();
     return {
       user: userWithoutPassword,
-      access_token: token,
     };
   }
 
@@ -107,28 +98,21 @@ export class AuthService {
     }
 
     // Generate JWT token
-    const payload = {
-      sub: user._id,
-      username: user.username,
-      role: user.role,
-    };
-
-    const token = this.jwtService.sign(payload);
-
     const userId = String(user._id);
     this.logger.logAuthentication('login', userId, email);
     this.logger.info(`User logged in successfully: ${userId}`, 'AuthService');
 
-    // Return user data and token
+    // Return user data without password
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _pwd, ...userWithoutPassword } = user.toObject();
     return {
       user: userWithoutPassword,
-      access_token: token,
     };
   }
 
   async validateUser(userId: string) {
+    ErrorHandlerUtil.validateObjectId(userId, 'user ID');
+
     this.logger.debug(`Validating user: ${userId}`, 'AuthService');
     const user = await this.userModel.findById(userId).select('-password');
 

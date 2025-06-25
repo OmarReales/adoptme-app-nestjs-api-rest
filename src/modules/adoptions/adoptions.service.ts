@@ -357,4 +357,31 @@ export class AdoptionsService {
       rejected,
     };
   }
+
+  async getSuccessStories(limit = 6): Promise<any[]> {
+    try {
+      const approvedAdoptions = await this.adoptionModel
+        .find({ status: AdoptionStatus.APPROVED })
+        .populate('pet', 'name image breed')
+        .populate('user', 'firstname lastname')
+        .sort({ approvedDate: -1 })
+        .limit(limit)
+        .exec();
+
+      return approvedAdoptions.map((adoption: any) => ({
+        petName: adoption.pet?.name || 'Mascota',
+        image: adoption.pet?.image || '/images/placeholder-pet.jpg',
+        familyName:
+          `${adoption.user?.firstname || ''} ${adoption.user?.lastname || ''}`.trim(),
+        story:
+          adoption.notes ||
+          'Una historia de amor que comenzó con una adopción.',
+        adoptionDate: adoption.approvedDate,
+        breed: adoption.pet?.breed || 'Desconocido',
+      }));
+    } catch (error) {
+      this.logger.error('Error fetching success stories:', error);
+      return [];
+    }
+  }
 }

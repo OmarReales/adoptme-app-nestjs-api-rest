@@ -4,13 +4,15 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { create } from 'express-handlebars';
+import * as session from 'express-session';
+import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
-import { winstonConfig } from './config/winston.config';
+// import { winstonConfig } from './config/winston.config'; // Temporarily commented
 import { CustomLoggerService } from './common/services/custom-logger.service';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    logger: winstonConfig,
+    // logger: winstonConfig, // Temporarily commented out to fix logger issue
   });
 
   // Configure express-handlebars view engine
@@ -37,6 +39,10 @@ async function bootstrap() {
       },
       // Helper para condicionales
       eq: (a: any, b: any) => a === b,
+      gt: (a: any, b: any) => a > b,
+      lt: (a: any, b: any) => a < b,
+      gte: (a: any, b: any) => a >= b,
+      lte: (a: any, b: any) => a <= b,
       // Helper para capitalizar
       capitalize: (text: string) => {
         if (!text) return '';
@@ -50,6 +56,23 @@ async function bootstrap() {
   app.set('views', join(__dirname, '..', 'views'));
   app.useStaticAssets(join(__dirname, '..', 'public'));
 
+  // Configure cookie parser
+  app.use(cookieParser());
+
+  // Configure express session
+  app.use(
+    session({
+      secret: process.env.SESSION_SECRET || 'adoptme-super-secret-key',
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      },
+    }),
+  );
+
   // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
@@ -58,6 +81,19 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+
+  // Set global prefix for API routes, excluding views
+  app.setGlobalPrefix('api', {
+    exclude: [
+      '/',
+      '/login',
+      '/register',
+      '/view-pets',
+      '/view-adoptions',
+      '/view-pets/*',
+      '/view-adoptions/*',
+    ],
+  });
 
   // CORS configuration
   app.enableCors({

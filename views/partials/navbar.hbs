@@ -1,5 +1,5 @@
 <nav class='navbar navbar-expand-lg navbar-dark bg-primary shadow-sm'>
-  <div class='container'>
+  <div class='container-fluid'>
     <a class='navbar-brand fw-bold' href='/'>
       <i class='fas fa-paw me-2'></i>
       AdoptMe
@@ -39,6 +39,67 @@
       </ul>
 
       <ul class='navbar-nav'>
+        <!-- Authentication buttons for non-authenticated users -->
+        <div class='auth-buttons'>
+          <li class='nav-item'>
+            <a class='nav-link' href='/login'>
+              <i class='fas fa-sign-in-alt me-1'></i>Iniciar Sesión
+            </a>
+          </li>
+          <li class='nav-item'>
+            <a class='nav-link' href='/register'>
+              <i class='fas fa-user-plus me-1'></i>Registrarse
+            </a>
+          </li>
+        </div>
+
+        <!-- User info for authenticated users -->
+        <div class='user-info' style='display: none;'>
+          <li class='nav-item dropdown'>
+            <a
+              class='nav-link dropdown-toggle d-flex align-items-center'
+              href='#'
+              role='button'
+              data-bs-toggle='dropdown'
+              id='userDropdown'
+            >
+              <i class='fas fa-user-circle me-2 fs-5'></i>
+              <span class='user-name-display'>Usuario</span>
+            </a>
+            <ul class='dropdown-menu dropdown-menu-end'>
+              <li class='dropdown-header'>
+                <div class='user-details-dropdown'>
+                  <strong class='user-full-name'>Nombre Usuario</strong>
+                  <small class='text-muted user-role-badge'>user</small>
+                </div>
+              </li>
+              <li><hr class='dropdown-divider' /></li>
+              <li class='protected admin-only' style='display: none;'>
+                <a class='dropdown-item' href='/admin/dashboard'>
+                  <i class='fas fa-tachometer-alt me-2'></i>Panel Admin
+                </a>
+              </li>
+              <li class='protected'>
+                <a class='dropdown-item' href='/profile'>
+                  <i class='fas fa-user me-2'></i>Mi Perfil
+                </a>
+              </li>
+              <li class='protected'>
+                <a class='dropdown-item' href='/my-adoptions'>
+                  <i class='fas fa-heart me-2'></i>Mis Adopciones
+                </a>
+              </li>
+              <li><hr class='dropdown-divider' /></li>
+              <li>
+                <button class='dropdown-item logout-btn'>
+                  <i class='fas fa-sign-out-alt me-2'></i>Cerrar Sesión
+                </button>
+              </li>
+            </ul>
+          </li>
+        </div>
+
+        <!-- API Docs link -->
         <li class='nav-item dropdown'>
           <a
             class='nav-link dropdown-toggle'
@@ -46,18 +107,14 @@
             role='button'
             data-bs-toggle='dropdown'
           >
-            <i class='fas fa-user me-1'></i>Usuario
+            <i class='fas fa-cog me-1'></i>Más
           </a>
-          <ul class='dropdown-menu'>
-            <li><a class='dropdown-item' href='/auth/login'>
-                <i class='fas fa-sign-in-alt me-2'></i>Iniciar Sesión
-              </a></li>
-            <li><a class='dropdown-item' href='/auth/register'>
-                <i class='fas fa-user-plus me-2'></i>Registrarse
-              </a></li>
-            <li><hr class='dropdown-divider' /></li>
-            <li><a class='dropdown-item' href='/api/docs'>
+          <ul class='dropdown-menu dropdown-menu-end'>
+            <li><a class='dropdown-item' href='/api/docs' target='_blank'>
                 <i class='fas fa-book me-2'></i>API Docs
+              </a></li>
+            <li><a class='dropdown-item' href='/help'>
+                <i class='fas fa-question-circle me-2'></i>Ayuda
               </a></li>
           </ul>
         </li>

@@ -1,0 +1,60 @@
+/* ===== ADOPTIONS PAGES STYLES ===== */
+
+.adoption-card {
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  border: none;
+  border-radius: var(--border-radius-default);
+  overflow: hidden;
+}
+
+.adoption-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.adopter-info,
+.adoption-details {
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.timeline-item {
+  padding: 0.25rem 0;
+  border-left: 3px solid #dee2e6;
+  padding-left: 1rem;
+  margin-left: 0.5rem;
+}
+
+.timeline-item:last-child {
+  border-left-color: transparent;
+}
+
+.success-story-card {
+  transition: var(--transition-transform);
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.success-story-card:hover {
+  transform: scale(1.02);
+}
+
+.adoptions-section {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  min-height: 100vh;
+}
+
+.stats-card .stats-number {
+  color: #e91e63;
+  font-weight: 800;
+}
+
+.adoptions .badge {
+  font-size: 0.75rem;
+  padding: 6px 12px;
+}

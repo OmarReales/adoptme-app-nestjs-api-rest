@@ -5,6 +5,8 @@ import {
   HttpCode,
   HttpStatus,
   Req,
+  Get,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Request } from 'express';
@@ -12,6 +14,8 @@ import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { CustomLoggerService } from '../../common/services/custom-logger.service';
+import { SessionAuthGuard } from '../../common/guards/session-auth.guard';
+import { GetSessionUser } from '../../common/decorators/get-session-user.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -36,6 +40,16 @@ export class AuthController {
 
     const result = await this.authService.register(createUserDto);
 
+    // Store user in session
+    req.session.user = {
+      id: String(result.user._id),
+      username: result.user.username,
+      firstName: result.user.firstname,
+      lastName: result.user.lastname,
+      email: result.user.email,
+      role: result.user.role,
+    };
+
     this.logger.logBusinessEvent(
       'user_registered',
       {
@@ -54,7 +68,11 @@ export class AuthController {
       'AuthController',
     );
 
-    return result;
+    // Return user data without token
+    return {
+      user: req.session.user,
+      message: 'Registration successful',
+    };
   }
 
   @Post('login')
@@ -73,6 +91,16 @@ export class AuthController {
 
     const result = await this.authService.login(loginDto);
 
+    // Store user in session
+    req.session.user = {
+      id: String(result.user._id),
+      username: result.user.username,
+      firstName: result.user.firstname,
+      lastName: result.user.lastname,
+      email: result.user.email,
+      role: result.user.role,
+    };
+
     this.logger.logBusinessEvent(
       'user_login',
       {
@@ -82,7 +110,7 @@ export class AuthController {
         role: result.user.role,
         clientIp,
         userAgent,
-        hasToken: !!result.access_token,
+        hasSession: !!req.session.user,
       },
       'AuthController',
       String(result.user._id),
@@ -93,6 +121,51 @@ export class AuthController {
       'AuthController',
     );
 
-    return result;
+    // Return user data without token
+    return {
+      user: req.session.user,
+      message: 'Login successful',
+    };
+  }
+
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Logout user' })
+  @ApiResponse({ status: 200, description: 'User logged out successfully' })
+  logout(@Req() req: Request) {
+    const userId = req.session?.user?.id;
+
+    req.session.destroy((err) => {
+      if (err) {
+        this.logger.error(
+          `Error destroying session for user: ${userId}`,
+          'AuthController',
+        );
+      } else {
+        this.logger.info(
+          `User logged out successfully: ${userId}`,
+          'AuthController',
+        );
+      }
+    });
+
+    return { message: 'Logout successful' };
+  }
+
+  @Get('profile')
+  @UseGuards(SessionAuthGuard)
+  @ApiOperation({ summary: 'Get current user profile' })
+  @ApiResponse({
+    status: 200,
+    description: 'User profile retrieved successfully',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  getProfile(@GetSessionUser() user: any) {
+    this.logger.info(
+      `Profile requested for user: ${user.id}`,
+      'AuthController',
+    );
+
+    return user;
   }
 }

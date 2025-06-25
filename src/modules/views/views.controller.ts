@@ -1,154 +1,114 @@
-import { Controller, Get, Render } from '@nestjs/common';
+import { Controller, Get, Render, Query } from '@nestjs/common';
+import { StatsService } from '../stats/stats.service';
+import { PetsService } from '../pets/pets.service';
+import { AdoptionsService } from '../adoptions/adoptions.service';
 
 @Controller()
 export class ViewsController {
+  constructor(
+    private readonly statsService: StatsService,
+    private readonly petsService: PetsService,
+    private readonly adoptionsService: AdoptionsService,
+  ) {}
+
   @Get('/')
   @Render('index')
-  home() {
+  async home() {
+    const stats = await this.statsService.getAppStats();
+
     return {
       title: 'Inicio',
       currentPage: 'home',
       stats: {
-        totalPets: 45,
-        totalAdoptions: 128,
-        totalUsers: 234,
+        totalPets: stats.totalPets,
+        totalAdoptions: stats.approvedAdoptions,
+        totalUsers: stats.totalUsers,
+        totalNotifications: stats.totalNotifications,
       },
+      scripts: ['/js/home.js'],
     };
   }
 
   @Get('/view-pets')
   @Render('pets/index')
-  pets() {
+  async pets(@Query('page') page = '1', @Query('limit') limit = '12') {
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
+
+    const petsData = await this.petsService.findAll(pageNumber, limitNumber);
+    const stats = await this.statsService.getAppStats();
+
     return {
       title: 'Mascotas',
       currentPage: 'pets',
-      pets: [
-        {
-          _id: '1',
-          name: 'Luna',
-          breed: 'Labrador',
-          age: 2,
-          status: 'available',
-          description: 'Una perrita muy cariñosa y juguetona',
-          image: '/images/pets/luna.jpg',
-        },
-        {
-          _id: '2',
-          name: 'Max',
-          breed: 'Golden Retriever',
-          age: 3,
-          status: 'available',
-          description: 'Un perro muy leal y protector',
-          image: '/images/pets/max.jpg',
-        },
-        {
-          _id: '3',
-          name: 'Mia',
-          breed: 'Siamés',
-          age: 1,
-          status: 'available',
-          description: 'Una gatita muy elegante y tranquila',
-          image: '/images/pets/mia.jpg',
-        },
-      ],
+      pets: petsData.data,
+      pagination: petsData.pagination,
+      stats: {
+        availablePets: stats.availablePets,
+        adoptedPets: stats.adoptedPets,
+        totalPets: stats.totalPets,
+      },
+      scripts: ['/js/pets.js'],
     };
   }
 
   @Get('/view-adoptions')
   @Render('adoptions/index')
-  adoptions() {
+  async adoptions(@Query('page') page = '1', @Query('limit') limit = '10') {
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
+
+    const adoptionsData = await this.adoptionsService.findAll(
+      pageNumber,
+      limitNumber,
+    );
+    const adoptionStats = await this.statsService.getAdoptionStats();
+    const pendingAdoptions = await this.adoptionsService.getPendingAdoptions();
+
+    // Create pagination object compatible with the view
+    const totalPages = Math.ceil(adoptionsData.total / limitNumber);
+    const pagination = {
+      page: pageNumber,
+      limit: limitNumber,
+      total: adoptionsData.total,
+      totalPages,
+      hasNext: pageNumber < totalPages,
+      hasPrev: pageNumber > 1,
+      nextPage: pageNumber + 1,
+      prevPage: pageNumber - 1,
+    };
+
+    const successStories = await this.adoptionsService.getSuccessStories(3);
+
     return {
       title: 'Adopciones',
       currentPage: 'adoptions',
-      stats: {
-        totalAdoptions: 128,
-        pendingAdoptions: 15,
-        happyFamilies: 113,
-      },
-      adoptions: [
-        {
-          _id: '1',
-          pet: {
-            name: 'Luna',
-            breed: 'Labrador',
-            age: 2,
-            image: '/images/pets/luna.jpg',
-          },
-          adopter: {
-            name: 'Juan Pérez',
-            email: 'juan.perez@email.com',
-            phone: '+34 612 345 678',
-          },
-          status: 'pending',
-          reason:
-            'Siempre he querido tener una Labrador. Tengo experiencia con perros y un gran jardín donde Luna podría jugar y ejercitarse. Mi familia está muy emocionada por darle todo el amor que merece.',
-          createdAt: new Date('2024-06-20'),
-        },
-        {
-          _id: '2',
-          pet: {
-            name: 'Max',
-            breed: 'Golden Retriever',
-            age: 3,
-            image: '/images/pets/max.jpg',
-          },
-          adopter: {
-            name: 'María González',
-            email: 'maria.gonzalez@email.com',
-            phone: '+34 698 765 432',
-          },
-          status: 'approved',
-          reason:
-            'Mi familia y yo hemos estado buscando un compañero fiel y cariñoso. Max parece perfecto para nosotros. Tenemos experiencia con Golden Retrievers y sabemos lo especiales que son.',
-          createdAt: new Date('2024-06-18'),
-          approvedAt: new Date('2024-06-22'),
-        },
-        {
-          _id: '3',
-          pet: {
-            name: 'Mia',
-            breed: 'Siamés',
-            age: 1,
-            image: '/images/pets/mia.jpg',
-          },
-          adopter: {
-            name: 'Carlos López',
-            email: 'carlos.lopez@email.com',
-            phone: '+34 634 567 890',
-          },
-          status: 'rejected',
-          reason:
-            'Me encantan los gatos siameses por su personalidad única. Vivo solo y creo que Mia sería una compañía perfecta para mí.',
-          createdAt: new Date('2024-06-15'),
-          rejectedAt: new Date('2024-06-19'),
-        },
-      ],
-      successStories: [
-        {
-          petName: 'Bobby',
-          familyName: 'Familia Martínez',
-          story:
-            'Bobby encontró su hogar perfecto con la familia Martínez. Ahora disfruta de largos paseos por el parque y es el mejor amigo de los niños.',
-          image: '/images/success/bobby.jpg',
-          adoptionDate: new Date('2024-05-15'),
-        },
-        {
-          petName: 'Whiskers',
-          familyName: 'Familia Rodríguez',
-          story:
-            'Whiskers ahora es el rey de la casa con la familia Rodríguez. Le encanta dormir al sol en su nueva terraza y jugar con sus nuevos juguetes.',
-          image: '/images/success/whiskers.jpg',
-          adoptionDate: new Date('2024-04-20'),
-        },
-        {
-          petName: 'Rocky',
-          familyName: 'Familia Sánchez',
-          story:
-            'Rocky encontró una segunda oportunidad con la familia Sánchez. Es un perro muy activo que disfruta de las caminatas matutinas y los juegos en el jardín.',
-          image: '/images/success/rocky.jpg',
-          adoptionDate: new Date('2024-03-10'),
-        },
-      ],
+      adoptions: adoptionsData.adoptions,
+      pagination,
+      stats: adoptionStats,
+      pendingAdoptions: pendingAdoptions.slice(0, 5), // Mostrar solo los primeros 5
+      successStories, // Real success stories from the DB
+      scripts: ['/js/adoptions.js'],
+    };
+  }
+
+  @Get('/login')
+  @Render('auth/login')
+  login() {
+    return {
+      title: 'Iniciar Sesión',
+      currentPage: 'login',
+      scripts: ['/js/auth.js'],
+    };
+  }
+
+  @Get('/register')
+  @Render('auth/register')
+  register() {
+    return {
+      title: 'Registrarse',
+      currentPage: 'register',
+      scripts: ['/js/auth.js'],
     };
   }
 }

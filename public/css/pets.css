@@ -1,0 +1,282 @@
+/* ===== PETS PAGES STYLES ===== */
+
+/* ===== PET CARDS (INDEX PAGE) ===== */
+
+.pet-card {
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  border: none;
+  border-radius: var(--border-radius-default);
+  overflow: hidden;
+}
+
+.pet-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.pet-image-container {
+  position: relative;
+  height: 250px;
+  overflow: hidden;
+}
+
+.pet-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition-transform);
+}
+
+.pet-card:hover .pet-image {
+  transform: scale(1.05);
+}
+
+.pet-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.pet-status {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pet-status.available {
+  background: rgba(40, 167, 69, 0.9);
+  color: white;
+}
+
+.pet-status.adopted {
+  background: rgba(108, 117, 125, 0.9);
+  color: white;
+}
+
+.pet-status.pending {
+  background: rgba(255, 193, 7, 0.9);
+  color: #212529;
+}
+
+.characteristics .badge {
+  font-size: 0.7rem;
+  padding: 4px 8px;
+}
+
+.pet-info .badge {
+  font-size: 0.75rem;
+  padding: 5px 10px;
+}
+
+/* ===== PET DETAIL PAGE ===== */
+
+.pet-detail-image {
+  height: 400px;
+  object-fit: cover;
+}
+
+.pet-placeholder-large {
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.pet-status-large {
+  font-size: 1rem;
+  padding: 10px 20px;
+  border-radius: 25px;
+}
+
+.pet-status-large.available {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+}
+
+.pet-status-large.adopted {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  color: white;
+}
+
+.pet-status-large.pending {
+  background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+  color: #212529;
+}
+
+.info-card {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: var(--border-radius-small);
+  padding: 15px;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.info-icon {
+  font-size: 1.5rem;
+  color: #007bff;
+  margin-bottom: 8px;
+}
+
+.info-label {
+  font-size: 0.8rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.characteristics-list .badge {
+  font-size: 0.85rem;
+  padding: 8px 12px;
+}
+
+.health-info .health-item {
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+
+.tab-content-wrapper {
+  padding: 20px;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+}
+
+.contact-item {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.pet-card-small {
+  border: none;
+  border-radius: var(--border-radius-small);
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.pet-card-small:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.pet-card-small .card-img-top {
+  height: 150px;
+  object-fit: cover;
+}
+
+/* ===== PET CREATE PAGE ===== */
+
+.required::after {
+  content: ' *';
+  color: #dc3545;
+}
+
+.section-header {
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.section-header h4 {
+  margin-bottom: 0;
+}
+
+.characteristics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.pets-create .form-check-label {
+  font-weight: 500;
+}
+
+.pets-create .form-check-input:checked {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.form-switch .form-check-label {
+  padding-left: 0.5rem;
+}
+
+.image-preview-item {
+  position: relative;
+  display: inline-block;
+  margin: 10px;
+}
+
+.image-preview-img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid #dee2e6;
+}
+
+.image-remove-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-remove-btn:hover {
+  background: #c82333;
+}
+
+.pets-create .card {
+  border-radius: var(--border-radius-default);
+}
+
+.pets-create .card-header {
+  border-radius: var(--border-radius-default) var(--border-radius-default) 0 0 !important;
+}
+
+.pets-create .btn-lg {
+  padding: 12px 24px;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .characteristics-grid {
+    grid-template-columns: 1fr;
+  }
+}

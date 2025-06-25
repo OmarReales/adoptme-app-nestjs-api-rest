@@ -3,7 +3,12 @@
     <div class="container">
         <!-- Breadcrumb -->
         <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb">
+                          <button class="btn btn-outline-primary btn-lg share-pet-btn">
+                            <i class="fas fa-share-alt me-2"></i>Compartir
+                        </button>
+                        <button class="btn btn-outline-secondary btn-lg favorite-pet-btn" data-pet-id="{{pet._id}}">
+                            <i class="far fa-bookmark me-2"></i>Guardar
+                        </button>    <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Inicio</a></li>
                 <li class="breadcrumb-item"><a href="/pets">Mascotas</a></li>
                 <li class="breadcrumb-item active" aria-current="page">{{pet.name}}</li>
@@ -160,10 +165,10 @@
                             <i class="fas fa-heart me-2"></i>Adoptar a {{pet.name}}
                         </a>
                         {{/if}}
-                        <button class="btn btn-outline-primary btn-lg" onclick="sharePet()">
+                        <button class="btn btn-outline-primary btn-lg share-pet-btn">
                             <i class="fas fa-share me-2"></i>Compartir
                         </button>
-                        <button class="btn btn-outline-secondary btn-lg" onclick="addToFavorites('{{pet._id}}')">
+                        <button class="btn btn-outline-secondary btn-lg favorite-pet-btn" data-pet-id="{{pet._id}}">
                             <i class="fas fa-bookmark me-2"></i>Guardar
                         </button>
                     </div>
@@ -257,156 +262,3 @@
         {{/if}}
     </div>
 </section>
-
-<style>
-.pet-detail-image {
-    height: 400px;
-    object-fit: cover;
-}
-
-.pet-placeholder-large {
-    height: 400px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-}
-
-.pet-status-large {
-    font-size: 1rem;
-    padding: 10px 20px;
-    border-radius: 25px;
-}
-
-.pet-status-large.available {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-    color: white;
-}
-
-.pet-status-large.adopted {
-    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
-    color: white;
-}
-
-.pet-status-large.pending {
-    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
-    color: #212529;
-}
-
-.info-card {
-    background: white;
-    border: 1px solid #e9ecef;
-    border-radius: 10px;
-    padding: 15px;
-    text-align: center;
-    transition: transform 0.2s ease;
-}
-
-.info-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.info-icon {
-    font-size: 1.5rem;
-    color: #007bff;
-    margin-bottom: 8px;
-}
-
-.info-label {
-    font-size: 0.8rem;
-    color: #6c757d;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.info-value {
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: #333;
-}
-
-.characteristics-list .badge {
-    font-size: 0.85rem;
-    padding: 8px 12px;
-}
-
-.health-info .health-item {
-    margin-bottom: 8px;
-    font-size: 1rem;
-}
-
-.tab-content-wrapper {
-    padding: 20px;
-    background: white;
-    border: 1px solid #dee2e6;
-    border-top: none;
-    border-radius: 0 0 8px 8px;
-}
-
-.contact-item {
-    margin-bottom: 10px;
-    font-size: 1rem;
-}
-
-.pet-card-small {
-    border: none;
-    border-radius: 10px;
-    overflow: hidden;
-    transition: transform 0.2s ease;
-}
-
-.pet-card-small:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-}
-
-.pet-card-small .card-img-top {
-    height: 150px;
-    object-fit: cover;
-}
-</style>
-
-<script>
-function sharePet() {
-    if (navigator.share) {
-        navigator.share({
-            title: '{{pet.name}} - AdoptMe',
-            text: '¡Mira a {{pet.name}}! Esta hermosa mascota está buscando un hogar.',
-            url: window.location.href
-        });
-    } else {
-        // Fallback - copy to clipboard
-        navigator.clipboard.writeText(window.location.href).then(() => {
-            alert('Enlace copiado al portapapeles');
-        });
-    }
-}
-
-function addToFavorites(petId) {
-    // This would typically make an API call to add to favorites
-    console.log('Adding pet to favorites:', petId);
-    
-    // Visual feedback
-    const button = event.target.closest('button');
-    const icon = button.querySelector('i');
-    
-    if (icon.classList.contains('fas')) {
-        icon.classList.remove('fas');
-        icon.classList.add('far');
-        button.innerHTML = '<i class="far fa-bookmark me-2"></i>Guardado';
-    } else {
-        icon.classList.remove('far');
-        icon.classList.add('fas');
-        button.innerHTML = '<i class="fas fa-bookmark me-2"></i>Guardar';
-    }
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Bootstrap tabs
-    const tabTriggerList = [].slice.call(document.querySelectorAll('#petTabs button'))
-    tabTriggerList.forEach(function (tabTriggerEl) {
-        new bootstrap.Tab(tabTriggerEl)
-    });
-});
-</script>
