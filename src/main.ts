@@ -73,16 +73,20 @@ async function bootstrap() {
   // Configure cookie parser
   app.use(cookieParser());
 
-  // Configure express session
+  // Configure express session with enhanced security
   app.use(
     session({
-      secret: process.env.SESSION_SECRET || 'adoptme-super-secret-key',
+      secret:
+        process.env.SESSION_SECRET ||
+        'adoptme-super-secret-key-change-in-production-min-32-chars',
       resave: false,
       saveUninitialized: false,
+      name: process.env.SESSION_NAME || 'adoptme.session',
       cookie: {
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        maxAge: parseInt(process.env.SESSION_MAX_AGE || '86400000'), // 24 hours
+        sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
       },
     }),
   );

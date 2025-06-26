@@ -20,7 +20,7 @@ import {
 } from '@nestjs/swagger';
 import { AdoptionsService } from './adoptions.service';
 import { CreateAdoptionDto, UpdateAdoptionDto } from './dto/adoption.dto';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { HybridAuthGuard } from '../../common/guards/hybrid-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { GetUser } from '../../common/decorators/get-user.decorator';
@@ -30,7 +30,7 @@ import { AdoptionStatus } from '../../schemas/adoption.schema';
 
 @ApiTags('adoptions')
 @Controller('adoptions')
-@UseGuards(JwtAuthGuard)
+@UseGuards(HybridAuthGuard)
 @ApiBearerAuth()
 export class AdoptionsController {
   constructor(private readonly adoptionsService: AdoptionsService) {}

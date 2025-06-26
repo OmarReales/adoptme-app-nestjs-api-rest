@@ -16,6 +16,8 @@ import { LoginDto } from './dto/login.dto';
 import { CustomLoggerService } from '../../common/services/custom-logger.service';
 import { SessionAuthGuard } from '../../common/guards/session-auth.guard';
 import { GetSessionUser } from '../../common/decorators/get-session-user.decorator';
+import { HybridAuthGuard } from '../../common/guards/hybrid-auth.guard';
+import { GetUser } from '../../common/decorators/get-user.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -121,9 +123,10 @@ export class AuthController {
       'AuthController',
     );
 
-    // Return user data without token
+    // Return user data + JWT token for hybrid authentication
     return {
       user: req.session.user,
+      access_token: result.access_token, // JWT for API/Mobile clients
       message: 'Login successful',
     };
   }
@@ -167,5 +170,26 @@ export class AuthController {
     );
 
     return user;
+  }
+
+  @Get('test-hybrid')
+  @UseGuards(HybridAuthGuard)
+  @ApiOperation({ summary: 'Test hybrid authentication (Session OR JWT)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Hybrid authentication test successful',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  testHybridAuth(@GetUser() user: any) {
+    this.logger.info(
+      `Hybrid auth successful for user: ${user.userId || user.id}`,
+      'AuthController',
+    );
+
+    return {
+      message: 'Hybrid authentication successful!',
+      authMethod: user.userId ? 'JWT' : 'Session',
+      user,
+    };
   }
 }

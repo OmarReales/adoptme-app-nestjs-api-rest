@@ -7,6 +7,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 import { User, UserSchema } from '../../schemas/user.schema';
+import { HybridAuthGuard } from '../../common/guards/hybrid-auth.guard';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { User, UserSchema } from '../../schemas/user.schema';
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
-  exports: [AuthService, JwtModule],
+  providers: [AuthService, JwtStrategy, HybridAuthGuard],
+  exports: [AuthService, JwtModule, HybridAuthGuard],
 })
 export class AuthModule {}

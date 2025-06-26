@@ -99,14 +99,22 @@ export class AuthService {
 
     // Generate JWT token
     const userId = String(user._id);
+    const payload = {
+      sub: userId,
+      username: user.username,
+      role: user.role,
+    };
+    const accessToken = this.jwtService.sign(payload);
+
     this.logger.logAuthentication('login', userId, email);
     this.logger.info(`User logged in successfully: ${userId}`, 'AuthService');
 
-    // Return user data without password
+    // Return user data without password + JWT token
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _pwd, ...userWithoutPassword } = user.toObject();
     return {
       user: userWithoutPassword,
+      access_token: accessToken, // JWT para API/Mobile
     };
   }
 

@@ -22,7 +22,7 @@ import {
 import { PetsService } from './pets.service';
 import { CreatePetDto } from './dto/create-pet.dto';
 import { UpdatePetDto } from './dto/update-pet.dto';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { HybridAuthGuard } from '../../common/guards/hybrid-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { GetUser } from '../../common/decorators/get-user.decorator';
@@ -41,7 +41,7 @@ export class PetsController {
   ) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(HybridAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new pet (Admin only)' })
@@ -125,7 +125,7 @@ export class PetsController {
   }
 
   @Get('my-pets')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(HybridAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get pets owned by current user' })
   @ApiResponse({ status: 200, description: 'User pets retrieved successfully' })
@@ -136,7 +136,7 @@ export class PetsController {
   }
 
   @Get('my-liked')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(HybridAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get pets liked by current user' })
   @ApiResponse({
@@ -162,7 +162,7 @@ export class PetsController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(HybridAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update pet (Admin only)' })
@@ -178,7 +178,7 @@ export class PetsController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(HybridAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete pet (Admin only)' })
@@ -195,7 +195,7 @@ export class PetsController {
 
   @Post(':id/like')
   @HttpCode(200)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(HybridAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Like a pet' })
   @ApiParam({ name: 'id', description: 'Pet ID' })
@@ -230,7 +230,7 @@ export class PetsController {
   }
   @Delete(':id/like')
   @HttpCode(200)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(HybridAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Unlike a pet' })
   @ApiParam({ name: 'id', description: 'Pet ID' })

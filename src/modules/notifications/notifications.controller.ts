@@ -24,7 +24,7 @@ import {
   MarkAsReadDto,
   NotificationQueryDto,
 } from './dto/notification.dto';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { HybridAuthGuard } from '../../common/guards/hybrid-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { GetUser } from '../../common/decorators/get-user.decorator';
@@ -34,7 +34,7 @@ import { ParseMongoIdPipe } from '../../common/pipes/parse-mongo-id.pipe';
 
 @ApiTags('notifications')
 @Controller('notifications')
-@UseGuards(JwtAuthGuard)
+@UseGuards(HybridAuthGuard)
 @ApiBearerAuth()
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
