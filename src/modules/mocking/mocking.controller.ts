@@ -131,7 +131,7 @@ export class MockingController {
   @ApiOperation({
     summary: 'Generate mock users',
     description:
-      'Creates mock users data for testing purposes. Users will have default password "password123".',
+      'Creates mock users data for testing purposes. Always includes default test users: user@adoptme.com (User123!) and admin@adoptme.com (Admin123!). Other users will have default password "password123".',
   })
   @ApiQuery({
     name: 'count',
@@ -227,7 +227,7 @@ export class MockingController {
   @ApiOperation({
     summary: 'Generate users and pets mock data',
     description:
-      'Creates both users and pets mock data for testing purposes. This endpoint generates data in batch and provides summary information.',
+      'Creates both users and pets mock data for testing purposes. Always includes default test users: user@adoptme.com (User123!) and admin@adoptme.com (Admin123!). This endpoint generates data in batch and provides summary information.',
   })
   @ApiResponse({
     status: 201,

@@ -7,6 +7,32 @@ import { Pet, PetStatus } from '../../schemas/pet.schema';
 import { User, UserRole } from '../../schemas/user.schema';
 import { CustomLoggerService } from '../../common/services/custom-logger.service';
 
+// Default test users that will always be created
+const DEFAULT_TEST_USERS = [
+  {
+    username: 'testuser',
+    firstname: 'Test',
+    lastname: 'User',
+    email: 'user@adoptme.com',
+    password: 'User123!',
+    age: 25,
+    role: UserRole.USER,
+    isEmailVerified: true,
+    emailVerificationToken: undefined,
+  },
+  {
+    username: 'testadmin',
+    firstname: 'Test',
+    lastname: 'Admin',
+    email: 'admin@adoptme.com',
+    password: 'Admin123!',
+    age: 30,
+    role: UserRole.ADMIN,
+    isEmailVerified: true,
+    emailVerificationToken: undefined,
+  },
+] as const;
+
 @Injectable()
 export class MockingService {
   constructor(
@@ -206,6 +232,9 @@ export class MockingService {
     );
 
     try {
+      // First, create/update default test users
+      await this.ensureDefaultTestUsers();
+
       const mockUsers: any[] = [];
       const hashedPassword = await bcrypt.hash('password123', 12);
 
@@ -261,10 +290,18 @@ export class MockingService {
       this.logger.logDatabaseOperation(
         'create',
         'User',
-        `Successfully created ${createdUsers.length} mock users`,
+        `Successfully created ${createdUsers.length} mock users (+ 2 default test users)`,
         'MockingService',
       );
-      return createdUsers;
+
+      // Return all created users including the default test users
+      const allUsers = await this.userModel
+        .find({
+          email: { $in: ['user@adoptme.com', 'admin@adoptme.com'] },
+        })
+        .lean();
+
+      return [...allUsers, ...createdUsers];
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
@@ -297,6 +334,67 @@ export class MockingService {
 
       this.logger.error(
         `Failed to clear users: ${errorMessage}`,
+        'MockingService',
+        errorStack,
+      );
+      throw error;
+    }
+  }
+
+  /**
+   * Ensures the default test users exist in the database.
+   * If they exist, they are deleted and recreated to avoid conflicts.
+   * These users are always created for consistent testing.
+   */
+  private async ensureDefaultTestUsers(): Promise<void> {
+    this.logger.info(
+      'Ensuring default test users are created/updated',
+      'MockingService',
+    );
+
+    try {
+      // Delete existing test users if they exist
+      const testEmails = DEFAULT_TEST_USERS.map((user) => user.email);
+      const deleteResult = await this.userModel.deleteMany({
+        email: { $in: testEmails },
+      });
+
+      if (deleteResult.deletedCount > 0) {
+        this.logger.info(
+          `Removed ${deleteResult.deletedCount} existing test users`,
+          'MockingService',
+        );
+      }
+
+      // Create test users with hashed passwords
+      const testUsers = await Promise.all(
+        DEFAULT_TEST_USERS.map(async (user) => ({
+          ...user,
+          password: await bcrypt.hash(user.password, 12),
+        })),
+      );
+
+      // Insert default test users
+      const createdTestUsers = await this.userModel.insertMany(testUsers);
+
+      this.logger.logDatabaseOperation(
+        'create',
+        'User',
+        `Successfully created/updated ${createdTestUsers.length} default test users`,
+        'MockingService',
+      );
+
+      this.logger.info(
+        `Default test users ready: user@adoptme.com (User123!), admin@adoptme.com (Admin123!)`,
+        'MockingService',
+      );
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+
+      this.logger.error(
+        `Failed to ensure default test users: ${errorMessage}`,
         'MockingService',
         errorStack,
       );
