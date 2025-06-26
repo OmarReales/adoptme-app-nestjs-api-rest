@@ -85,14 +85,43 @@ export class PetsController {
     type: String,
     example: 'Golden Retriever',
   })
+  @ApiQuery({
+    name: 'species',
+    required: false,
+    type: String,
+    example: 'dog',
+  })
+  @ApiQuery({
+    name: 'name',
+    required: false,
+    type: String,
+    example: 'Buddy',
+  })
+  @ApiQuery({
+    name: 'ageRange',
+    required: false,
+    type: String,
+    example: 'young',
+  })
   @ApiResponse({ status: 200, description: 'Pets retrieved successfully' })
   findAll(
     @Query('page', new ParseIntPipe({ optional: true })) page?: number,
     @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
     @Query('status') status?: PetStatus,
     @Query('breed') breed?: string,
+    @Query('species') species?: string,
+    @Query('name') name?: string,
+    @Query('ageRange') ageRange?: string,
   ) {
-    return this.petsService.findAll(page, limit, status, breed);
+    return this.petsService.findAll(
+      page,
+      limit,
+      status,
+      breed,
+      species,
+      name,
+      ageRange,
+    );
   }
 
   @Get('my-pets')

@@ -43,6 +43,18 @@ async function bootstrap() {
       lt: (a: any, b: any) => a < b,
       gte: (a: any, b: any) => a >= b,
       lte: (a: any, b: any) => a <= b,
+      // Helper para operaciones matemáticas
+      add: (a: number, b: number) => a + b,
+      subtract: (a: number, b: number) => a - b,
+      multiply: (a: number, b: number) => a * b,
+      // Helper para generar rangos
+      range: (start: number, end: number) => {
+        const result: number[] = [];
+        for (let i = start; i <= end; i++) {
+          result.push(i);
+        }
+        return result;
+      },
       // Helper para capitalizar
       capitalize: (text: string) => {
         if (!text) return '';

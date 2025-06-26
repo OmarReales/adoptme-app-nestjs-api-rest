@@ -55,6 +55,9 @@ export class PetsService {
     limit = 10,
     status?: PetStatus,
     breed?: string,
+    species?: string,
+    name?: string,
+    ageRange?: string,
   ): Promise<{
     data: Pet[];
     pagination: {
@@ -74,6 +77,28 @@ export class PetsService {
       query.breed = { $regex: breed, $options: 'i' };
     }
 
+    if (species) {
+      query.species = species;
+    }
+
+    if (name) {
+      query.name = { $regex: name, $options: 'i' };
+    }
+
+    if (ageRange) {
+      switch (ageRange) {
+        case 'young':
+          query.age = { $gte: 1, $lte: 3 };
+          break;
+        case 'adult':
+          query.age = { $gte: 4, $lte: 8 };
+          break;
+        case 'senior':
+          query.age = { $gte: 9 };
+          break;
+      }
+    }
+
     const skip = (page - 1) * limit;
 
     const [pets, total] = await Promise.all([
@@ -83,6 +108,7 @@ export class PetsService {
         .skip(skip)
         .limit(limit)
         .sort({ createdAt: -1 })
+        .lean()
         .exec(),
       this.petModel.countDocuments(query),
     ]);
@@ -107,13 +133,14 @@ export class PetsService {
       .findById(id)
       .populate('owner', 'username firstname lastname')
       .populate('likedBy', 'username firstname lastname')
+      .lean()
       .exec();
 
     if (!pet) {
       throw new NotFoundException('Pet not found');
     }
 
-    return pet;
+    return pet as Pet;
   }
 
   async update(id: string, updatePetDto: UpdatePetDto): Promise<Pet> {

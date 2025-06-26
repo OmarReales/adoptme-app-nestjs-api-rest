@@ -20,7 +20,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <form class="row g-3">
+                        <form class="row g-3" id="filter-form">
                             <div class="col-md-4">
                                 <label for="search" class="form-label">Buscar</label>
                                 <input type="text" class="form-control" id="search" placeholder="Nombre de la mascota...">
@@ -31,19 +31,15 @@
                                     <option value="">Todas las especies</option>
                                     <option value="dog">Perro</option>
                                     <option value="cat">Gato</option>
-                                    <option value="rabbit">Conejo</option>
-                                    <option value="bird">Ave</option>
-                                    <option value="other">Otro</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
                                 <label for="age" class="form-label">Edad</label>
                                 <select class="form-select" id="age">
                                     <option value="">Todas las edades</option>
-                                    <option value="puppy">Cachorro (0-1 año)</option>
                                     <option value="young">Joven (1-3 años)</option>
-                                    <option value="adult">Adulto (3-7 años)</option>
-                                    <option value="senior">Senior (7+ años)</option>
+                                    <option value="adult">Adulto (4-8 años)</option>
+                                    <option value="senior">Senior (9+ años)</option>
                                 </select>
                             </div>
                             <div class="col-md-2">
@@ -85,13 +81,25 @@
                         <h5 class="card-title">{{this.name}}</h5>
                         <div class="pet-info mb-3">
                             <span class="badge bg-light text-dark me-2">
-                                <i class="fas fa-dog me-1"></i>{{this.species}}
+                                {{#if (eq this.species 'dog')}}
+                                    <i class="fas fa-dog me-1"></i>Perro
+                                {{else if (eq this.species 'cat')}}
+                                    <i class="fas fa-cat me-1"></i>Gato
+                                {{else}}
+                                    <i class="fas fa-paw me-1"></i>{{this.species}}
+                                {{/if}}
                             </span>
                             <span class="badge bg-light text-dark me-2">
                                 <i class="fas fa-birthday-cake me-1"></i>{{this.age}} años
                             </span>
                             <span class="badge bg-light text-dark">
-                                <i class="fas fa-venus-mars me-1"></i>{{this.gender}}
+                                {{#if (eq this.gender 'male')}}
+                                    <i class="fas fa-mars me-1"></i>Macho
+                                {{else if (eq this.gender 'female')}}
+                                    <i class="fas fa-venus me-1"></i>Hembra
+                                {{else}}
+                                    <i class="fas fa-venus-mars me-1"></i>{{this.gender}}
+                                {{/if}}
                             </span>
                         </div>
                         <p class="card-text text-muted">{{this.description}}</p>
@@ -141,35 +149,67 @@
 
         <!-- Pagination -->
         {{#if pagination}}
+        {{#if pagination.totalPages}}
+        {{#if (gt pagination.totalPages 1)}}
         <div class="row mt-5">
             <div class="col-12">
                 <nav aria-label="Navegación de mascotas">
                     <ul class="pagination justify-content-center">
-                        {{#if pagination.hasPrevious}}
+                        <!-- Previous button -->
+                        {{#if (gt pagination.page 1)}}
                         <li class="page-item">
-                            <a class="page-link" href="/pets?page={{pagination.previousPage}}">
+                            <a class="page-link" href="#" data-page="{{subtract pagination.page 1}}" class="pagination-link">
                                 <i class="fas fa-chevron-left me-1"></i>Anterior
                             </a>
                         </li>
+                        {{else}}
+                        <li class="page-item disabled">
+                            <span class="page-link">
+                                <i class="fas fa-chevron-left me-1"></i>Anterior
+                            </span>
+                        </li>
                         {{/if}}
                         
-                        {{#each pagination.pages}}
-                        <li class="page-item {{#if this.active}}active{{/if}}">
-                            <a class="page-link" href="/pets?page={{this.number}}">{{this.number}}</a>
+                        <!-- Page numbers -->
+                        {{#each (range 1 pagination.totalPages)}}
+                        <li class="page-item {{#if (eq this ../pagination.page)}}active{{/if}}">
+                            <a class="page-link pagination-link" href="#" data-page="{{this}}">{{this}}</a>
                         </li>
                         {{/each}}
                         
-                        {{#if pagination.hasNext}}
+                        <!-- Next button -->
+                        {{#if (lt pagination.page pagination.totalPages)}}
                         <li class="page-item">
-                            <a class="page-link" href="/pets?page={{pagination.nextPage}}">
+                            <a class="page-link pagination-link" href="#" data-page="{{add pagination.page 1}}">
                                 Siguiente<i class="fas fa-chevron-right ms-1"></i>
                             </a>
+                        </li>
+                        {{else}}
+                        <li class="page-item disabled">
+                            <span class="page-link">
+                                Siguiente<i class="fas fa-chevron-right ms-1"></i>
+                            </span>
                         </li>
                         {{/if}}
                     </ul>
                 </nav>
+                
+                <!-- Pagination info -->
+                <div class="text-center mt-3">
+                    <small class="text-muted">
+                        Mostrando {{add (multiply (subtract pagination.page 1) pagination.limit) 1}} - 
+                        {{#if (eq pagination.page pagination.totalPages)}}
+                            {{pagination.total}}
+                        {{else}}
+                            {{multiply pagination.page pagination.limit}}
+                        {{/if}}
+                        de {{pagination.total}} mascotas
+                    </small>
+                </div>
             </div>
         </div>
+        {{/if}}
+        {{/if}}
         {{/if}}
     </div>
 </section>

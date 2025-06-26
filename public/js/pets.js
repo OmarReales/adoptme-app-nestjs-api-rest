@@ -21,17 +21,40 @@ class PetsAPI {
     });
 
     // Handle filter changes
-    document
-      .querySelectorAll('.form-select, .form-control')
-      .forEach((input) => {
-        input.addEventListener('change', (e) => this.handleFilterChange(e));
-      });
+    const searchInput = document.querySelector('#search');
+    const speciesSelect = document.querySelector('#species');
+    const ageSelect = document.querySelector('#age');
+    const filterForm = document.querySelector('#filter-form');
 
-    // Handle search
-    const searchForm = document.querySelector('#pet-search-form');
-    if (searchForm) {
-      searchForm.addEventListener('submit', (e) => this.handleSearch(e));
+    if (searchInput) {
+      searchInput.addEventListener('input', () => this.handleFilterWithURL());
     }
+
+    if (speciesSelect) {
+      speciesSelect.addEventListener('change', () =>
+        this.handleFilterWithURL(),
+      );
+    }
+
+    if (ageSelect) {
+      ageSelect.addEventListener('change', () => this.handleFilterWithURL());
+    }
+
+    // Prevent form submission
+    if (filterForm) {
+      filterForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        this.handleFilterWithURL();
+      });
+    }
+
+    // Handle pagination clicks
+    document.querySelectorAll('.pagination-link').forEach((link) => {
+      link.addEventListener('click', (e) => this.handlePagination(e));
+    });
+
+    // Initialize filters from URL on page load
+    this.initializeFiltersFromURL();
   }
 
   async handleAdoptionRequest(event) {
@@ -96,7 +119,7 @@ class PetsAPI {
 
     try {
       // Call the favorites API endpoint
-      await this.handleFavoriteAPI(petId, isFavorited);
+      await PetsAPI.handleFavoriteAPI(petId, isFavorited);
       // Update UI on success
       this.toggleFavoriteUI(button, !isFavorited);
     } catch (error) {
@@ -104,7 +127,7 @@ class PetsAPI {
     }
   }
 
-  async handleFavoriteAPI(petId, isCurrentlyFavorited) {
+  static async handleFavoriteAPI(petId, isCurrentlyFavorited) {
     try {
       const endpoint = `/pets/${petId}/like`;
       const method = isCurrentlyFavorited ? 'DELETE' : 'POST';
@@ -137,46 +160,80 @@ class PetsAPI {
     }
   }
 
-  handleFilterChange(event) {
-    const input = event.target;
+  initializeFiltersFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
 
-    // Build URL with filters
-    const form = input.closest('form');
-    if (form) {
-      const formData = new FormData(form);
-      const params = new URLSearchParams();
+    // Set filter values from URL
+    const searchInput = document.querySelector('#search');
+    const speciesSelect = document.querySelector('#species');
+    const ageSelect = document.querySelector('#age');
 
-      for (const [key, value] of formData.entries()) {
-        if (value) {
-          params.append(key, value);
-        }
-      }
+    if (searchInput && urlParams.has('name')) {
+      searchInput.value = urlParams.get('name');
+    }
 
-      // Update URL without page reload for better UX
-      const newUrl = `${window.location.pathname}?${params.toString()}`;
-      window.history.pushState({}, '', newUrl);
+    if (speciesSelect && urlParams.has('species')) {
+      speciesSelect.value = urlParams.get('species');
+    }
 
-      // TODO: Load filtered results via AJAX instead of page reload
-      window.location.reload();
+    if (ageSelect && urlParams.has('ageRange')) {
+      ageSelect.value = urlParams.get('ageRange');
     }
   }
 
-  handleSearch(event) {
-    event.preventDefault();
-    const form = event.target;
-    const formData = new FormData(form);
-    const searchTerm = formData.get('search');
+  handleFilterWithURL() {
+    const searchTerm = document.querySelector('#search')?.value || '';
+    const selectedSpecies = document.querySelector('#species')?.value || '';
+    const selectedAge = document.querySelector('#age')?.value || '';
+
+    // Build URL with filters (reset to page 1 when filtering)
+    const params = new URLSearchParams();
+    params.set('page', '1');
+    params.set('limit', '24');
 
     if (searchTerm) {
-      const params = new URLSearchParams({ search: searchTerm });
-      window.location.href = `${window.location.pathname}?${params.toString()}`;
+      params.set('name', searchTerm);
     }
+
+    if (selectedSpecies) {
+      params.set('species', selectedSpecies);
+    }
+
+    if (selectedAge) {
+      params.set('ageRange', selectedAge);
+    }
+
+    // Navigate to filtered page
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.location.href = newUrl;
+  }
+
+  handlePagination(event) {
+    event.preventDefault();
+    const page = event.target.closest('a').dataset.page;
+
+    if (!page) return;
+
+    // Get current filters from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('page', page);
+    urlParams.set('limit', '24');
+
+    // Navigate to new page with same filters
+    const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+    window.location.href = newUrl;
   }
 
   updateButtonToRequested(button) {
     button.disabled = true;
     button.className = 'btn btn-secondary btn-sm';
     button.innerHTML = '<i class="fas fa-clock me-1"></i>Solicitud Enviada';
+  }
+
+  resetButton(button, originalContent) {
+    button.disabled = false;
+    button.className = 'btn btn-primary btn-sm adopt-pet';
+    button.innerHTML = originalContent;
   }
 
   toggleFavoriteUI(button, isFavorited) {
@@ -249,7 +306,7 @@ class PetDetail {
     }
 
     // Call API to add to favorites (assuming not favorited yet)
-    this.handleFavoriteAPI(petId, false)
+    PetsAPI.handleFavoriteAPI(petId, false)
       .then(() => {
         // Visual feedback on success
         if (icon.classList.contains('fas')) {

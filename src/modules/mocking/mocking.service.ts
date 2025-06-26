@@ -97,10 +97,46 @@ export class MockingService {
 
         const description = `${name} is a ${personalities[faker.number.int({ min: 0, max: personalities.length - 1 })]} ${petType.type}. ${faker.lorem.sentence()}`;
 
+        // Generate characteristics based on pet type
+        const dogCharacteristics = [
+          'friendly',
+          'loyal',
+          'energetic',
+          'protective',
+          'intelligent',
+          'playful',
+          'gentle',
+          'trainable',
+          'social',
+          'active',
+        ];
+
+        const catCharacteristics = [
+          'independent',
+          'affectionate',
+          'playful',
+          'curious',
+          'gentle',
+          'quiet',
+          'clean',
+          'agile',
+          'observant',
+          'calm',
+        ];
+
+        const characteristicsList =
+          petType.type === 'dog' ? dogCharacteristics : catCharacteristics;
+        const selectedCharacteristics = faker.helpers.arrayElements(
+          characteristicsList,
+          faker.number.int({ min: 2, max: 4 }),
+        );
+
         mockPets.push({
           name,
           breed,
           age,
+          species: petType.type,
+          gender: faker.helpers.arrayElement(['male', 'female']),
           owner: null,
           status: PetStatus.AVAILABLE,
           description,
@@ -109,6 +145,7 @@ export class MockingService {
             width: 400,
             height: 300,
           }),
+          characteristics: selectedCharacteristics,
           likedBy: [],
         });
       }

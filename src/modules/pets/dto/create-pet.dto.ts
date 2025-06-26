@@ -8,9 +8,10 @@ import {
   Max,
   IsNotEmpty,
   IsUrl,
+  IsArray,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { PetStatus } from '../../../schemas/pet.schema';
+import { PetStatus, PetSpecies, PetGender } from '../../../schemas/pet.schema';
 
 export class CreatePetDto {
   @ApiProperty({
@@ -43,6 +44,22 @@ export class CreatePetDto {
   age: number;
 
   @ApiProperty({
+    description: 'Species of the pet',
+    enum: PetSpecies,
+    example: PetSpecies.DOG,
+  })
+  @IsEnum(PetSpecies)
+  species: PetSpecies;
+
+  @ApiProperty({
+    description: 'Gender of the pet',
+    enum: PetGender,
+    example: PetGender.MALE,
+  })
+  @IsEnum(PetGender)
+  gender: PetGender;
+
+  @ApiProperty({
     description: 'Description of the pet',
     example: 'Friendly and energetic dog who loves to play',
     required: false,
@@ -59,6 +76,16 @@ export class CreatePetDto {
   @IsOptional()
   @IsUrl()
   image?: string;
+
+  @ApiProperty({
+    description: 'Characteristics of the pet',
+    example: ['friendly', 'energetic', 'house-trained'],
+    required: false,
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  characteristics?: string[];
 
   @ApiProperty({
     description: 'Status of the pet',

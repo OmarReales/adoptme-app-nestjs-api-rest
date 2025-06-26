@@ -31,11 +31,25 @@ export class ViewsController {
 
   @Get('/view-pets')
   @Render('pets/index')
-  async pets(@Query('page') page = '1', @Query('limit') limit = '12') {
+  async pets(
+    @Query('page') page = '1',
+    @Query('limit') limit = '24',
+    @Query('species') species?: string,
+    @Query('name') name?: string,
+    @Query('ageRange') ageRange?: string,
+  ) {
     const pageNumber = parseInt(page, 10);
     const limitNumber = parseInt(limit, 10);
 
-    const petsData = await this.petsService.findAll(pageNumber, limitNumber);
+    const petsData = await this.petsService.findAll(
+      pageNumber,
+      limitNumber,
+      undefined, // status
+      undefined, // breed
+      species,
+      name,
+      ageRange,
+    );
     const stats = await this.statsService.getAppStats();
 
     return {
