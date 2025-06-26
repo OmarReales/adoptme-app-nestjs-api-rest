@@ -14,6 +14,12 @@ import { User, UserRole } from '../../schemas/user.schema';
 import { CreateAdoptionDto, UpdateAdoptionDto } from './dto/adoption.dto';
 import { PetsService } from '../pets/pets.service';
 import { NotificationsService } from '../notifications/notifications.service';
+import {
+  PopulatedAdoption,
+  SuccessStory,
+} from '../../common/interfaces/adoptions.interfaces';
+
+// Remove the local interfaces as they are now exported from common interfaces
 
 @Injectable()
 export class AdoptionsService {
@@ -358,7 +364,7 @@ export class AdoptionsService {
     };
   }
 
-  async getSuccessStories(limit = 6): Promise<any[]> {
+  async getSuccessStories(limit = 6): Promise<SuccessStory[]> {
     try {
       const approvedAdoptions = await this.adoptionModel
         .find({ status: AdoptionStatus.APPROVED })
@@ -368,17 +374,20 @@ export class AdoptionsService {
         .limit(limit)
         .exec();
 
-      return approvedAdoptions.map((adoption: any) => ({
-        petName: adoption.pet?.name || 'Mascota',
-        image: adoption.pet?.image || '/images/placeholder-pet.jpg',
-        familyName:
-          `${adoption.user?.firstname || ''} ${adoption.user?.lastname || ''}`.trim(),
-        story:
-          adoption.notes ||
-          'Una historia de amor que comenzó con una adopción.',
-        adoptionDate: adoption.approvedDate,
-        breed: adoption.pet?.breed || 'Desconocido',
-      }));
+      return approvedAdoptions.map((adoption: unknown): SuccessStory => {
+        const typedAdoption = adoption as PopulatedAdoption;
+        return {
+          petName: typedAdoption.pet?.name || 'Mascota',
+          image: typedAdoption.pet?.image || '/images/placeholder-pet.jpg',
+          familyName:
+            `${typedAdoption.user?.firstname || ''} ${typedAdoption.user?.lastname || ''}`.trim(),
+          story:
+            typedAdoption.notes ||
+            'Una historia de amor que comenzó con una adopción.',
+          adoptionDate: typedAdoption.approvedDate,
+          breed: typedAdoption.pet?.breed || 'Desconocido',
+        };
+      });
     } catch (error) {
       this.logger.error('Error fetching success stories:', error);
       return [];

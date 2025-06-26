@@ -14,10 +14,14 @@ import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { CustomLoggerService } from '../../common/services/custom-logger.service';
-import { SessionAuthGuard } from '../../common/guards/session-auth.guard';
-import { GetSessionUser } from '../../common/decorators/get-session-user.decorator';
 import { HybridAuthGuard } from '../../common/guards/hybrid-auth.guard';
 import { GetUser } from '../../common/decorators/get-user.decorator';
+import {
+  LoginResponse,
+  RegistrationResponse,
+  SessionUser,
+  AuthenticatedUser,
+} from '../../common/interfaces/auth.interfaces';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -31,7 +35,10 @@ export class AuthController {
   @ApiOperation({ summary: 'Register a new user' })
   @ApiResponse({ status: 201, description: 'User registered successfully' })
   @ApiResponse({ status: 409, description: 'User already exists' })
-  async register(@Body() createUserDto: CreateUserDto, @Req() req: Request) {
+  async register(
+    @Body() createUserDto: CreateUserDto,
+    @Req() req: Request,
+  ): Promise<RegistrationResponse> {
     const clientIp = req.ip || 'unknown';
     const userAgent = req.headers['user-agent'] || 'unknown';
 
@@ -42,8 +49,8 @@ export class AuthController {
 
     const result = await this.authService.register(createUserDto);
 
-    // Store user in session
-    req.session.user = {
+    // Create session user object
+    const sessionUser: SessionUser = {
       id: String(result.user._id),
       username: result.user.username,
       firstName: result.user.firstname,
@@ -51,6 +58,9 @@ export class AuthController {
       email: result.user.email,
       role: result.user.role,
     };
+
+    // Store user in session
+    req.session.user = sessionUser;
 
     this.logger.logBusinessEvent(
       'user_registered',
@@ -70,9 +80,9 @@ export class AuthController {
       'AuthController',
     );
 
-    // Return user data without token
+    // Return strongly typed response
     return {
-      user: req.session.user,
+      user: sessionUser,
       message: 'Registration successful',
     };
   }
@@ -82,7 +92,10 @@ export class AuthController {
   @ApiOperation({ summary: 'Login user' })
   @ApiResponse({ status: 200, description: 'User logged in successfully' })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
-  async login(@Body() loginDto: LoginDto, @Req() req: Request) {
+  async login(
+    @Body() loginDto: LoginDto,
+    @Req() req: Request,
+  ): Promise<LoginResponse> {
     const clientIp = req.ip || 'unknown';
     const userAgent = req.headers['user-agent'] || 'unknown';
 
@@ -93,8 +106,8 @@ export class AuthController {
 
     const result = await this.authService.login(loginDto);
 
-    // Store user in session
-    req.session.user = {
+    // Create session user object
+    const sessionUser: SessionUser = {
       id: String(result.user._id),
       username: result.user.username,
       firstName: result.user.firstname,
@@ -102,6 +115,9 @@ export class AuthController {
       email: result.user.email,
       role: result.user.role,
     };
+
+    // Store user in session
+    req.session.user = sessionUser;
 
     this.logger.logBusinessEvent(
       'user_login',
@@ -123,9 +139,9 @@ export class AuthController {
       'AuthController',
     );
 
-    // Return user data + JWT token for hybrid authentication
+    // Return strongly typed response with user data + JWT token for hybrid authentication
     return {
-      user: req.session.user,
+      user: sessionUser,
       access_token: result.access_token, // JWT for API/Mobile clients
       message: 'Login successful',
     };
@@ -156,16 +172,16 @@ export class AuthController {
   }
 
   @Get('profile')
-  @UseGuards(SessionAuthGuard)
+  @UseGuards(HybridAuthGuard)
   @ApiOperation({ summary: 'Get current user profile' })
   @ApiResponse({
     status: 200,
     description: 'User profile retrieved successfully',
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  getProfile(@GetSessionUser() user: any) {
+  getProfile(@GetUser() user: AuthenticatedUser): AuthenticatedUser {
     this.logger.info(
-      `Profile requested for user: ${user.id}`,
+      `Profile requested for user: ${user.userId}`,
       'AuthController',
     );
 
@@ -180,15 +196,20 @@ export class AuthController {
     description: 'Hybrid authentication test successful',
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  testHybridAuth(@GetUser() user: any) {
+  testHybridAuth(@GetUser() user: AuthenticatedUser | null) {
+    if (!user) {
+      // This shouldn't happen with the guard, but for type safety
+      throw new Error('User not authenticated');
+    }
+
     this.logger.info(
-      `Hybrid auth successful for user: ${user.userId || user.id}`,
+      `Hybrid auth successful for user: ${user.userId}`,
       'AuthController',
     );
 
     return {
       message: 'Hybrid authentication successful!',
-      authMethod: user.userId ? 'JWT' : 'Session',
+      authMethod: user.firstName ? 'Session' : 'JWT', // Session has firstName, JWT doesn't
       user,
     };
   }

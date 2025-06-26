@@ -3,9 +3,20 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import { faker } from '@faker-js/faker';
-import { Pet, PetStatus } from '../../schemas/pet.schema';
+import {
+  Pet,
+  PetStatus,
+  PetSpecies,
+  PetGender,
+} from '../../schemas/pet.schema';
 import { User, UserRole } from '../../schemas/user.schema';
 import { CustomLoggerService } from '../../common/services/custom-logger.service';
+import {
+  MockPet,
+  MockUser,
+  PetTypeDefinition,
+  GenerationSummary,
+} from '../../common/interfaces/mocking.interfaces';
 
 // Default test users that will always be created
 const DEFAULT_TEST_USERS = [
@@ -41,19 +52,19 @@ export class MockingService {
     private readonly logger: CustomLoggerService,
   ) {}
 
-  async generateMockPets(count: number = 100): Promise<any[]> {
+  async generateMockPets(count: number = 100): Promise<MockPet[]> {
     this.logger.info(
       `Starting generation of ${count} mock pets`,
       'MockingService',
     );
 
     try {
-      const mockPets: any[] = [];
+      const mockPets: MockPet[] = [];
 
       // Define pet types with their common breeds
-      const petTypes = [
+      const petTypes: PetTypeDefinition[] = [
         {
-          type: 'dog',
+          type: PetSpecies.DOG,
           breeds: [
             'Labrador Retriever',
             'Golden Retriever',
@@ -76,7 +87,7 @@ export class MockingService {
           ],
         },
         {
-          type: 'cat',
+          type: PetSpecies.CAT,
           breeds: [
             'Persian',
             'Maine Coon',
@@ -151,7 +162,9 @@ export class MockingService {
         ];
 
         const characteristicsList =
-          petType.type === 'dog' ? dogCharacteristics : catCharacteristics;
+          petType.type === PetSpecies.DOG
+            ? dogCharacteristics
+            : catCharacteristics;
         const selectedCharacteristics = faker.helpers.arrayElements(
           characteristicsList,
           faker.number.int({ min: 2, max: 4 }),
@@ -162,7 +175,10 @@ export class MockingService {
           breed,
           age,
           species: petType.type,
-          gender: faker.helpers.arrayElement(['male', 'female']),
+          gender: faker.helpers.arrayElement([
+            PetGender.MALE,
+            PetGender.FEMALE,
+          ]),
           owner: null,
           status: PetStatus.AVAILABLE,
           description,
@@ -225,7 +241,7 @@ export class MockingService {
     }
   }
 
-  async generateMockUsers(count: number = 50): Promise<any[]> {
+  async generateMockUsers(count: number = 50): Promise<MockUser[]> {
     this.logger.info(
       `Starting generation of ${count} mock users`,
       'MockingService',
@@ -235,7 +251,7 @@ export class MockingService {
       // First, create/update default test users
       await this.ensureDefaultTestUsers();
 
-      const mockUsers: any[] = [];
+      const mockUsers: MockUser[] = [];
       const hashedPassword = await bcrypt.hash('password123', 12);
 
       for (let i = 0; i < count; i++) {
@@ -397,6 +413,45 @@ export class MockingService {
         `Failed to ensure default test users: ${errorMessage}`,
         'MockingService',
         errorStack,
+      );
+      throw error;
+    }
+  }
+
+  /**
+   * Generate complete mock data including both pets and users
+   */
+  async generateCompleteDataSet(
+    petCount: number = 100,
+    userCount: number = 50,
+  ): Promise<GenerationSummary> {
+    this.logger.info(
+      `Starting complete data generation: ${userCount} users, ${petCount} pets`,
+      'MockingService',
+    );
+
+    try {
+      const users = await this.generateMockUsers(userCount);
+      const pets = await this.generateMockPets(petCount);
+
+      const summary: GenerationSummary = {
+        usersGenerated: users.length,
+        petsGenerated: pets.length,
+        totalRecords: users.length + pets.length,
+      };
+
+      this.logger.info(
+        `Complete data generation finished: ${summary.totalRecords} total records`,
+        'MockingService',
+      );
+
+      return summary;
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(
+        `Failed to generate complete data set: ${errorMessage}`,
+        'MockingService',
       );
       throw error;
     }

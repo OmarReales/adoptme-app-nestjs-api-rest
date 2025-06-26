@@ -26,6 +26,7 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { GetUser } from '../../common/decorators/get-user.decorator';
 import { UserRole } from '../../schemas/user.schema';
 import { CustomLoggerService } from '../../common/services/custom-logger.service';
+import { AuthenticatedUser } from '../../common/interfaces/auth.interfaces';
 
 @ApiTags('users')
 @Controller('users')
@@ -89,27 +90,31 @@ export class UsersController {
   @Get('profile/me')
   @ApiOperation({ summary: 'Get current user profile' })
   @ApiResponse({ status: 200, description: 'Profile retrieved successfully' })
-  getProfile(@GetUser() user: any) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const userId = user.userId as string;
+  getProfile(@GetUser() user: AuthenticatedUser | null) {
+    if (!user) {
+      throw new ForbiddenException('User not authenticated');
+    }
+
     this.logger.debug(
-      `User accessing own profile: ${userId}`,
+      `User accessing own profile: ${user.userId}`,
       'UsersController',
     );
-    return this.usersService.findOne(userId);
+    return this.usersService.findOne(user.userId);
   }
 
   @Get('me')
   @ApiOperation({ summary: 'Get current user profile' })
   @ApiResponse({ status: 200, description: 'Profile retrieved successfully' })
-  getCurrentUserProfile(@GetUser() user: any) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const userId = user.userId as string;
+  getCurrentUserProfile(@GetUser() user: AuthenticatedUser | null) {
+    if (!user) {
+      throw new ForbiddenException('User not authenticated');
+    }
+
     this.logger.debug(
-      `User accessing own profile: ${userId}`,
+      `User accessing own profile: ${user.userId}`,
       'UsersController',
     );
-    return this.usersService.findOne(userId);
+    return this.usersService.findOne(user.userId);
   }
 
   @Patch('me')

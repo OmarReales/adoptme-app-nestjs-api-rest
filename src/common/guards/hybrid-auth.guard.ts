@@ -2,12 +2,8 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../../modules/auth/auth.service';
-
-interface JwtPayload {
-  sub: string;
-  username: string;
-  role: string;
-}
+import { JwtPayload, AuthenticatedUser } from '../interfaces/auth.interfaces';
+import { UserRole } from '../../schemas/user.schema';
 
 @Injectable()
 export class HybridAuthGuard implements CanActivate {
@@ -57,10 +53,13 @@ export class HybridAuthGuard implements CanActivate {
     }
 
     // Set user in request for consistency
-    (request as any).user = {
+    (request as Request & { user: AuthenticatedUser }).user = {
       userId: user.id,
       username: user.username,
-      role: user.role,
+      role: user.role as UserRole, // Convert string to enum
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
     };
 
     return true;
@@ -94,7 +93,7 @@ export class HybridAuthGuard implements CanActivate {
       }
 
       // Set user in request
-      (request as any).user = {
+      (request as Request & { user: AuthenticatedUser }).user = {
         userId: payload.sub,
         username: payload.username,
         role: payload.role,
