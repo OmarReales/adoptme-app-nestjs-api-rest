@@ -7,12 +7,14 @@ import { create } from 'express-handlebars';
 import * as session from 'express-session';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
-// import { winstonConfig } from './config/winston.config'; // Temporarily commented
-import { CustomLoggerService } from './common/services/custom-logger.service';
+import { winstonLogger } from './config/winston.config';
+import { WinstonModule } from 'nest-winston';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    // logger: winstonConfig, // Temporarily commented out to fix logger issue
+    logger: WinstonModule.createLogger({
+      instance: winstonLogger,
+    }),
   });
 
   // Configure express-handlebars view engine
@@ -127,20 +129,14 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
   await app.listen(port);
 
-  // Use the Winston logger that's already configured for the app
-  const loggerService = app.get(CustomLoggerService);
-  loggerService.info(
-    `🚀 Application running on: http://localhost:${port}`,
-    'Bootstrap',
-  );
-  loggerService.info(
+  // Use Winston logger directly
+  console.log(`🚀 Application running on: http://localhost:${port}`);
+  console.log(
     `📚 Swagger docs available at: http://localhost:${port}/api/docs`,
-    'Bootstrap',
   );
 }
 
 bootstrap().catch((error) => {
-  // Use a basic console.error here since the app may not have started
   console.error('❌ Error starting server:', error);
   process.exit(1);
 });

@@ -7,20 +7,22 @@ const logDir = 'logs';
 // Custom log levels with priorities (lower number = higher priority)
 const customLevels = {
   levels: {
-    fatal: 0,
-    error: 1,
-    warning: 2,
-    info: 3,
-    http: 4,
+    error: 0,
+    warn: 1,
+    info: 2,
+    http: 3,
+    verbose: 4,
     debug: 5,
+    silly: 6,
   },
   colors: {
-    fatal: 'bold red',
     error: 'red',
-    warning: 'yellow',
+    warn: 'yellow',
     info: 'green',
     http: 'magenta',
+    verbose: 'cyan',
     debug: 'blue',
+    silly: 'grey',
   },
 };
 
@@ -168,15 +170,49 @@ export const winstonConfig = WinstonModule.createLogger({
   ],
 });
 
+// Create a standard winston logger instance
+export const winstonLogger = winston.createLogger({
+  levels: customLevels.levels,
+  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+  transports: createTransports(),
+  exceptionHandlers: [
+    new winston.transports.Console({
+      format: developmentFormat,
+    }),
+    ...(process.env.NODE_ENV === 'production'
+      ? [
+          new winston.transports.File({
+            filename: join(logDir, 'exceptions.log'),
+            format: productionFormat,
+          }),
+        ]
+      : []),
+  ],
+  rejectionHandlers: [
+    new winston.transports.Console({
+      format: developmentFormat,
+    }),
+    ...(process.env.NODE_ENV === 'production'
+      ? [
+          new winston.transports.File({
+            filename: join(logDir, 'rejections.log'),
+            format: productionFormat,
+          }),
+        ]
+      : []),
+  ],
+});
+
 // Export custom levels for use in other parts of the application
 export const logLevels = customLevels.levels;
 
 // Custom logger interface
 export interface CustomLogger {
-  debug(message: string, context?: string, meta?: any): void;
-  http(message: string, context?: string, meta?: any): void;
-  info(message: string, context?: string, meta?: any): void;
-  warning(message: string, context?: string, meta?: any): void;
   error(message: string, context?: string, meta?: any): void;
-  fatal(message: string, context?: string, meta?: any): void;
+  warn(message: string, context?: string, meta?: any): void;
+  info(message: string, context?: string, meta?: any): void;
+  http(message: string, context?: string, meta?: any): void;
+  verbose(message: string, context?: string, meta?: any): void;
+  debug(message: string, context?: string, meta?: any): void;
+  silly(message: string, context?: string, meta?: any): void;
 }
