@@ -115,6 +115,11 @@ export class AuthService {
     };
     const accessToken = this.jwtService.sign(payload);
 
+    // Update last connection
+    await this.userModel.findByIdAndUpdate(user._id, {
+      lastConnection: new Date(),
+    });
+
     this.logger.logAuthentication('login', userId, email);
     this.logger.info(`User logged in successfully: ${userId}`, 'AuthService');
 

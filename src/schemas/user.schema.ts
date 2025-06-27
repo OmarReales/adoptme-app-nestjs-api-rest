@@ -6,6 +6,15 @@ export enum UserRole {
   ADMIN = 'admin',
 }
 
+// Document interface for user documents
+export interface UserDocument {
+  name: string;
+  reference: string;
+  uploadDate: Date;
+  size: number;
+  mimeType: string;
+}
+
 @Schema({
   timestamps: true,
   versionKey: false,
@@ -43,6 +52,23 @@ export class User extends Document {
 
   @Prop()
   passwordResetExpires?: Date;
+
+  @Prop({
+    type: [
+      {
+        name: { type: String, required: true },
+        reference: { type: String, required: true },
+        uploadDate: { type: Date, default: Date.now },
+        size: { type: Number, required: true },
+        mimeType: { type: String, required: true },
+      },
+    ],
+    default: [],
+  })
+  documents: UserDocument[];
+
+  @Prop({ type: Date })
+  lastConnection?: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

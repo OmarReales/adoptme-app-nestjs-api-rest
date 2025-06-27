@@ -8,9 +8,14 @@ import {
   Param,
   Delete,
   UseGuards,
+  UseInterceptors,
+  UploadedFiles,
   ForbiddenException,
   Query,
+  BadRequestException,
 } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { Express } from 'express';
 import {
   ApiTags,
   ApiOperation,
@@ -27,6 +32,7 @@ import { GetUser } from '../../common/decorators/get-user.decorator';
 import { UserRole } from '../../schemas/user.schema';
 import { CustomLoggerService } from '../../common/services/custom-logger.service';
 import { AuthenticatedUser } from '../../common/interfaces/auth.interfaces';
+import { getDocumentUploadConfig } from '../../common/middleware/file-upload.middleware';
 
 @ApiTags('users')
 @Controller('users')
@@ -213,6 +219,62 @@ export class UsersController {
     return {
       message: 'User deleted successfully',
       id,
+    };
+  }
+
+  @Post(':uid/documents')
+  @UseInterceptors(FilesInterceptor('documents', 5, getDocumentUploadConfig()))
+  @ApiOperation({ summary: 'Upload documents for a user' })
+  @ApiResponse({ status: 200, description: 'Documents uploaded successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid files or request' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Cannot upload documents for another user',
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  async uploadDocuments(
+    @Param('uid') uid: string,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @GetUser() user: AuthenticatedUser | null,
+  ) {
+    if (!user) {
+      throw new ForbiddenException('User not authenticated');
+    }
+
+    // Users can only upload documents to their own profile, admins can upload to any profile
+    if (user.role !== UserRole.ADMIN && user.userId !== uid) {
+      throw new ForbiddenException(
+        'You can only upload documents to your own profile',
+      );
+    }
+
+    if (!files || files.length === 0) {
+      throw new BadRequestException('No files provided');
+    }
+
+    this.logger.info(
+      `User ${user.userId} uploading ${files.length} documents for user ${uid}`,
+      'UsersController',
+    );
+
+    const result = await this.usersService.uploadDocuments(uid, files);
+
+    this.logger.logBusinessEvent(
+      'user_documents_uploaded',
+      {
+        userId: uid,
+        uploadedBy: user.userId,
+        filesCount: files.length,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
+        filenames: files.map((file) => (file as any).originalname),
+      },
+      'UsersController',
+    );
+
+    return {
+      message: 'Documents uploaded successfully',
+      documentsCount: files.length,
+      user: result,
     };
   }
 }

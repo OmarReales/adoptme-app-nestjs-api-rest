@@ -2,15 +2,17 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
-import { User } from '../../schemas/user.schema';
+import { User, UserDocument } from '../../schemas/user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CustomLoggerService } from '../../common/services/custom-logger.service';
 import { ErrorHandlerUtil } from '../../common/utils/error-handler.util';
+import { getPublicFileUrl } from '../../common/middleware/file-upload.middleware';
 
 @Injectable()
 export class UsersService {
@@ -214,5 +216,69 @@ export class UsersService {
       `User removed successfully: ${id}`,
       'UsersService',
     );
+  }
+
+  async uploadDocuments(userId: string, files: any[]): Promise<User> {
+    this.logger.info(
+      `Uploading ${files.length} documents for user: ${userId}`,
+      'UsersService',
+    );
+
+    ErrorHandlerUtil.validateObjectId(userId, 'user ID');
+
+    // Validate that user exists
+    const user = await this.userModel.findById(userId);
+    if (!user) {
+      this.logger.warn(
+        `User not found for document upload: ${userId}`,
+        'UsersService',
+      );
+      throw new NotFoundException('User not found');
+    }
+
+    // Validate files
+    if (!files || files.length === 0) {
+      throw new BadRequestException('No files provided');
+    }
+
+    // Create document objects
+    /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument */
+    const newDocuments: UserDocument[] = files.map((file) => ({
+      name: file.originalname,
+      reference: getPublicFileUrl(file.path),
+      uploadDate: new Date(),
+      size: file.size,
+      mimeType: file.mimetype,
+    }));
+    /* eslint-enable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument */
+
+    // Update user with new documents
+    const updatedUser = await this.userModel
+      .findByIdAndUpdate(
+        userId,
+        {
+          $push: { documents: { $each: newDocuments } },
+        },
+        { new: true, runValidators: true },
+      )
+      .select('-password');
+
+    if (!updatedUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    this.logger.logDatabaseOperation(
+      'update',
+      'User',
+      `Documents uploaded successfully for user: ${userId}, count: ${files.length}`,
+      'UsersService',
+    );
+
+    this.logger.info(
+      `Successfully uploaded ${files.length} documents for user: ${userId}`,
+      'UsersService',
+    );
+
+    return updatedUser;
   }
 }
