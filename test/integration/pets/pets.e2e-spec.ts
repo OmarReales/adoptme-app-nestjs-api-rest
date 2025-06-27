@@ -11,7 +11,11 @@ import { TestAppSetup } from '../../setup/test-app.setup';
 import { TestDbSetup } from '../../setup/test-db.setup';
 import { AuthHelper } from '../../utils/auth.helper';
 import { TestHelper } from '../../utils/test.helper';
-import { PetStatus } from '../../../src/schemas/pet.schema';
+import {
+  PetStatus,
+  PetSpecies,
+  PetGender,
+} from '../../../src/schemas/pet.schema';
 import { TestPetResponse } from '../../interfaces/test-types';
 
 describe('Pets Integration Tests', () => {
@@ -51,6 +55,8 @@ describe('Pets Integration Tests', () => {
         name: 'Buddy',
         breed: 'Golden Retriever',
         age: 3,
+        species: PetSpecies.DOG,
+        gender: PetGender.MALE,
         description: 'Friendly and energetic dog',
         image: 'https://example.com/buddy.jpg',
       };
@@ -70,7 +76,7 @@ describe('Pets Integration Tests', () => {
       expect(petResponse.likedBy).to.be.an('array');
       expect(petResponse.likedBy).to.have.lengthOf(0);
 
-      testPetId = petResponse._id;
+      testPetId = (petResponse._id || petResponse.id) as string;
     });
 
     it('should deny access to regular users', async () => {
@@ -78,6 +84,8 @@ describe('Pets Integration Tests', () => {
         name: 'Buddy',
         breed: 'Golden Retriever',
         age: 3,
+        species: PetSpecies.DOG,
+        gender: PetGender.MALE,
       };
 
       const response = await request(app.getHttpServer())
@@ -94,6 +102,8 @@ describe('Pets Integration Tests', () => {
         name: 'Buddy',
         breed: 'Golden Retriever',
         age: 3,
+        species: PetSpecies.DOG,
+        gender: PetGender.MALE,
       };
 
       const response = await request(app.getHttpServer())
@@ -106,7 +116,7 @@ describe('Pets Integration Tests', () => {
 
     it('should validate required fields', async () => {
       const invalidData = {
-        // Missing required fields
+        // Missing required fields: name, breed, age, species, gender
         description: 'Test description',
       };
 
@@ -122,6 +132,8 @@ describe('Pets Integration Tests', () => {
       expect(messageString).to.include('name');
       expect(messageString).to.include('breed');
       expect(messageString).to.include('age');
+      expect(messageString).to.include('species');
+      expect(messageString).to.include('gender');
     });
 
     it('should validate age constraints', async () => {
@@ -129,6 +141,8 @@ describe('Pets Integration Tests', () => {
         name: 'Test Pet',
         breed: 'Test Breed',
         age: 50, // Above maximum age
+        species: PetSpecies.DOG,
+        gender: PetGender.MALE,
       };
 
       const response = await request(app.getHttpServer())
@@ -145,6 +159,8 @@ describe('Pets Integration Tests', () => {
         name: 'A', // Too short
         breed: 'Test Breed',
         age: 3,
+        species: PetSpecies.DOG,
+        gender: PetGender.MALE,
       };
 
       const response = await request(app.getHttpServer())
@@ -161,6 +177,8 @@ describe('Pets Integration Tests', () => {
         name: 'Test Pet',
         breed: 'Test Breed',
         age: 3,
+        species: PetSpecies.DOG,
+        gender: PetGender.MALE,
         image: 'invalid-url',
       };
 
@@ -239,6 +257,8 @@ describe('Pets Integration Tests', () => {
         name: 'Test Pet',
         breed: 'Test Breed',
         age: 2,
+        species: PetSpecies.DOG,
+        gender: PetGender.MALE,
       };
 
       const createResponse = await request(app.getHttpServer())
@@ -285,6 +305,8 @@ describe('Pets Integration Tests', () => {
         name: 'Test Pet',
         breed: 'Test Breed',
         age: 2,
+        species: PetSpecies.DOG,
+        gender: PetGender.MALE,
       };
 
       const createResponse = await request(app.getHttpServer())
@@ -378,6 +400,8 @@ describe('Pets Integration Tests', () => {
         name: 'Test Pet',
         breed: 'Test Breed',
         age: 2,
+        species: PetSpecies.DOG,
+        gender: PetGender.MALE,
       };
 
       const createResponse = await request(app.getHttpServer())
@@ -435,6 +459,8 @@ describe('Pets Integration Tests', () => {
         name: 'Test Pet',
         breed: 'Test Breed',
         age: 2,
+        species: PetSpecies.DOG,
+        gender: PetGender.MALE,
       };
 
       const createResponse = await request(app.getHttpServer())
@@ -503,6 +529,8 @@ describe('Pets Integration Tests', () => {
         name: 'Test Pet',
         breed: 'Test Breed',
         age: 2,
+        species: PetSpecies.DOG,
+        gender: PetGender.MALE,
       };
 
       const createResponse = await request(app.getHttpServer())
@@ -595,6 +623,8 @@ describe('Pets Integration Tests', () => {
         name: 'Test Pet',
         breed: 'Test Breed',
         age: 2,
+        species: PetSpecies.DOG,
+        gender: PetGender.MALE,
       };
 
       const createResponse = await request(app.getHttpServer())

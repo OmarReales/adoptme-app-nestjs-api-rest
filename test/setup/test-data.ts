@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { UserRole } from '../../src/schemas/user.schema';
-import { PetStatus } from '../../src/schemas/pet.schema';
+import { PetStatus, PetSpecies, PetGender } from '../../src/schemas/pet.schema';
 import * as bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
 
 // Test user data - 1 admin + 5 users
 export const TEST_USERS = [
   {
-    _id: '507f1f77bcf86cd799439011',
+    _id: new mongoose.Types.ObjectId('507f1f77bcf86cd799439011'),
     username: 'admin_test',
     firstname: 'Admin',
     lastname: 'Test',
@@ -17,7 +17,7 @@ export const TEST_USERS = [
     role: UserRole.ADMIN,
   },
   {
-    _id: '507f1f77bcf86cd799439012',
+    _id: new mongoose.Types.ObjectId('507f1f77bcf86cd799439012'),
     username: 'john_doe',
     firstname: 'John',
     lastname: 'Doe',
@@ -27,7 +27,7 @@ export const TEST_USERS = [
     role: UserRole.USER,
   },
   {
-    _id: '507f1f77bcf86cd799439013',
+    _id: new mongoose.Types.ObjectId('507f1f77bcf86cd799439013'),
     username: 'jane_smith',
     firstname: 'Jane',
     lastname: 'Smith',
@@ -37,7 +37,7 @@ export const TEST_USERS = [
     role: UserRole.USER,
   },
   {
-    _id: '507f1f77bcf86cd799439014',
+    _id: new mongoose.Types.ObjectId('507f1f77bcf86cd799439014'),
     username: 'bob_wilson',
     firstname: 'Bob',
     lastname: 'Wilson',
@@ -47,7 +47,7 @@ export const TEST_USERS = [
     role: UserRole.USER,
   },
   {
-    _id: '507f1f77bcf86cd799439015',
+    _id: new mongoose.Types.ObjectId('507f1f77bcf86cd799439015'),
     username: 'alice_johnson',
     firstname: 'Alice',
     lastname: 'Johnson',
@@ -57,7 +57,7 @@ export const TEST_USERS = [
     role: UserRole.USER,
   },
   {
-    _id: '507f1f77bcf86cd799439016',
+    _id: new mongoose.Types.ObjectId('507f1f77bcf86cd799439016'),
     username: 'charlie_brown',
     firstname: 'Charlie',
     lastname: 'Brown',
@@ -75,6 +75,8 @@ export const TEST_PETS = [
     name: 'Buddy',
     breed: 'Golden Retriever',
     age: 3,
+    species: PetSpecies.DOG,
+    gender: PetGender.MALE,
     description: 'Friendly and energetic dog, loves to play fetch.',
     status: PetStatus.AVAILABLE,
     image: 'https://example.com/buddy.jpg',
@@ -86,6 +88,8 @@ export const TEST_PETS = [
     name: 'Whiskers',
     breed: 'Persian Cat',
     age: 2,
+    species: PetSpecies.CAT,
+    gender: PetGender.FEMALE,
     description: 'Calm and affectionate cat, perfect for apartments.',
     status: PetStatus.AVAILABLE,
     image: 'https://example.com/whiskers.jpg',
@@ -97,6 +101,8 @@ export const TEST_PETS = [
     name: 'Luna',
     breed: 'Husky',
     age: 4,
+    species: PetSpecies.DOG,
+    gender: PetGender.FEMALE,
     description: 'Active and intelligent dog, needs lots of exercise.',
     status: PetStatus.AVAILABLE,
     image: 'https://example.com/luna.jpg',
@@ -108,6 +114,8 @@ export const TEST_PETS = [
     name: 'Max',
     breed: 'German Shepherd',
     age: 5,
+    species: PetSpecies.DOG,
+    gender: PetGender.MALE,
     description: 'Loyal and protective, great family dog.',
     status: PetStatus.ADOPTED,
     image: 'https://example.com/max.jpg',
@@ -119,6 +127,8 @@ export const TEST_PETS = [
     name: 'Bella',
     breed: 'Labrador',
     age: 1,
+    species: PetSpecies.DOG,
+    gender: PetGender.FEMALE,
     description: 'Young and playful puppy, loves everyone.',
     status: PetStatus.AVAILABLE,
     image: 'https://example.com/bella.jpg',
@@ -130,6 +140,8 @@ export const TEST_PETS = [
     name: 'Milo',
     breed: 'Beagle',
     age: 6,
+    species: PetSpecies.DOG,
+    gender: PetGender.MALE,
     description: 'Gentle and calm, good with children.',
     status: PetStatus.AVAILABLE,
     image: 'https://example.com/milo.jpg',
@@ -141,6 +153,8 @@ export const TEST_PETS = [
     name: 'Coco',
     breed: 'Poodle',
     age: 2,
+    species: PetSpecies.DOG,
+    gender: PetGender.FEMALE,
     description: 'Smart and hypoallergenic, great for families.',
     status: PetStatus.AVAILABLE,
     image: 'https://example.com/coco.jpg',
@@ -152,6 +166,8 @@ export const TEST_PETS = [
     name: 'Rocky',
     breed: 'Bulldog',
     age: 4,
+    species: PetSpecies.DOG,
+    gender: PetGender.MALE,
     description: 'Laid-back and friendly, loves to relax.',
     status: PetStatus.AVAILABLE,
     image: 'https://example.com/rocky.jpg',
@@ -163,6 +179,8 @@ export const TEST_PETS = [
     name: 'Sadie',
     breed: 'Border Collie',
     age: 3,
+    species: PetSpecies.DOG,
+    gender: PetGender.FEMALE,
     description: 'Highly intelligent and active, needs mental stimulation.',
     status: PetStatus.AVAILABLE,
     image: 'https://example.com/sadie.jpg',
@@ -174,6 +192,8 @@ export const TEST_PETS = [
     name: 'Oliver',
     breed: 'Maine Coon',
     age: 1,
+    species: PetSpecies.CAT,
+    gender: PetGender.MALE,
     description: 'Large and gentle cat, very social.',
     status: PetStatus.ADOPTED,
     image: 'https://example.com/oliver.jpg',

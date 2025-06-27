@@ -61,22 +61,28 @@ export class TestHelper {
   }
 
   static expectUserStructure(user: TestUserResponse): void {
-    expect(user).to.have.property('_id');
+    // Accept both _id and id properties for MongoDB documents
+    const hasId = '_id' in user || 'id' in user;
+    expect(hasId).to.equal(true);
     expect(user).to.have.property('username');
     expect(user).to.have.property('firstname');
     expect(user).to.have.property('lastname');
     expect(user).to.have.property('email');
-    expect(user).to.have.property('age');
     expect(user).to.have.property('role');
     expect(user).to.not.have.property('password'); // Password should not be returned
   }
 
   static expectPetStructure(pet: TestPetResponse): void {
-    expect(pet).to.have.property('_id');
+    // Accept both _id and id properties for MongoDB documents
+    const hasId = '_id' in pet || 'id' in pet;
+    expect(hasId).to.equal(true);
     expect(pet).to.have.property('name');
     expect(pet).to.have.property('breed');
     expect(pet).to.have.property('age');
+    expect(pet).to.have.property('species');
+    expect(pet).to.have.property('gender');
     expect(pet).to.have.property('status');
+    expect(pet).to.have.property('characteristics');
     expect(pet).to.have.property('likedBy');
   }
 

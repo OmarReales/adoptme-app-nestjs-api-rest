@@ -12,7 +12,12 @@ import * as sinon from 'sinon';
 import { ConflictException, NotFoundException } from '@nestjs/common';
 
 import { PetsService } from '../../../src/modules/pets/pets.service';
-import { Pet, PetStatus } from '../../../src/schemas/pet.schema';
+import {
+  Pet,
+  PetStatus,
+  PetSpecies,
+  PetGender,
+} from '../../../src/schemas/pet.schema';
 import { User } from '../../../src/schemas/user.schema';
 import { CustomLoggerService } from '../../../src/common/services/custom-logger.service';
 import { CreatePetDto } from '../../../src/modules/pets/dto/create-pet.dto';
@@ -87,6 +92,8 @@ describe('PetsService - Complete Unit Tests', () => {
         name: 'Buddy',
         breed: 'Golden Retriever',
         age: 3,
+        species: PetSpecies.DOG,
+        gender: PetGender.MALE,
         description: 'Friendly dog',
       };
 
@@ -116,6 +123,8 @@ describe('PetsService - Complete Unit Tests', () => {
         name: 'Buddy',
         breed: 'Golden Retriever',
         age: 3,
+        species: PetSpecies.DOG,
+        gender: PetGender.MALE,
       };
 
       const mockPet = {
@@ -152,6 +161,7 @@ describe('PetsService - Complete Unit Tests', () => {
         skip: sinon.stub().returnsThis(),
         limit: sinon.stub().returnsThis(),
         sort: sinon.stub().returnsThis(),
+        lean: sinon.stub().returnsThis(),
         exec: sinon.stub().resolves(mockPets),
       };
 
@@ -183,6 +193,7 @@ describe('PetsService - Complete Unit Tests', () => {
         skip: sinon.stub().returnsThis(),
         limit: sinon.stub().returnsThis(),
         sort: sinon.stub().returnsThis(),
+        lean: sinon.stub().returnsThis(),
         exec: sinon.stub().resolves([]),
       };
 
@@ -208,6 +219,7 @@ describe('PetsService - Complete Unit Tests', () => {
 
       const query = {
         populate: sinon.stub().returnsThis(),
+        lean: sinon.stub().returnsThis(),
         exec: sinon.stub().resolves(mockPet),
       };
       petModel.findById.returns(query);
@@ -222,6 +234,7 @@ describe('PetsService - Complete Unit Tests', () => {
       const petId = new Types.ObjectId().toString();
       const query = {
         populate: sinon.stub().returnsThis(),
+        lean: sinon.stub().returnsThis(),
         exec: sinon.stub().resolves(null),
       };
       petModel.findById.returns(query);

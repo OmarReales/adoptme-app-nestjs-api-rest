@@ -6,8 +6,8 @@ import { UserRole } from '../../schemas/user.schema';
 export interface SessionUser {
   id: string;
   username: string;
-  firstName: string;
-  lastName: string;
+  firstname: string;
+  lastname: string;
   email: string;
   role: UserRole;
 }
@@ -30,8 +30,8 @@ export interface AuthenticatedUser {
   username: string;
   role: UserRole;
   // Optional fields that may not be available from JWT
-  firstName?: string;
-  lastName?: string;
+  firstname?: string;
+  lastname?: string;
   email?: string;
 }
 
@@ -47,8 +47,12 @@ export interface LoginResponse {
 /**
  * Registration response interface
  */
+/**
+ * Response when registering a new user
+ */
 export interface RegistrationResponse {
   user: SessionUser;
+  access_token: string;
   message: string;
 }
 

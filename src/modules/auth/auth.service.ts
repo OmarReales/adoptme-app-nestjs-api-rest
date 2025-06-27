@@ -62,11 +62,20 @@ export class AuthService {
     this.logger.logAuthentication('register', userId, email);
     this.logger.info(`User registered successfully: ${userId}`, 'AuthService');
 
-    // Return user data without password
+    // Generate JWT token for hybrid authentication
+    const payload = {
+      sub: userId,
+      username: user.username,
+      role: user.role,
+    };
+    const accessToken = this.jwtService.sign(payload);
+
+    // Return user data without password + JWT token
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _pwd, ...userWithoutPassword } = user.toObject();
     return {
       user: userWithoutPassword,
+      access_token: accessToken, // JWT para API/Mobile
     };
   }
 

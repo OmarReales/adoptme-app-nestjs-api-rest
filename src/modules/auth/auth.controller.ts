@@ -23,6 +23,13 @@ import {
   AuthenticatedUser,
 } from '../../common/interfaces/auth.interfaces';
 
+// Extend express-session types
+declare module 'express-session' {
+  interface SessionData {
+    user: SessionUser;
+  }
+}
+
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
@@ -53,8 +60,8 @@ export class AuthController {
     const sessionUser: SessionUser = {
       id: String(result.user._id),
       username: result.user.username,
-      firstName: result.user.firstname,
-      lastName: result.user.lastname,
+      firstname: result.user.firstname,
+      lastname: result.user.lastname,
       email: result.user.email,
       role: result.user.role,
     };
@@ -83,6 +90,7 @@ export class AuthController {
     // Return strongly typed response
     return {
       user: sessionUser,
+      access_token: result.access_token,
       message: 'Registration successful',
     };
   }
@@ -110,8 +118,8 @@ export class AuthController {
     const sessionUser: SessionUser = {
       id: String(result.user._id),
       username: result.user.username,
-      firstName: result.user.firstname,
-      lastName: result.user.lastname,
+      firstname: result.user.firstname,
+      lastname: result.user.lastname,
       email: result.user.email,
       role: result.user.role,
     };
@@ -209,7 +217,7 @@ export class AuthController {
 
     return {
       message: 'Hybrid authentication successful!',
-      authMethod: user.firstName ? 'Session' : 'JWT', // Session has firstName, JWT doesn't
+      authMethod: user.firstname ? 'Session' : 'JWT', // Session has firstname, JWT doesn't
       user,
     };
   }

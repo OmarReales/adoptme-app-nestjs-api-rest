@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../../modules/auth/auth.service';
@@ -15,17 +20,18 @@ export class HybridAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
 
-    // 1. Try Session Authentication first (for web app)
-    if (this.validateSession(request)) {
-      return true;
-    }
-
-    // 2. Try JWT Authentication (for API/Mobile)
+    // 1. Try JWT Authentication first (higher priority for hybrid scenarios)
     if (await this.validateJwt(request)) {
       return true;
     }
 
-    return false;
+    // 2. Try Session Authentication (for web app)
+    if (this.validateSession(request)) {
+      return true;
+    }
+
+    // Throw unauthorized exception instead of returning false
+    throw new UnauthorizedException('Authentication required');
   }
 
   private validateSession(request: Request): boolean {
@@ -57,8 +63,8 @@ export class HybridAuthGuard implements CanActivate {
       userId: user.id,
       username: user.username,
       role: user.role as UserRole, // Convert string to enum
-      firstName: user.firstName,
-      lastName: user.lastName,
+      firstname: user.firstname,
+      lastname: user.lastname,
       email: user.email,
     };
 

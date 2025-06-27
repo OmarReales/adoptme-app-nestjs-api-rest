@@ -257,10 +257,10 @@ describe('Users Integration Tests', () => {
     });
   });
 
-  describe('GET /users/me', () => {
+  describe('GET /users/profile/me', () => {
     it('should get current user profile', async () => {
       const response = await request(app.getHttpServer())
-        .get('/users/me')
+        .get('/users/profile/me')
         .set('Authorization', `Bearer ${userToken}`)
         .expect(200);
 
@@ -272,14 +272,14 @@ describe('Users Integration Tests', () => {
 
     it('should deny access without token', async () => {
       const response = await request(app.getHttpServer())
-        .get('/users/me')
+        .get('/users/profile/me')
         .expect(401);
 
       TestHelper.expectUnauthorized(response);
     });
   });
 
-  describe('PUT /users/me', () => {
+  describe('PUT /users/profile/me', () => {
     it('should update current user profile', async () => {
       const updateData = {
         firstname: 'UpdatedByMe',
@@ -288,7 +288,7 @@ describe('Users Integration Tests', () => {
       };
 
       const response = await request(app.getHttpServer())
-        .put('/users/me')
+        .put('/users/profile/me')
         .set('Authorization', `Bearer ${userToken}`)
         .send(updateData)
         .expect(200);
@@ -305,7 +305,7 @@ describe('Users Integration Tests', () => {
       };
 
       const response = await request(app.getHttpServer())
-        .put('/users/me')
+        .put('/users/profile/me')
         .set('Authorization', `Bearer ${userToken}`)
         .send(invalidData)
         .expect(400);
@@ -315,7 +315,7 @@ describe('Users Integration Tests', () => {
 
     it('should deny access without token', async () => {
       const response = await request(app.getHttpServer())
-        .put('/users/me')
+        .put('/users/profile/me')
         .send({ firstname: 'Test' })
         .expect(401);
 

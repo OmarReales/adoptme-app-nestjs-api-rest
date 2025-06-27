@@ -3,19 +3,26 @@
  */
 
 export interface TestPetResponse {
-  _id: string;
+  _id?: string;
+  id?: string;
   name: string;
   breed: string;
   age: number;
-  status: string;
+  species: string; // PetSpecies enum
+  gender: string; // PetGender enum
+  owner?: string | null; // ObjectId as string
+  status: string; // PetStatus enum
   description?: string;
-  likedBy: string[];
+  image?: string;
+  characteristics: string[];
+  likedBy: string[]; // ObjectId[] as string[]
   createdAt?: string;
   updatedAt?: string;
 }
 
 export interface TestUserResponse {
-  _id: string;
+  _id?: string;
+  id?: string;
   username: string;
   firstname: string;
   lastname: string;

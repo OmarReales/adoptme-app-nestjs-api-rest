@@ -8,7 +8,12 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import * as sinon from 'sinon';
 import { PetsService } from '../../../src/modules/pets/pets.service';
-import { Pet, PetStatus } from '../../../src/schemas/pet.schema';
+import {
+  Pet,
+  PetStatus,
+  PetSpecies,
+  PetGender,
+} from '../../../src/schemas/pet.schema';
 import { User } from '../../../src/schemas/user.schema';
 import { CustomLoggerService } from '../../../src/common/services/custom-logger.service';
 import { CreatePetDto } from '../../../src/modules/pets/dto/create-pet.dto';
@@ -76,6 +81,8 @@ describe('PetsService - Unit Tests', () => {
         name: 'Buddy',
         breed: 'Golden Retriever',
         age: 3,
+        species: PetSpecies.DOG,
+        gender: PetGender.MALE,
         description: 'Friendly dog',
         status: PetStatus.AVAILABLE,
       };
@@ -120,6 +127,7 @@ describe('PetsService - Unit Tests', () => {
         skip: sinon.stub().returnsThis(),
         limit: sinon.stub().returnsThis(),
         sort: sinon.stub().returnsThis(),
+        lean: sinon.stub().returnsThis(),
         exec: sinon.stub().resolves(mockPets),
       };
 
@@ -150,6 +158,7 @@ describe('PetsService - Unit Tests', () => {
 
       const query = {
         populate: sinon.stub().returnsThis(),
+        lean: sinon.stub().returnsThis(),
         exec: sinon.stub().resolves(mockPet),
       };
       petModel.findById.returns(query);
@@ -166,6 +175,7 @@ describe('PetsService - Unit Tests', () => {
       const petId = '507f1f77bcf86cd799439011';
       const query = {
         populate: sinon.stub().returnsThis(),
+        lean: sinon.stub().returnsThis(),
         exec: sinon.stub().resolves(null),
       };
       petModel.findById.returns(query);

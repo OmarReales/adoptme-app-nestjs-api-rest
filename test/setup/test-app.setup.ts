@@ -3,6 +3,8 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { PassportModule } from '@nestjs/passport';
+import * as session from 'express-session';
+import * as cookieParser from 'cookie-parser';
 
 import { TestDatabaseSetup } from './test-db.setup';
 import { CommonModule } from '../../src/common/common.module';
@@ -62,6 +64,25 @@ export class TestAppSetup {
 
     this.moduleRef = moduleFixture;
     this.app = moduleFixture.createNestApplication();
+
+    // Configure cookie parser for tests
+    this.app.use(cookieParser());
+
+    // Configure express session for tests
+    this.app.use(
+      session({
+        secret: 'test-session-secret-for-testing-only',
+        resave: false,
+        saveUninitialized: false,
+        name: 'test.session',
+        cookie: {
+          secure: false, // false for testing
+          httpOnly: true,
+          maxAge: 86400000, // 24 hours
+          sameSite: 'lax',
+        },
+      }),
+    );
 
     // Configure ValidationPipe globally for tests
     this.app.useGlobalPipes(

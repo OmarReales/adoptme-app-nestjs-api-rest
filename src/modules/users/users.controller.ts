@@ -102,22 +102,7 @@ export class UsersController {
     return this.usersService.findOne(user.userId);
   }
 
-  @Get('me')
-  @ApiOperation({ summary: 'Get current user profile' })
-  @ApiResponse({ status: 200, description: 'Profile retrieved successfully' })
-  getCurrentUserProfile(@GetUser() user: AuthenticatedUser | null) {
-    if (!user) {
-      throw new ForbiddenException('User not authenticated');
-    }
-
-    this.logger.debug(
-      `User accessing own profile: ${user.userId}`,
-      'UsersController',
-    );
-    return this.usersService.findOne(user.userId);
-  }
-
-  @Patch('me')
+  @Patch('profile/me')
   @ApiOperation({ summary: 'Update current user profile' })
   @ApiResponse({ status: 200, description: 'Profile updated successfully' })
   updateCurrentUserProfile(
@@ -129,7 +114,7 @@ export class UsersController {
     return this.usersService.update(userId, updateUserDto);
   }
 
-  @Put('me')
+  @Put('profile/me')
   @ApiOperation({ summary: 'Update current user profile (PUT)' })
   @ApiResponse({ status: 200, description: 'Profile updated successfully' })
   updateCurrentUserProfilePut(

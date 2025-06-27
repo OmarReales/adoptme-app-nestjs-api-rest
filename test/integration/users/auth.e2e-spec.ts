@@ -135,8 +135,13 @@ describe('Auth Integration Tests', () => {
 
       expect(response.body).to.have.property('access_token');
       expect(response.body).to.have.property('user');
+      expect(response.body).to.have.property('message');
       TestHelper.expectUserStructure(response.body.user);
       expect(response.body.user.role).to.equal('admin');
+
+      // Verify JWT token is returned
+      expect(response.body.access_token).to.be.a('string');
+      expect(response.body.access_token.length).to.be.greaterThan(0);
     });
 
     it('should login regular user successfully', async () => {
@@ -150,8 +155,13 @@ describe('Auth Integration Tests', () => {
 
       expect(response.body).to.have.property('access_token');
       expect(response.body).to.have.property('user');
+      expect(response.body).to.have.property('message');
       TestHelper.expectUserStructure(response.body.user);
       expect(response.body.user.role).to.equal('user');
+
+      // Verify JWT token is returned
+      expect(response.body.access_token).to.be.a('string');
+      expect(response.body.access_token.length).to.be.greaterThan(0);
     });
 
     it('should reject invalid credentials', async () => {
@@ -185,6 +195,93 @@ describe('Auth Integration Tests', () => {
         .expect(400);
 
       TestHelper.expectValidationError(response);
+    });
+
+    // NEW: Test hybrid authentication - both JWT and session should work
+    it('should allow access to protected endpoints with JWT token', async () => {
+      // First login to get token
+      const loginResponse = await request(app.getHttpServer())
+        .post('/auth/login')
+        .send({
+          email: TEST_USER.email,
+          password: TEST_USER.password,
+        })
+        .expect(200);
+
+      const token = loginResponse.body.access_token as string;
+
+      // Test accessing protected endpoint with JWT
+      const profileResponse = await request(app.getHttpServer())
+        .get('/auth/profile')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+
+      expect(profileResponse.body).to.have.property('userId');
+      expect(profileResponse.body).to.have.property('username');
+      expect(profileResponse.body).to.have.property('role');
+    });
+
+    it('should allow access to protected endpoints with session cookies', async () => {
+      const agent = request.agent(app.getHttpServer());
+
+      // Login with session (using agent to maintain cookies)
+      await agent
+        .post('/auth/login')
+        .send({
+          email: TEST_USER.email,
+          password: TEST_USER.password,
+        })
+        .expect(200);
+
+      // Test accessing protected endpoint with session
+      const profileResponse = await agent.get('/auth/profile').expect(200);
+
+      expect(profileResponse.body).to.have.property('userId');
+      expect(profileResponse.body).to.have.property('username');
+      expect(profileResponse.body).to.have.property('role');
+    });
+
+    it('should test hybrid auth endpoint with both methods', async () => {
+      // Test with JWT
+      const loginResponse = await request(app.getHttpServer())
+        .post('/auth/login')
+        .send({
+          email: TEST_USER.email,
+          password: TEST_USER.password,
+        })
+        .expect(200);
+
+      const token = loginResponse.body.access_token as string;
+
+      const jwtTestResponse = await request(app.getHttpServer())
+        .get('/auth/test-hybrid')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+
+      expect(jwtTestResponse.body.message).to.include(
+        'Hybrid authentication successful',
+      );
+      expect(jwtTestResponse.body.authMethod).to.equal('JWT');
+
+      // Test with session
+      const agent = request.agent(app.getHttpServer());
+
+      await agent
+        .post('/auth/login')
+        .send({
+          email: TEST_USER.email,
+          password: TEST_USER.password,
+        })
+        .expect(200);
+
+      const sessionTestResponse = await agent
+        .get('/auth/test-hybrid')
+        .expect(200);
+
+      expect(sessionTestResponse.body.message).to.include(
+        'Hybrid authentication successful',
+      );
+      expect(sessionTestResponse.body.authMethod).to.equal('Session');
     });
   });
 });
