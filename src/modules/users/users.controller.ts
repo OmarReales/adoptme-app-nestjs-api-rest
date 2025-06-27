@@ -13,6 +13,7 @@ import {
   ForbiddenException,
   Query,
   BadRequestException,
+  HttpCode,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
@@ -223,9 +224,10 @@ export class UsersController {
   }
 
   @Post(':uid/documents')
+  @HttpCode(201)
   @UseInterceptors(FilesInterceptor('documents', 5, getDocumentUploadConfig()))
   @ApiOperation({ summary: 'Upload documents for a user' })
-  @ApiResponse({ status: 200, description: 'Documents uploaded successfully' })
+  @ApiResponse({ status: 201, description: 'Documents uploaded successfully' })
   @ApiResponse({ status: 400, description: 'Invalid files or request' })
   @ApiResponse({
     status: 403,

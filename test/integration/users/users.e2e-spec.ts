@@ -322,4 +322,169 @@ describe('Users Integration Tests', () => {
       TestHelper.expectUnauthorized(response);
     });
   });
+
+  describe('POST /users/:uid/documents', () => {
+    it('should upload documents to own profile', async () => {
+      // First get user ID from token
+      const userProfileResponse = await request(app.getHttpServer())
+        .get('/users/profile/me')
+        .set('Authorization', `Bearer ${userToken}`)
+        .expect(200);
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const userId = userProfileResponse.body._id;
+
+      const response = await request(app.getHttpServer())
+        .post(`/users/${userId}/documents`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .attach(
+          'documents',
+          Buffer.from('fake document content'),
+          'test-document.pdf',
+        )
+        .expect(201);
+
+      expect(response.body).to.have.property(
+        'message',
+        'Documents uploaded successfully',
+      );
+      expect(response.body).to.have.property('documentsCount', 1);
+      expect(response.body).to.have.property('user');
+      expect(response.body.user.documents).to.be.an('array');
+      expect(response.body.user.documents).to.have.length(1);
+      expect(response.body.user.documents[0]).to.have.property(
+        'name',
+        'test-document.pdf',
+      );
+      expect(response.body.user.documents[0]).to.have.property('reference');
+      expect(response.body.user.documents[0]).to.have.property('uploadDate');
+      expect(response.body.user.documents[0]).to.have.property('size');
+      expect(response.body.user.documents[0]).to.have.property('mimeType');
+    });
+
+    it('should allow admin to upload documents to any user', async () => {
+      // Get a regular user's ID
+      const userProfileResponse = await request(app.getHttpServer())
+        .get('/users/profile/me')
+        .set('Authorization', `Bearer ${userToken}`)
+        .expect(200);
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const userId = userProfileResponse.body._id;
+
+      const response = await request(app.getHttpServer())
+        .post(`/users/${userId}/documents`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .attach(
+          'documents',
+          Buffer.from('admin uploaded document'),
+          'admin-document.doc',
+        )
+        .expect(201);
+
+      expect(response.body).to.have.property(
+        'message',
+        'Documents uploaded successfully',
+      );
+      expect(response.body).to.have.property('documentsCount', 1);
+      expect(response.body.user.documents[0]).to.have.property(
+        'name',
+        'admin-document.doc',
+      );
+    });
+
+    it('should reject upload to another user profile (non-admin)', async () => {
+      // Get admin user ID
+      const adminProfileResponse = await request(app.getHttpServer())
+        .get('/users/profile/me')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(200);
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const adminUserId = adminProfileResponse.body._id;
+
+      const response = await request(app.getHttpServer())
+        .post(`/users/${adminUserId}/documents`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .attach(
+          'documents',
+          Buffer.from('unauthorized upload'),
+          'unauthorized.pdf',
+        )
+        .expect(403);
+
+      expect(response.body).to.have.property(
+        'message',
+        'You can only upload documents to your own profile',
+      );
+    });
+
+    it('should reject upload without files', async () => {
+      const userProfileResponse = await request(app.getHttpServer())
+        .get('/users/profile/me')
+        .set('Authorization', `Bearer ${userToken}`)
+        .expect(200);
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const userId = userProfileResponse.body._id;
+
+      const response = await request(app.getHttpServer())
+        .post(`/users/${userId}/documents`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .expect(400);
+
+      expect(response.body).to.have.property('message', 'No files provided');
+    });
+
+    it('should reject upload without authentication', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/users/dummy-id/documents')
+        .attach('documents', Buffer.from('unauthorized'), 'test.pdf')
+        .expect(401);
+
+      TestHelper.expectUnauthorized(response);
+    });
+
+    it('should handle non-existent user', async () => {
+      const fakeUserId = '507f1f77bcf86cd799999999'; // Valid ObjectId format but non-existent
+
+      const response = await request(app.getHttpServer())
+        .post(`/users/${fakeUserId}/documents`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .attach('documents', Buffer.from('test content'), 'test.pdf')
+        .expect(404);
+
+      expect(response.body).to.have.property('message', 'User not found');
+    });
+
+    it('should handle multiple file uploads', async () => {
+      const userProfileResponse = await request(app.getHttpServer())
+        .get('/users/profile/me')
+        .set('Authorization', `Bearer ${userToken}`)
+        .expect(200);
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const userId = userProfileResponse.body._id;
+
+      const response = await request(app.getHttpServer())
+        .post(`/users/${userId}/documents`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .attach('documents', Buffer.from('document 1 content'), 'doc1.pdf')
+        .attach('documents', Buffer.from('document 2 content'), 'doc2.doc')
+        .attach('documents', Buffer.from('document 3 content'), 'doc3.txt')
+        .expect(201);
+
+      expect(response.body).to.have.property('documentsCount', 3);
+      expect(response.body.user.documents).to.have.length(3);
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const documentNames = response.body.user.documents.map(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        (doc: any) => doc.name,
+      );
+      expect(documentNames).to.include('doc1.pdf');
+      expect(documentNames).to.include('doc2.doc');
+      expect(documentNames).to.include('doc3.txt');
+    });
+  });
 });
