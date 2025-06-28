@@ -87,6 +87,7 @@ describe('AuthService', () => {
     // Agregamos métodos estáticos al constructor mock
     mockUserModel.findOne = sinon.stub();
     mockUserModel.findById = sinon.stub();
+    mockUserModel.findByIdAndUpdate = sinon.stub();
 
     const mockJwtService = {
       sign: sinon.stub(),
@@ -228,6 +229,7 @@ describe('AuthService', () => {
       sinon.stub(bcrypt, 'compare').resolves(true);
       const mockToken = 'jwt.token.here';
       jwtService.sign.returns(mockToken);
+      userModel.findByIdAndUpdate.resolves(userWithPassword);
 
       // Act
       const result = await service.login(mockLoginDto);
@@ -308,6 +310,7 @@ describe('AuthService', () => {
 
       sinon.stub(bcrypt, 'compare').resolves(true);
       jwtService.sign.returns('token');
+      userModel.findByIdAndUpdate.resolves(userWithPassword);
 
       // Act
       await service.login(mockLoginDto);
