@@ -16,6 +16,7 @@ import { Adoption, AdoptionStatus } from '../../../src/schemas/adoption.schema';
 import { Pet, PetStatus } from '../../../src/schemas/pet.schema';
 import { User, UserRole } from '../../../src/schemas/user.schema';
 import { UpdateAdoptionDto } from '../../../src/modules/adoptions/dto/adoption.dto';
+import { Logger } from '@nestjs/common';
 
 describe('AdoptionsService', () => {
   let service: AdoptionsService;
@@ -51,6 +52,12 @@ describe('AdoptionsService', () => {
   };
 
   beforeEach(async () => {
+    // Mock Logger to suppress console output during tests
+    sinon.stub(Logger.prototype, 'log');
+    sinon.stub(Logger.prototype, 'error');
+    sinon.stub(Logger.prototype, 'warn');
+    sinon.stub(Logger.prototype, 'debug');
+
     adoptionModel = {
       findOne: sinon.stub(),
       findById: sinon.stub(),
@@ -60,6 +67,26 @@ describe('AdoptionsService', () => {
       findByIdAndDelete: sinon.stub(),
       updateMany: sinon.stub(),
     };
+
+    // Mock del constructor
+    const mockConstructor = function (this: any, data: any) {
+      Object.assign(this, data);
+      this.save = sinon.stub().resolves({
+        ...data,
+        _id: mockObjectId,
+        populate: sinon.stub().returnsThis(),
+      });
+      this.populate = sinon.stub().returnsThis();
+    };
+    mockConstructor.findOne = adoptionModel.findOne;
+    mockConstructor.findById = adoptionModel.findById;
+    mockConstructor.find = adoptionModel.find;
+    mockConstructor.countDocuments = adoptionModel.countDocuments;
+    mockConstructor.findByIdAndUpdate = adoptionModel.findByIdAndUpdate;
+    mockConstructor.findByIdAndDelete = adoptionModel.findByIdAndDelete;
+    mockConstructor.updateMany = adoptionModel.updateMany;
+
+    adoptionModel = mockConstructor as any;
 
     petModel = {
       findById: sinon.stub(),
@@ -115,6 +142,84 @@ describe('AdoptionsService', () => {
 
   afterEach(() => {
     sinon.restore();
+  });
+
+  describe('create', () => {
+    const mockCreateDto = {
+      pet: mockPetId.toString(),
+      notes: 'I would love to adopt this pet',
+    };
+
+    beforeEach(() => {
+      petModel.findById.resolves(mockPet);
+      adoptionModel.findOne.resolves(null); // No existing adoption
+
+      userModel.findById.returns({
+        select: sinon.stub().returns({
+          lean: sinon.stub().resolves({ username: 'testuser' }),
+        }),
+      });
+
+      userModel.find.returns({
+        select: sinon.stub().resolves([{ _id: mockAdminId }]),
+      });
+
+      notificationsService.notifyAdoptionRequest.resolves();
+    });
+
+    it('should create adoption request successfully', async () => {
+      const result = await service.create(mockCreateDto, mockUserId.toString());
+
+      expect(result).to.be.an('object');
+      expect(petModel.findById).to.have.been.calledWith(mockCreateDto.pet);
+    });
+
+    it('should throw BadRequestException for invalid pet ID', async () => {
+      try {
+        await service.create(
+          { ...mockCreateDto, pet: 'invalid-id' },
+          mockUserId.toString(),
+        );
+        expect.fail('Should have thrown BadRequestException');
+      } catch (error) {
+        expect(error.message).to.include('Invalid pet ID');
+      }
+    });
+
+    it('should throw NotFoundException when pet not found', async () => {
+      petModel.findById.resolves(null);
+
+      try {
+        await service.create(mockCreateDto, mockUserId.toString());
+        expect.fail('Should have thrown NotFoundException');
+      } catch (error) {
+        expect(error.message).to.include('Pet not found');
+      }
+    });
+
+    it('should throw ConflictException when pet not available', async () => {
+      petModel.findById.resolves({ ...mockPet, status: PetStatus.ADOPTED });
+
+      try {
+        await service.create(mockCreateDto, mockUserId.toString());
+        expect.fail('Should have thrown ConflictException');
+      } catch (error) {
+        expect(error.message).to.include('Pet is not available for adoption');
+      }
+    });
+
+    it('should throw ConflictException when user already has pending adoption', async () => {
+      adoptionModel.findOne.resolves(mockAdoption);
+
+      try {
+        await service.create(mockCreateDto, mockUserId.toString());
+        expect.fail('Should have thrown ConflictException');
+      } catch (error) {
+        expect(error.message).to.include(
+          'You already have a pending adoption request',
+        );
+      }
+    });
   });
 
   describe('findAll', () => {
@@ -373,6 +478,56 @@ describe('AdoptionsService', () => {
         approved: 5,
         rejected: 2,
       });
+    });
+  });
+
+  describe('getSuccessStories', () => {
+    const mockSuccessStories = [
+      {
+        ...mockAdoption,
+        status: AdoptionStatus.APPROVED,
+        approvedDate: new Date(),
+        pet: {
+          name: 'Buddy',
+          image: '/images/buddy.jpg',
+          breed: 'Golden Retriever',
+        },
+        user: {
+          firstname: 'John',
+          lastname: 'Doe',
+        },
+      },
+    ];
+
+    beforeEach(() => {
+      adoptionModel.find.returns({
+        populate: sinon.stub().returnsThis(),
+        sort: sinon.stub().returnsThis(),
+        limit: sinon.stub().returnsThis(),
+        exec: sinon.stub().resolves(mockSuccessStories),
+      });
+    });
+
+    it('should get success stories successfully', async () => {
+      const result = await service.getSuccessStories(6);
+
+      expect(result).to.be.an('array');
+      expect(result).to.have.length(1);
+      expect(result[0]).to.have.property('petName');
+      expect(result[0]).to.have.property('familyName');
+      expect(result[0]).to.have.property('story');
+    });
+
+    it('should return empty array on error', async () => {
+      adoptionModel.find.returns({
+        populate: sinon.stub().returnsThis(),
+        sort: sinon.stub().returnsThis(),
+        limit: sinon.stub().returnsThis(),
+        exec: sinon.stub().rejects(new Error('Database error')),
+      });
+
+      const result = await service.getSuccessStories();
+      expect(result).to.deep.equal([]);
     });
   });
 });
