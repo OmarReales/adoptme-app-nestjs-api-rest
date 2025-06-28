@@ -42,7 +42,7 @@ AdoptMe API is a full-featured pet adoption platform that combines a robust back
 - **📝 Comprehensive Logging**: Winston-based logging with multiple levels and file rotation
 - **🛡️ Security First**: Input validation, rate limiting, and security middleware
 - **📚 Auto-generated Documentation**: Interactive Swagger/OpenAPI documentation
-- **🧪 Testing Ready**: Jest, Mocha, and comprehensive testing setup
+- **🧪 Testing Ready**: Mocha, Chai, and comprehensive testing setup
 - **🎯 Real-Time Features**: Dynamic content loading and interactive UI
 
 ---
@@ -113,7 +113,6 @@ AdoptMe API is a full-featured pet adoption platform that combines a robust back
 
 - **ESLint** v9.18.0 - Advanced linting with TypeScript support and custom rules
 - **Prettier** v3.4.2 - Code formatting with consistent style enforcement
-- **Jest** v29.7.0 - Comprehensive JavaScript testing framework with coverage
 - **Mocha** v11.7.0 - Flexible testing framework with async support
 - **Chai** v5.2.0 & **Sinon** v21.0.0 - Assertion library and test spies/stubs
 - **Supertest** v7.1.1 - HTTP assertion library for API testing
