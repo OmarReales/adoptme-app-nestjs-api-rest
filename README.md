@@ -5,9 +5,12 @@
 ![NestJS](https://img.shields.io/badge/nestjs-%23E0234E.svg?style=for-the-badge&logo=nestjs&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 ![Handlebars](https://img.shields.io/badge/Handlebars-%23000000.svg?style=for-the-badge&logo=handlebars.js&logoColor=white)
 ![Bootstrap](https://img.shields.io/badge/bootstrap-%23563D7C.svg?style=for-the-badge&logo=bootstrap&logoColor=white)
 ![Winston](https://img.shields.io/badge/winston-%23000000.svg?style=for-the-badge&logo=winston&logoColor=white)
+
+[![Docker Hub](https://img.shields.io/docker/pulls/tukisito/adoptme-app?style=for-the-badge&logo=docker&logoColor=white&label=Docker%20Hub)](https://hub.docker.com/r/tukisito/adoptme-app)
 
 ---
 
@@ -318,6 +321,50 @@ npm run test:all
 # Watch mode for development
 npm run start:dev
 ```
+
+### 🐳 Docker Installation (Recommended)
+
+The AdoptMe application is available as a Docker image on Docker Hub for easy deployment:
+
+**Docker Hub Repository**: [tukisito/adoptme-app](https://hub.docker.com/r/tukisito/adoptme-app)
+
+#### Quick Docker Setup
+
+1. **Pull the image from Docker Hub**
+
+   ```bash
+   docker pull tukisito/adoptme-app:latest
+   ```
+
+2. **Run with Docker Compose** (includes MongoDB)
+
+   ```bash
+   # Clone the repository for docker-compose.yml
+   git clone https://github.com/your-username/adoptme-app-nestjs-api-rest.git
+   cd adoptme-app-nestjs-api-rest
+
+   # Start services
+   docker-compose up -d
+   ```
+
+3. **Or run standalone** (requires separate MongoDB)
+
+   ```bash
+   docker run -d \
+     --name adoptme-app \
+     -p 3000:3000 \
+     -e MONGODB_URI="mongodb://your-mongo-host:27017/adoptme-db" \
+     -e JWT_SECRET="your-jwt-secret" \
+     -e SESSION_SECRET="your-session-secret" \
+     tukisito/adoptme-app:latest
+   ```
+
+#### Available Tags
+
+- `latest` - Most recent stable version
+- `v1.0` - Version 1.0 release
+
+**📚 For detailed Docker setup instructions, see [DOCKER.md](./DOCKER.md)**
 
 ---
 
@@ -1188,7 +1235,3 @@ curl http://localhost:3000/api/health
 **Built with ❤️ using NestJS, TypeScript, MongoDB, and modern web technologies**
 
 _AdoptMe - Connecting pets with loving families through technology_
-
-```
-
-```
