@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: adoptme-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+      MONGO_INITDB_DATABASE: adoptme-db
+    volumes:
+      - mongodb_data:/data/db
+      - ./scripts/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    ports:
+      - '27017:27017'
+    networks:
+      - adoptme-network
+
+  # AdoptMe Application
+  adoptme-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: adoptme-app
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - MONGODB_URI=mongodb://admin:password123@mongodb:27017/adoptme-db?authSource=admin
+      - JWT_SECRET=your-super-secret-jwt-key-change-in-production
+      - SESSION_SECRET=your-super-secret-session-key-change-in-production
+      - FRONTEND_URL=http://localhost:3000
+    volumes:
+      - ./logs:/app/logs
+      - uploads_data:/app/public/uploads
+    ports:
+      - '3000:3000'
+    depends_on:
+      - mongodb
+    networks:
+      - adoptme-network
+
+volumes:
+  mongodb_data:
+    driver: local
+  uploads_data:
+    driver: local
+
+networks:
+  adoptme-network:
+    driver: bridge
