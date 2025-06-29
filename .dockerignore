@@ -70,9 +70,10 @@ debug-test.js
 .eslintrc.js
 eslint.config.mjs
 
-# TypeScript config (not needed in container)
-tsconfig.json
-tsconfig.build.json
+# TypeScript config files are needed for build stage
+# tsconfig.json - needed for compilation
+# tsconfig.build.json - needed for compilation
+# nest-cli.json - needed for NestJS build
 
 # Uploads folder (will be mounted as volume)
 public/uploads/*

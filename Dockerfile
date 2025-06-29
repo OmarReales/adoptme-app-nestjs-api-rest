@@ -12,8 +12,12 @@ COPY package*.json ./
 # Install all dependencies (including dev dependencies for build)
 RUN npm ci
 
+# Copy TypeScript configuration files
+COPY tsconfig*.json ./
+COPY nest-cli.json ./
+
 # Copy source code
-COPY . .
+COPY src ./src
 
 # Build the application
 RUN npm run build
