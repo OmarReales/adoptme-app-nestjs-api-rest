@@ -354,19 +354,6 @@ window.showMessage = function (message, type) {
   return window.Notifications.show(message, type);
 };
 
-// Global loading functions for compatibility
-window.showLoading = function (button, text) {
-  return window.Loading.showLoading(button, text);
-};
-
-window.resetButton = function (button, originalText) {
-  return window.Loading.resetButton(button, originalText);
-};
-
-window.showMessage = function (message, type) {
-  return window.Notifications.show(message, type);
-};
-
 window.showSuccess = function (message) {
   return window.Notifications.success(message);
 };
@@ -381,4 +368,13 @@ window.showInfo = function (message) {
 
 window.showWarning = function (message) {
   return window.Notifications.warning(message);
+};
+
+// Global loading functions for compatibility
+window.showLoading = function (button, text) {
+  return window.Loading.showLoading(button, text);
+};
+
+window.resetButton = function (button, originalText) {
+  return window.Loading.resetButton(button, originalText);
 };

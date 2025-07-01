@@ -2,20 +2,14 @@
 
 document.addEventListener('DOMContentLoaded', function () {
   // Initialize tooltips
-  const tooltipTriggerList = [].slice.call(
-    document.querySelectorAll('[data-bs-toggle="tooltip"]'),
-  );
-  tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl);
-  });
+  document
+    .querySelectorAll('[data-bs-toggle="tooltip"]')
+    .forEach((el) => new bootstrap.Tooltip(el));
 
   // Initialize modals
-  const modalTriggerList = [].slice.call(
-    document.querySelectorAll('[data-bs-toggle="modal"]'),
-  );
-  modalTriggerList.map(function (modalTriggerEl) {
-    return new bootstrap.Modal(modalTriggerEl);
-  });
+  document
+    .querySelectorAll('[data-bs-toggle="modal"]')
+    .forEach((el) => new bootstrap.Modal(el));
 
   // Auto-dismiss alerts after 5 seconds
   const alerts = document.querySelectorAll('.alert');

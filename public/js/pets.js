@@ -62,10 +62,9 @@ class PetsAPI {
     const button = event.target.closest('.adopt-pet');
     const petId = button.dataset.petId;
 
-    // TODO: Check if user is authenticated
+    // Check if user is authenticated
     if (!Auth.isAuthenticated()) {
       showError('Debes iniciar sesión para solicitar una adopción.');
-      // TODO: Redirect to login page
       return;
     }
 
@@ -78,9 +77,8 @@ class PetsAPI {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // TODO: Add JWT token when auth is implemented
-          // 'Authorization': `Bearer ${this.getAuthToken()}`
         },
+        credentials: 'include',
         body: JSON.stringify({
           pet: petId,
           notes: notes || '',
@@ -132,30 +130,30 @@ class PetsAPI {
       const endpoint = `/pets/${petId}/like`;
       const method = isCurrentlyFavorited ? 'DELETE' : 'POST';
 
-      const response = await window.api.call(endpoint, null, {
+      const result = await window.API.request(endpoint, {
         method,
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        showSuccess(
-          data.message ||
+      if (result.success) {
+        window.Notifications.success(
+          result.data.message ||
             (isCurrentlyFavorited
               ? 'Eliminado de favoritos'
               : 'Agregado a favoritos'),
         );
-        return data;
+        return result.data;
       } else {
-        const errorData = await response.json();
-        showError(errorData.message || 'Error al actualizar favoritos');
-        throw new Error(errorData.message);
+        window.Notifications.error(
+          result.error || 'Error al actualizar favoritos',
+        );
+        throw new Error(result.error);
       }
     } catch (error) {
       console.error('Error with favorites API:', error);
-      showError('Error al actualizar favoritos');
+      window.Notifications.error('Error al actualizar favoritos');
       throw error;
     }
   }

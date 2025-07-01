@@ -60,7 +60,7 @@ const generateUniqueFilename = (originalName: string): string => {
 };
 
 // Multer storage configuration with null check
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument */
 let storage: any = null;
 
 if (multer && typeof multer.diskStorage === 'function') {
@@ -98,7 +98,7 @@ if (multer && typeof multer.diskStorage === 'function') {
     'Multer is not available, using null storage for testing environment',
   );
 }
-/* eslint-enable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument */
+/* eslint-enable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument */
 
 // File filter function
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument */

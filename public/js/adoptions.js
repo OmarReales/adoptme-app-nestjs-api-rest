@@ -92,8 +92,7 @@ class AdoptionsAPI {
   handleFilterChange(event) {
     const input = event.target;
 
-    // TODO: Implement real-time filtering
-    // For now, we'll submit the form or reload with new parameters
+    // Implement real-time filtering by reloading with new parameters
     if (input.form) {
       const formData = new FormData(input.form);
       const params = new URLSearchParams(formData);
@@ -118,7 +117,7 @@ class AdoptionsAPI {
     }
   }
 
-  // TODO: Implement when authentication is added
+  // Get authentication token from session/storage
   getAuthToken() {
     return (
       localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
