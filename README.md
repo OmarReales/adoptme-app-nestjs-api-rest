@@ -36,6 +36,7 @@ npm run start:dev
 
 - **Web Interface**: http://localhost:3000
 - **API Documentation**: http://localhost:3000/api/docs
+- **Health Check**: http://localhost:3000/health
 
 ---
 

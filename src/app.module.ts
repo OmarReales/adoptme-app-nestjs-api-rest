@@ -84,7 +84,7 @@ export class AppModule implements NestModule {
       .apply(HttpLoggerMiddleware)
       .exclude(
         // Exclude health check and static endpoints from logging
-        { path: 'api/health', method: RequestMethod.GET },
+        { path: 'health', method: RequestMethod.GET },
         { path: 'favicon.ico', method: RequestMethod.GET },
       )
       .forRoutes('*'); // Apply to all routes

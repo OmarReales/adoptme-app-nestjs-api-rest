@@ -120,7 +120,7 @@ describe('UsersService - Unit Tests', () => {
       } catch (error) {
         expect(error).to.be.instanceOf(ConflictException);
         expect(error.message).to.equal(
-          'User with this email or username already exists',
+          'User with this email or userName already exists',
         );
         expect(logger.warn.calledOnce).to.be.true;
       }

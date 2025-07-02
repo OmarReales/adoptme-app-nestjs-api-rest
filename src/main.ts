@@ -100,7 +100,7 @@ async function bootstrap() {
     }),
   );
 
-  // Set global prefix for API routes, excluding views
+  // Set global prefix for API routes, excluding views and health check
   app.setGlobalPrefix('api', {
     exclude: [
       '/',
@@ -110,6 +110,7 @@ async function bootstrap() {
       '/view-adoptions',
       '/view-pets/*',
       '/view-adoptions/*',
+      '/health', // Health check should be at root level
     ],
   });
 
