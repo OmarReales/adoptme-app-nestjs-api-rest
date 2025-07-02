@@ -101,10 +101,8 @@ export class UsersService {
       filter.role = options.role;
     }
 
-    // Get total count for pagination
     const total = await this.userModel.countDocuments(filter).exec();
 
-    // Get users with pagination
     const users = await this.userModel
       .find(filter)
       .select('-password')
@@ -241,7 +239,6 @@ export class UsersService {
       throw new BadRequestException('No files provided');
     }
 
-    // Create document objects
     /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument */
     const newDocuments: UserDocument[] = files.map((file) => ({
       name: file.originalname,
@@ -252,7 +249,6 @@ export class UsersService {
     }));
     /* eslint-enable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument */
 
-    // Update user with new documents
     const updatedUser = await this.userModel
       .findByIdAndUpdate(
         userId,

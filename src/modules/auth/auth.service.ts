@@ -48,7 +48,6 @@ export class AuthService {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Create user
     const user = new this.userModel({
       ...rest,
       email,
@@ -84,7 +83,6 @@ export class AuthService {
 
     this.logger.debug(`Login attempt for email: ${email}`, 'AuthService');
 
-    // Find user by email
     const user = await this.userModel.findOne({ email }).select('+password');
     if (!user) {
       this.logger.logAuthentication('failed_login', undefined, email);

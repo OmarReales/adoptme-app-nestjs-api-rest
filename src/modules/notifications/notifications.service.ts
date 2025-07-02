@@ -26,7 +26,7 @@ export class NotificationsService {
     @InjectModel(User.name) private userModel: Model<User>,
   ) {}
 
-  // Crear una notificación individual
+  // Create an individual notification
   async create(
     createNotificationDto: CreateNotificationDto,
   ): Promise<Notification> {
@@ -38,7 +38,7 @@ export class NotificationsService {
       throw new BadRequestException('Invalid recipient ID');
     }
 
-    // Verificar que el usuario existe
+    // Verify that the user exists
     const user = await this.userModel.findById(createNotificationDto.recipient);
     if (!user) {
       throw new NotFoundException('Recipient user not found');
@@ -58,7 +58,7 @@ export class NotificationsService {
     return savedNotification;
   }
 
-  // Crear notificaciones en lote (para múltiples usuarios)
+  // Create bulk notifications (for multiple users)
   async createBulk(
     recipients: string[],
     notificationData: Omit<CreateNotificationDto, 'recipient'>,
@@ -86,7 +86,7 @@ export class NotificationsService {
     return savedNotifications.length;
   }
 
-  // Obtener notificaciones del usuario con filtros
+  // Get user notifications with filters
   async findUserNotifications(
     userId: string,
     query: NotificationQueryDto,
@@ -138,7 +138,7 @@ export class NotificationsService {
     };
   }
 
-  // Marcar una notificación como leída
+  // Mark a notification as read
   async markAsRead(
     notificationId: string,
     userId: string,
@@ -165,7 +165,7 @@ export class NotificationsService {
     return notification;
   }
 
-  // Marcar múltiples notificaciones como leídas
+  // Mark multiple notifications as read
   async markMultipleAsRead(
     notificationIds: string[],
     userId: string,
@@ -187,7 +187,7 @@ export class NotificationsService {
     return result.modifiedCount;
   }
 
-  // Marcar todas las notificaciones del usuario como leídas
+  // Mark all user notifications as read
   async markAllAsRead(userId: string): Promise<number> {
     if (!Types.ObjectId.isValid(userId)) {
       throw new BadRequestException('Invalid user ID');
@@ -202,7 +202,7 @@ export class NotificationsService {
     return result.modifiedCount;
   }
 
-  // Eliminar notificación
+  // Delete notification
   async remove(notificationId: string, userId: string): Promise<void> {
     if (!Types.ObjectId.isValid(notificationId)) {
       throw new BadRequestException('Invalid notification ID');
@@ -220,7 +220,7 @@ export class NotificationsService {
     this.logger.log(`Notification ${notificationId} deleted by user ${userId}`);
   }
 
-  // Métodos helper para crear notificaciones específicas de adopción
+  // Helper methods to create adoption-specific notifications
   async notifyAdoptionRequest(
     adoptionId: string,
     petOwnerId: string,
@@ -292,7 +292,7 @@ export class NotificationsService {
     });
   }
 
-  // Limpiar notificaciones expiradas (para ejecutar periódicamente)
+  // Clean up expired notifications (to run periodically)
   async cleanupExpiredNotifications(): Promise<number> {
     const result = await this.notificationModel.deleteMany({
       expiresAt: { $lte: new Date() },
@@ -302,7 +302,7 @@ export class NotificationsService {
     return result.deletedCount;
   }
 
-  // Obtener estadísticas de notificaciones para admins
+  // Get notification statistics for admins
   async getNotificationStats(): Promise<{
     totalNotifications: number;
     unreadNotifications: number;

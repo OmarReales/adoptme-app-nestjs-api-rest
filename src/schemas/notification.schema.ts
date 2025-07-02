@@ -37,18 +37,18 @@ export class Notification extends Document {
   relatedModel?: string;
 
   @Prop()
-  actionUrl?: string; // URL para redireccionar desde la notificación
+  actionUrl?: string; // URL to redirect from notification
 
   @Prop()
   priority?: 'low' | 'medium' | 'high';
 
   @Prop()
-  expiresAt?: Date; // Para notificaciones temporales
+  expiresAt?: Date; // For temporary notifications
 }
 
 export const NotificationSchema = SchemaFactory.createForClass(Notification);
 
-// Índices para mejorar performance
+// Indexes to improve performance
 NotificationSchema.index({ recipient: 1, createdAt: -1 });
 NotificationSchema.index({ recipient: 1, isRead: 1 });
 NotificationSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });

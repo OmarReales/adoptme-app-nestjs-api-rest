@@ -100,7 +100,7 @@ export class ViewsController {
       adoptions: adoptionsData.adoptions,
       pagination,
       stats: adoptionStats,
-      pendingAdoptions: pendingAdoptions.slice(0, 5), // Mostrar solo los primeros 5
+      pendingAdoptions: pendingAdoptions.slice(0, 5), // Show only the first 5
       successStories, // Real success stories from the DB
       scripts: ['/js/adoptions.js'],
     };

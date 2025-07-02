@@ -84,7 +84,7 @@ export class AdoptionsService {
         { path: 'pet', select: 'name breed age status' },
       ]);
 
-      // Obtener información del usuario para las notificaciones
+      // Get user information for notifications
       const userDoc = await this.userModel
         .findById(userId)
         .select('username')
@@ -213,7 +213,6 @@ export class AdoptionsService {
       throw new NotFoundException('Associated pet not found');
     }
 
-    // Update adoption
     adoption.status = updateAdoptionDto.status;
     adoption.adminApprover = new Types.ObjectId(adminId);
     if (updateAdoptionDto.notes) {
@@ -229,7 +228,7 @@ export class AdoptionsService {
         adoption.user.toString(),
       );
 
-      // Notificar al usuario que su adopción fue aprobada
+      // Notify the user that their adoption was approved
       await this.notificationsService.notifyAdoptionApproved(
         adoption.user.toString(),
         pet.name,
@@ -259,7 +258,7 @@ export class AdoptionsService {
         },
       );
 
-      // Notificar a los usuarios cuyas solicitudes fueron rechazadas automáticamente
+      // Notify users whose requests were automatically rejected
       for (const rejectedAdoption of otherPendingAdoptions) {
         try {
           await this.notificationsService.notifyAdoptionRejected(
@@ -280,7 +279,7 @@ export class AdoptionsService {
     } else if (updateAdoptionDto.status === AdoptionStatus.REJECTED) {
       adoption.rejectedDate = new Date();
 
-      // Notificar al usuario que su adopción fue rechazada
+      // Notify the user that their adoption was rejected
       await this.notificationsService.notifyAdoptionRejected(
         adoption.user.toString(),
         pet.name,

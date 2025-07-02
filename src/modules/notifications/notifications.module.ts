@@ -19,6 +19,6 @@ import { AuthModule } from '../auth/auth.module';
   ],
   controllers: [NotificationsController],
   providers: [NotificationsService],
-  exports: [NotificationsService], // Para usar en otros módulos
+  exports: [NotificationsService], // For use in other modules
 })
 export class NotificationsModule {}

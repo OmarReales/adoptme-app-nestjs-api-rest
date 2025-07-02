@@ -24,7 +24,7 @@ async function bootstrap() {
     layoutsDir: join(__dirname, '..', 'views', 'layouts'),
     partialsDir: join(__dirname, '..', 'views', 'partials'),
     helpers: {
-      // Helper para formatear fechas
+      // Date formatting helper
       formatDate: (date: Date) => {
         return new Date(date).toLocaleDateString('es-ES', {
           year: 'numeric',
@@ -32,24 +32,24 @@ async function bootstrap() {
           day: 'numeric',
         });
       },
-      // Helper para truncar texto
+      // Text truncation helper
       truncate: (text: string, length: number) => {
         if (text && text.length > length) {
           return text.substring(0, length) + '...';
         }
         return text;
       },
-      // Helper para condicionales
+      // Conditional helpers
       eq: (a: any, b: any) => a === b,
       gt: (a: any, b: any) => a > b,
       lt: (a: any, b: any) => a < b,
       gte: (a: any, b: any) => a >= b,
       lte: (a: any, b: any) => a <= b,
-      // Helper para operaciones matemáticas
+      // Math operation helpers
       add: (a: number, b: number) => a + b,
       subtract: (a: number, b: number) => a - b,
       multiply: (a: number, b: number) => a * b,
-      // Helper para generar rangos
+      // Range generation helper
       range: (start: number, end: number) => {
         const result: number[] = [];
         for (let i = start; i <= end; i++) {
@@ -57,7 +57,7 @@ async function bootstrap() {
         }
         return result;
       },
-      // Helper para capitalizar
+      // Text capitalization helper
       capitalize: (text: string) => {
         if (!text) return '';
         return text.charAt(0).toUpperCase() + text.slice(1);

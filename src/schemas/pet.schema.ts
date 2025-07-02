@@ -61,7 +61,7 @@ export class Pet extends Document {
 
 export const PetSchema = SchemaFactory.createForClass(Pet);
 
-// Crear índices para mejorar el rendimiento de las consultas
+// Create indexes to improve query performance
 PetSchema.index({ name: 1 });
 PetSchema.index({ species: 1 });
 PetSchema.index({ status: 1 });
@@ -69,7 +69,7 @@ PetSchema.index({ owner: 1 });
 PetSchema.index({ createdAt: -1 });
 PetSchema.index({ likedBy: 1 });
 
-// Índices compuestos para consultas complejas
+// Compound indexes for complex queries
 PetSchema.index({ species: 1, status: 1 });
 PetSchema.index({ status: 1, createdAt: -1 });
 PetSchema.index({ owner: 1, status: 1 });
