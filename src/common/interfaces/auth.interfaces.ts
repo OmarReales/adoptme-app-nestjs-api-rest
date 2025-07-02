@@ -5,9 +5,9 @@ import { UserRole } from '../../schemas/user.schema';
  */
 export interface SessionUser {
   id: string;
-  username: string;
-  firstname: string;
-  lastname: string;
+  userName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   role: UserRole;
 }
@@ -17,7 +17,7 @@ export interface SessionUser {
  */
 export interface JwtUser {
   userId: string;
-  username: string;
+  userName: string;
   role: UserRole;
 }
 
@@ -27,11 +27,11 @@ export interface JwtUser {
  */
 export interface AuthenticatedUser {
   userId: string;
-  username: string;
+  userName: string;
   role: UserRole;
   // Optional fields that may not be available from JWT
-  firstname?: string;
-  lastname?: string;
+  firstName?: string;
+  lastName?: string;
   email?: string;
 }
 
@@ -61,7 +61,7 @@ export interface RegistrationResponse {
  */
 export interface JwtPayload {
   sub: string;
-  username: string;
+  userName: string;
   role: UserRole;
   iat?: number;
   exp?: number;
@@ -73,9 +73,9 @@ export interface JwtPayload {
 export interface AuthResult {
   user: {
     _id: string;
-    username: string;
-    firstname: string;
-    lastname: string;
+    userName: string;
+    firstName: string;
+    lastName: string;
     email: string;
     role: UserRole;
   };

@@ -10,8 +10,8 @@ export interface PopulatedPet {
 }
 
 export interface PopulatedUser {
-  firstname: string;
-  lastname: string;
+  firstName: string;
+  lastName: string;
 }
 
 export interface PopulatedAdoption {

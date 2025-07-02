@@ -5,7 +5,7 @@ import { UserRole } from '../../schemas/user.schema';
  */
 export interface JwtPayload {
   sub: string; // user ID
-  username: string;
+  userName: string;
   role: UserRole;
   iat?: number;
   exp?: number;
@@ -16,7 +16,7 @@ export interface JwtPayload {
  */
 export interface RequestUser {
   userId: string;
-  username: string;
+  userName: string;
   role: UserRole;
 }
 

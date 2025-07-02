@@ -75,11 +75,11 @@ describe('UsersService - Unit Tests', () => {
   describe('create', () => {
     it('should create a new user successfully', async () => {
       const createUserDto: CreateUserDto = {
-        username: 'testuser',
+        userName: 'testuser',
         email: 'test@example.com',
         password: 'Password123!',
-        firstname: 'Test',
-        lastname: 'User',
+        firstName: 'Test',
+        lastName: 'User',
         age: 25,
         role: UserRole.USER,
       };
@@ -99,11 +99,11 @@ describe('UsersService - Unit Tests', () => {
 
     it('should throw ConflictException if user already exists', async () => {
       const createUserDto: CreateUserDto = {
-        username: 'testuser',
+        userName: 'testuser',
         email: 'test@example.com',
         password: 'Password123!',
-        firstname: 'Test',
-        lastname: 'User',
+        firstName: 'Test',
+        lastName: 'User',
         age: 25,
         role: UserRole.USER,
       };
@@ -128,11 +128,11 @@ describe('UsersService - Unit Tests', () => {
 
     it('should handle creation errors', async () => {
       const createUserDto: CreateUserDto = {
-        username: 'testuser',
+        userName: 'testuser',
         email: 'test@example.com',
         password: 'Password123!',
-        firstname: 'Test',
-        lastname: 'User',
+        firstName: 'Test',
+        lastName: 'User',
         age: 25,
         role: UserRole.USER,
       };
@@ -160,13 +160,13 @@ describe('UsersService - Unit Tests', () => {
       const mockUsers = [
         {
           _id: new Types.ObjectId(),
-          username: 'user1',
+          userName: 'user1',
           email: 'user1@example.com',
           role: UserRole.USER,
         },
         {
           _id: new Types.ObjectId(),
-          username: 'user2',
+          userName: 'user2',
           email: 'user2@example.com',
           role: UserRole.ADMIN,
         },
@@ -196,7 +196,7 @@ describe('UsersService - Unit Tests', () => {
       const mockAdmins = [
         {
           _id: new Types.ObjectId(),
-          username: 'admin1',
+          userName: 'admin1',
           email: 'admin1@example.com',
           role: UserRole.ADMIN,
         },
@@ -224,7 +224,7 @@ describe('UsersService - Unit Tests', () => {
       const userId = new Types.ObjectId().toString();
       const mockUser = {
         _id: userId,
-        username: 'testuser',
+        userName: 'testuser',
         email: 'test@example.com',
       };
 
@@ -290,20 +290,20 @@ describe('UsersService - Unit Tests', () => {
     });
   });
 
-  describe('findByUsername', () => {
-    it('should return user by username', async () => {
-      const username = 'testuser';
-      const mockUser = { _id: new Types.ObjectId(), username };
+  describe('findByUserName', () => {
+    it('should return user by userName', async () => {
+      const userName = 'testuser';
+      const mockUser = { _id: new Types.ObjectId(), userName };
 
       const query = {
         exec: sinon.stub().resolves(mockUser),
       };
       userModel.findOne.returns(query);
 
-      const result = await service.findByUsername(username);
+      const result = await service.findByUserName(userName);
 
       expect(result).to.deep.equal(mockUser);
-      expect(userModel.findOne.calledWith({ username })).to.be.true;
+      expect(userModel.findOne.calledWith({ userName })).to.be.true;
     });
   });
 
@@ -311,18 +311,18 @@ describe('UsersService - Unit Tests', () => {
     it('should update user successfully', async () => {
       const userId = new Types.ObjectId().toString();
       const updateDto: UpdateUserDto = {
-        firstname: 'Updated',
-        lastname: 'Name',
+        firstName: 'Updated',
+        lastName: 'Name',
         age: 30,
       };
 
       const updatedUser = {
         _id: userId,
-        username: 'testuser',
+        userName: 'testuser',
         ...updateDto,
       };
 
-      userModel.findOne.resolves(null); // No existing user with same email/username
+      userModel.findOne.resolves(null); // No existing user with same email/userName
 
       const query = {
         select: sinon.stub().returnsThis(),
@@ -365,7 +365,7 @@ describe('UsersService - Unit Tests', () => {
       ).to.be.true;
     });
 
-    it('should throw ConflictException for duplicate email/username', async () => {
+    it('should throw ConflictException for duplicate email/userName', async () => {
       const userId = new Types.ObjectId().toString();
       const updateDto: UpdateUserDto = {
         email: 'existing@example.com',
@@ -383,14 +383,14 @@ describe('UsersService - Unit Tests', () => {
       } catch (error) {
         expect(error).to.be.instanceOf(ConflictException);
         expect(error.message).to.equal(
-          'User with this email or username already exists',
+          'User with this email or userName already exists',
         );
       }
     });
 
     it('should throw NotFoundException when user not found for update', async () => {
       const userId = new Types.ObjectId().toString();
-      const updateDto: UpdateUserDto = { firstname: 'Updated' };
+      const updateDto: UpdateUserDto = { firstName: 'Updated' };
 
       userModel.findOne.resolves(null);
 
@@ -413,7 +413,7 @@ describe('UsersService - Unit Tests', () => {
   describe('remove', () => {
     it('should remove user successfully', async () => {
       const userId = new Types.ObjectId().toString();
-      const deletedUser = { _id: userId, username: 'testuser' };
+      const deletedUser = { _id: userId, userName: 'testuser' };
 
       const query = {
         exec: sinon.stub().resolves(deletedUser),

@@ -26,6 +26,15 @@ export class TestDatabaseSetup {
     console.log('🧹 Database cleaned');
   }
 
+  // New method to completely reset database including indexes
+  static async resetDatabase() {
+    if (mongoose.connection.db) {
+      // Drop the entire database to remove old indexes
+      await mongoose.connection.db.dropDatabase();
+      console.log('🗑️ Database dropped completely (including indexes)');
+    }
+  }
+
   static async closeConnection() {
     await mongoose.connection.close();
     console.log('🔌 Database connection closed');

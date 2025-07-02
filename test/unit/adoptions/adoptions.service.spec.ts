@@ -156,7 +156,7 @@ describe('AdoptionsService', () => {
 
       userModel.findById.returns({
         select: sinon.stub().returns({
-          lean: sinon.stub().resolves({ username: 'testuser' }),
+          lean: sinon.stub().resolves({ userName: 'testuser' }),
         }),
       });
 
@@ -493,8 +493,8 @@ describe('AdoptionsService', () => {
           breed: 'Golden Retriever',
         },
         user: {
-          firstname: 'John',
-          lastname: 'Doe',
+          firstName: 'John',
+          lastName: 'Doe',
         },
       },
     ];

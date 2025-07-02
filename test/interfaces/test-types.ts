@@ -23,9 +23,9 @@ export interface TestPetResponse {
 export interface TestUserResponse {
   _id?: string;
   id?: string;
-  username: string;
-  firstname: string;
-  lastname: string;
+  userName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   age: number;
   role: string;

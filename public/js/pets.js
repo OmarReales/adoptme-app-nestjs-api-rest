@@ -20,14 +20,17 @@ class PetsAPI {
       button.addEventListener('click', (e) => this.handleFavorite(e));
     });
 
-    // Handle filter changes
+    // Handle filter changes with debouncing for better performance
     const searchInput = document.querySelector('#search');
     const speciesSelect = document.querySelector('#species');
     const ageSelect = document.querySelector('#age');
     const filterForm = document.querySelector('#filter-form');
 
+    // Create debounced filter function for search input
+    const debouncedFilter = debounce(() => this.handleFilterWithURL(), 300);
+
     if (searchInput) {
-      searchInput.addEventListener('input', () => this.handleFilterWithURL());
+      searchInput.addEventListener('input', debouncedFilter);
     }
 
     if (speciesSelect) {

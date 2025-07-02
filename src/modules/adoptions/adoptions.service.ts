@@ -101,7 +101,7 @@ export class AdoptionsService {
         await this.notificationsService.notifyAdoptionRequest(
           adoptionId,
           (admin._id as Types.ObjectId).toString(),
-          userDoc?.username || 'Usuario',
+          userDoc?.userName || 'Usuario',
           pet.name,
         );
       }
@@ -146,9 +146,9 @@ export class AdoptionsService {
     const [adoptions, total] = await Promise.all([
       this.adoptionModel
         .find(query)
-        .populate('user', 'username firstname lastname email')
+        .populate('user', 'userName firstName lastName email')
         .populate('pet', 'name breed age status image')
-        .populate('adminApprover', 'username firstname lastname')
+        .populate('adminApprover', 'userName firstName lastName')
         .skip(skip)
         .limit(limit)
         .sort({ createdAt: -1 })
@@ -171,9 +171,9 @@ export class AdoptionsService {
 
     const adoption = await this.adoptionModel
       .findById(id)
-      .populate('user', 'username firstname lastname email age')
+      .populate('user', 'userName firstName lastName email age')
       .populate('pet', 'name breed age status image description')
-      .populate('adminApprover', 'username firstname lastname')
+      .populate('adminApprover', 'userName firstName lastName')
       .exec();
 
     if (!adoption) {
@@ -329,7 +329,7 @@ export class AdoptionsService {
     return this.adoptionModel
       .find({ user: userId })
       .populate('pet', 'name breed age status image')
-      .populate('adminApprover', 'username firstname lastname')
+      .populate('adminApprover', 'userName firstName lastName')
       .sort({ createdAt: -1 })
       .exec();
   }
@@ -337,7 +337,7 @@ export class AdoptionsService {
   async getPendingAdoptions(): Promise<Adoption[]> {
     return this.adoptionModel
       .find({ status: AdoptionStatus.PENDING })
-      .populate('user', 'username firstname lastname email')
+      .populate('user', 'userName firstName lastName email')
       .populate('pet', 'name breed age status image')
       .sort({ createdAt: 1 }) // Oldest first
       .exec();
@@ -369,7 +369,7 @@ export class AdoptionsService {
       const approvedAdoptions = await this.adoptionModel
         .find({ status: AdoptionStatus.APPROVED })
         .populate('pet', 'name image breed')
-        .populate('user', 'firstname lastname')
+        .populate('user', 'firstName lastName')
         .sort({ approvedDate: -1 })
         .limit(limit)
         .exec();
@@ -380,7 +380,7 @@ export class AdoptionsService {
           petName: typedAdoption.pet?.name || 'Mascota',
           image: typedAdoption.pet?.image || '/images/placeholder-pet.jpg',
           familyName:
-            `${typedAdoption.user?.firstname || ''} ${typedAdoption.user?.lastname || ''}`.trim(),
+            `${typedAdoption.user?.firstName || ''} ${typedAdoption.user?.lastName || ''}`.trim(),
           story:
             typedAdoption.notes ||
             'Una historia de amor que comenzó con una adopción.',

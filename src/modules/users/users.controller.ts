@@ -64,7 +64,7 @@ export class UsersController {
       {
         userId: String(result._id),
         email: createUserDto.email,
-        username: createUserDto.username,
+        userName: createUserDto.userName,
         role: createUserDto.role,
       },
       'UsersController',
@@ -268,7 +268,7 @@ export class UsersController {
         uploadedBy: user.userId,
         filesCount: files.length,
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
-        filenames: files.map((file) => (file as any).originalname),
+        fileNames: files.map((file) => (file as any).originalName),
       },
       'UsersController',
     );

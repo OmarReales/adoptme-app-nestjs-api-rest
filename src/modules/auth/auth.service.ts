@@ -22,7 +22,7 @@ export class AuthService {
   ) {}
 
   async register(createUserDto: CreateUserDto) {
-    const { email, username, password, ...rest } = createUserDto;
+    const { email, userName, password, ...rest } = createUserDto;
 
     this.logger.debug(
       `Registration attempt for email: ${email}`,
@@ -31,7 +31,7 @@ export class AuthService {
 
     // Check if user already exists
     const existingUser = await this.userModel.findOne({
-      $or: [{ email }, { username }],
+      $or: [{ email }, { userName }],
     });
 
     if (existingUser) {
@@ -41,7 +41,7 @@ export class AuthService {
         'AuthService',
       );
       throw new ConflictException(
-        'User with this email or username already exists',
+        'User with this email or userName already exists',
       );
     }
 
@@ -52,7 +52,7 @@ export class AuthService {
     const user = new this.userModel({
       ...rest,
       email,
-      username,
+      userName,
       password: hashedPassword,
     });
 
@@ -65,7 +65,7 @@ export class AuthService {
     // Generate JWT token for hybrid authentication
     const payload = {
       sub: userId,
-      username: user.username,
+      userName: user.userName,
       role: user.role,
     };
     const accessToken = this.jwtService.sign(payload);
@@ -110,7 +110,7 @@ export class AuthService {
     const userId = String(user._id);
     const payload = {
       sub: userId,
-      username: user.username,
+      userName: user.userName,
       role: user.role,
     };
     const accessToken = this.jwtService.sign(payload);

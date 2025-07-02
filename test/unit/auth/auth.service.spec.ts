@@ -27,19 +27,19 @@ describe('AuthService', () => {
 
   const mockUser = {
     _id: '507f1f77bcf86cd799439011',
-    username: 'testuser',
+    userName: 'testuser',
     email: 'test@example.com',
     password: 'hashedPassword123',
-    firstname: 'Test',
-    lastname: 'User',
+    firstName: 'Test',
+    lastName: 'User',
     age: 25,
     role: 'user',
     toObject: sinon.stub().returns({
       _id: '507f1f77bcf86cd799439011',
-      username: 'testuser',
+      userName: 'testuser',
       email: 'test@example.com',
-      firstname: 'Test',
-      lastname: 'User',
+      firstName: 'Test',
+      lastName: 'User',
       age: 25,
       role: 'user',
     }),
@@ -47,11 +47,11 @@ describe('AuthService', () => {
   };
 
   const mockCreateUserDto: CreateUserDto = {
-    username: 'testuser',
+    userName: 'testuser',
     email: 'test@example.com',
     password: 'password123',
-    firstname: 'Test',
-    lastname: 'User',
+    firstName: 'Test',
+    lastName: 'User',
     age: 25,
   };
 
@@ -64,19 +64,19 @@ describe('AuthService', () => {
     // Mock del constructor del modelo User
     const userInstance = {
       _id: '507f1f77bcf86cd799439011',
-      username: 'testuser',
+      userName: 'testuser',
       email: 'test@example.com',
-      firstname: 'Test',
-      lastname: 'User',
+      firstName: 'Test',
+      lastName: 'User',
       age: 25,
       role: 'user',
       save: sinon.stub().resolves(mockUser),
       toObject: () => ({
         _id: '507f1f77bcf86cd799439011',
-        username: 'testuser',
+        userName: 'testuser',
         email: 'test@example.com',
-        firstname: 'Test',
-        lastname: 'User',
+        firstName: 'Test',
+        lastName: 'User',
         age: 25,
         role: 'user',
       }),
@@ -156,7 +156,7 @@ describe('AuthService', () => {
       expect(userModel.findOne).to.have.been.calledWith({
         $or: [
           { email: mockCreateUserDto.email },
-          { username: mockCreateUserDto.username },
+          { userName: mockCreateUserDto.userName },
         ],
       });
       expect(result).to.have.property('user');
@@ -319,7 +319,7 @@ describe('AuthService', () => {
       expect(jwtService.sign).to.have.been.calledOnce;
       expect(jwtService.sign).to.have.been.calledWith({
         sub: mockUser._id,
-        username: mockUser.username,
+        userName: mockUser.userName,
         role: mockUser.role,
       });
     });

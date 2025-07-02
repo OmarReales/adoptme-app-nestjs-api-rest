@@ -56,7 +56,7 @@ describe('Hybrid Authentication Integration Tests', () => {
         .expect(200);
 
       expect(profileResponse.body).to.have.property('userId');
-      expect(profileResponse.body).to.have.property('username');
+      expect(profileResponse.body).to.have.property('userName');
       expect(profileResponse.body).to.have.property('role');
       expect(profileResponse.body.role).to.equal('user');
     });
@@ -101,7 +101,7 @@ describe('Hybrid Authentication Integration Tests', () => {
       const profileResponse = await agent.get('/auth/profile').expect(200);
 
       expect(profileResponse.body).to.have.property('userId');
-      expect(profileResponse.body).to.have.property('username');
+      expect(profileResponse.body).to.have.property('userName');
       expect(profileResponse.body).to.have.property('role');
       expect(profileResponse.body.role).to.equal('user');
     });

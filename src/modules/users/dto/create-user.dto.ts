@@ -14,14 +14,14 @@ import { IsStrongPassword } from '../../../common/validators/strong-password.val
 
 export class CreateUserDto {
   @ApiProperty({
-    description: 'Unique username for the user',
+    description: 'Unique userName for the user',
     example: 'john_doe',
     minLength: 3,
   })
   @IsString()
   @IsNotEmpty()
   @MinLength(3)
-  username: string;
+  userName: string;
 
   @ApiProperty({
     description: 'First name of the user',
@@ -29,7 +29,7 @@ export class CreateUserDto {
   })
   @IsString()
   @IsNotEmpty()
-  firstname: string;
+  firstName: string;
 
   @ApiProperty({
     description: 'Last name of the user',
@@ -37,7 +37,7 @@ export class CreateUserDto {
   })
   @IsString()
   @IsNotEmpty()
-  lastname: string;
+  lastName: string;
 
   @ApiProperty({
     description: 'Email address of the user',

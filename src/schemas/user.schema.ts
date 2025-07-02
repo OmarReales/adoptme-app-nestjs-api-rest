@@ -20,14 +20,14 @@ export interface UserDocument {
   versionKey: false,
 })
 export class User extends Document {
-  @Prop({ required: true, unique: true, trim: true })
-  username: string;
+  @Prop({ required: true, unique: true, trim: true, alias: 'username' })
+  userName: string;
 
-  @Prop({ required: true, trim: true })
-  firstname: string;
+  @Prop({ required: true, trim: true, alias: 'firstname' })
+  firstName: string;
 
-  @Prop({ required: true, trim: true })
-  lastname: string;
+  @Prop({ required: true, trim: true, alias: 'lastname' })
+  lastName: string;
 
   @Prop({ required: true, unique: true, lowercase: true, trim: true })
   email: string;

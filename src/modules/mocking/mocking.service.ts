@@ -21,9 +21,9 @@ import {
 // Default test users that will always be created
 const DEFAULT_TEST_USERS = [
   {
-    username: 'testuser',
-    firstname: 'Test',
-    lastname: 'User',
+    userName: 'testuser',
+    firstName: 'Test',
+    lastName: 'User',
     email: 'user@adoptme.com',
     password: 'User123!',
     age: 25,
@@ -32,9 +32,9 @@ const DEFAULT_TEST_USERS = [
     emailVerificationToken: undefined,
   },
   {
-    username: 'testadmin',
-    firstname: 'Test',
-    lastname: 'Admin',
+    userName: 'testadmin',
+    firstName: 'Test',
+    lastName: 'Admin',
     email: 'admin@adoptme.com',
     password: 'Admin123!',
     age: 30,
@@ -260,8 +260,8 @@ export class MockingService {
         const lastName = faker.person.lastName();
 
         // Create username with some variation to avoid conflicts
-        const baseUsername = faker.internet.username();
-        const username = `${baseUsername}${faker.number.int({ min: 1, max: 999 })}`;
+        const baseUserName = faker.internet.username();
+        const userName = `${baseUserName}${faker.number.int({ min: 1, max: 999 })}`;
 
         // Generate email with different providers
         const emailProviders = [
@@ -271,7 +271,7 @@ export class MockingService {
           'hotmail.com',
         ];
         const provider = faker.helpers.arrayElement(emailProviders);
-        const email = `${username.toLowerCase()}@${provider}`;
+        const email = `${userName.toLowerCase()}@${provider}`;
 
         // Age between 18 and 80
         const age = faker.number.int({ min: 18, max: 80 });
@@ -285,9 +285,9 @@ export class MockingService {
         const isEmailVerified = faker.datatype.boolean(0.8);
 
         mockUsers.push({
-          username,
-          firstname: firstName,
-          lastname: lastName,
+          userName,
+          firstName: firstName,
+          lastName: lastName,
           email,
           password: hashedPassword,
           age,

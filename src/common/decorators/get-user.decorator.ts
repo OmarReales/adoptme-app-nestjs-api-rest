@@ -18,11 +18,11 @@ export const GetUser = createParamDecorator(
     if (request.session?.user) {
       return {
         userId: request.session.user.id,
-        username: request.session.user.username,
+        userName: request.session.user.userName,
         role: request.session.user.role as UserRole, // Convert string to enum
         email: request.session.user.email,
-        firstname: request.session.user.firstname,
-        lastname: request.session.user.lastname,
+        firstName: request.session.user.firstName,
+        lastName: request.session.user.lastName,
       };
     }
 

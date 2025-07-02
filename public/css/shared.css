@@ -50,7 +50,10 @@
   max-width: 500px;
   opacity: 0;
   transform: translateX(400px);
-  transition: all 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+  will-change: transform, opacity; /* Optimize for animations */
 }
 
 .notification.show {

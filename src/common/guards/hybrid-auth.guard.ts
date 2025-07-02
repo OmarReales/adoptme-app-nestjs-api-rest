@@ -61,10 +61,10 @@ export class HybridAuthGuard implements CanActivate {
     // Set user in request for consistency
     (request as Request & { user: AuthenticatedUser }).user = {
       userId: user.id,
-      username: user.username,
+      userName: user.userName,
       role: user.role as UserRole, // Convert string to enum
-      firstname: user.firstname,
-      lastname: user.lastname,
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: user.email,
     };
 
@@ -82,7 +82,7 @@ export class HybridAuthGuard implements CanActivate {
       const payload = this.jwtService.verify<JwtPayload>(token);
 
       // Validate payload structure
-      if (!payload.sub || !payload.username || !payload.role) {
+      if (!payload.sub || !payload.userName || !payload.role) {
         return false;
       }
 
@@ -101,7 +101,7 @@ export class HybridAuthGuard implements CanActivate {
       // Set user in request
       (request as Request & { user: AuthenticatedUser }).user = {
         userId: payload.sub,
-        username: payload.username,
+        userName: payload.userName,
         role: payload.role,
       };
 

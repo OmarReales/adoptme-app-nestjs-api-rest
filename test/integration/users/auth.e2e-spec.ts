@@ -39,9 +39,9 @@ describe('Auth Integration Tests', () => {
   describe('POST /auth/register', () => {
     it('should register a new user successfully', async () => {
       const newUser = {
-        username: TestHelper.generateRandomString(),
-        firstname: 'Test',
-        lastname: 'User',
+        userName: TestHelper.generateRandomString(),
+        firstName: 'Test',
+        lastName: 'User',
         email: TestHelper.generateRandomEmail(),
         password: 'TestPassword123!',
         age: 25,
@@ -61,9 +61,9 @@ describe('Auth Integration Tests', () => {
 
     it('should not register user with existing email', async () => {
       const existingUser = {
-        username: 'test_user',
-        firstname: 'Test',
-        lastname: 'User',
+        userName: 'test_user',
+        firstName: 'Test',
+        lastName: 'User',
         email: TEST_USER.email,
         password: 'TestPassword123!',
         age: 25,
@@ -88,9 +88,9 @@ describe('Auth Integration Tests', () => {
 
     it('should validate email format', async () => {
       const invalidUser = {
-        username: 'test_user',
-        firstname: 'Test',
-        lastname: 'User',
+        userName: 'test_user',
+        firstName: 'Test',
+        lastName: 'User',
         email: 'invalid-email',
         password: 'TestPassword123!',
         age: 25,
@@ -106,9 +106,9 @@ describe('Auth Integration Tests', () => {
 
     it('should validate password strength', async () => {
       const weakPasswordUser = {
-        username: 'test_user',
-        firstname: 'Test',
-        lastname: 'User',
+        userName: 'test_user',
+        firstName: 'Test',
+        lastName: 'User',
         email: TestHelper.generateRandomEmail(),
         password: '123',
         age: 25,
@@ -217,7 +217,7 @@ describe('Auth Integration Tests', () => {
         .expect(200);
 
       expect(profileResponse.body).to.have.property('userId');
-      expect(profileResponse.body).to.have.property('username');
+      expect(profileResponse.body).to.have.property('userName');
       expect(profileResponse.body).to.have.property('role');
     });
 
@@ -237,7 +237,7 @@ describe('Auth Integration Tests', () => {
       const profileResponse = await agent.get('/auth/profile').expect(200);
 
       expect(profileResponse.body).to.have.property('userId');
-      expect(profileResponse.body).to.have.property('username');
+      expect(profileResponse.body).to.have.property('userName');
       expect(profileResponse.body).to.have.property('role');
     });
 

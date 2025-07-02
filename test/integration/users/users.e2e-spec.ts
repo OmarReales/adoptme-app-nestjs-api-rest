@@ -147,8 +147,8 @@ describe('Users Integration Tests', () => {
   describe('PUT /users/:id', () => {
     it('should update user (admin)', async () => {
       const updateData = {
-        firstname: 'UpdatedName',
-        lastname: 'UpdatedLastname',
+        firstName: 'UpdatedName',
+        lastName: 'UpdatedLastname',
         age: 30,
       };
 
@@ -159,14 +159,14 @@ describe('Users Integration Tests', () => {
         .expect(200);
 
       TestHelper.expectUserStructure(response.body);
-      expect(response.body.firstname).to.equal(updateData.firstname);
-      expect(response.body.lastname).to.equal(updateData.lastname);
+      expect(response.body.firstName).to.equal(updateData.firstName);
+      expect(response.body.lastName).to.equal(updateData.lastName);
       expect(response.body.age).to.equal(updateData.age);
     });
 
     it('should allow users to update their own profile', async () => {
       const updateData = {
-        firstname: 'SelfUpdated',
+        firstName: 'SelfUpdated',
         age: 26,
       };
 
@@ -176,12 +176,12 @@ describe('Users Integration Tests', () => {
         .send(updateData)
         .expect(200);
 
-      expect(response.body.firstname).to.equal(updateData.firstname);
+      expect(response.body.firstName).to.equal(updateData.firstName);
       expect(response.body.age).to.equal(updateData.age);
     });
 
     it('should deny users updating other profiles', async () => {
-      const updateData = { firstname: 'Hacker' };
+      const updateData = { firstName: 'Hacker' };
 
       const response = await request(app.getHttpServer())
         .put(`/users/${TEST_USER_2.id}`)
@@ -282,8 +282,8 @@ describe('Users Integration Tests', () => {
   describe('PUT /users/profile/me', () => {
     it('should update current user profile', async () => {
       const updateData = {
-        firstname: 'UpdatedByMe',
-        lastname: 'UpdatedLastname',
+        firstName: 'UpdatedByMe',
+        lastName: 'UpdatedLastname',
         age: 27,
       };
 
@@ -294,8 +294,8 @@ describe('Users Integration Tests', () => {
         .expect(200);
 
       TestHelper.expectUserStructure(response.body);
-      expect(response.body.firstname).to.equal(updateData.firstname);
-      expect(response.body.lastname).to.equal(updateData.lastname);
+      expect(response.body.firstName).to.equal(updateData.firstName);
+      expect(response.body.lastName).to.equal(updateData.lastName);
       expect(response.body.age).to.equal(updateData.age);
     });
 
@@ -316,7 +316,7 @@ describe('Users Integration Tests', () => {
     it('should deny access without token', async () => {
       const response = await request(app.getHttpServer())
         .put('/users/profile/me')
-        .send({ firstname: 'Test' })
+        .send({ firstName: 'Test' })
         .expect(401);
 
       TestHelper.expectUnauthorized(response);

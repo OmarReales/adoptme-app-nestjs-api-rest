@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 
 export interface JwtPayload {
   sub: string;
-  username: string;
+  userName: string;
   role: string;
   iat?: number;
   exp?: number;
@@ -13,7 +13,7 @@ export interface JwtPayload {
 
 export interface ValidatedUser {
   userId: string;
-  username: string;
+  userName: string;
   role: string;
 }
 
@@ -32,7 +32,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   validate(payload: JwtPayload): ValidatedUser {
     // Validate payload structure
-    if (!payload.sub || !payload.username || !payload.role) {
+    if (!payload.sub || !payload.userName || !payload.role) {
       throw new UnauthorizedException('Invalid token payload');
     }
 
@@ -50,7 +50,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     return {
       userId: payload.sub,
-      username: payload.username,
+      userName: payload.userName,
       role: payload.role,
     };
   }

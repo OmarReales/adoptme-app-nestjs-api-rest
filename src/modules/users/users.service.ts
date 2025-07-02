@@ -33,17 +33,17 @@ export class UsersService {
       const existingUser = await this.userModel.findOne({
         $or: [
           { email: createUserDto.email },
-          { username: createUserDto.username },
+          { userName: createUserDto.userName },
         ],
       });
 
       if (existingUser) {
         this.logger.warn(
-          `User creation failed: email or username already exists for ${createUserDto.email}`,
+          `User creation failed: email or userName already exists for ${createUserDto.email}`,
           'UsersService',
         );
         throw new ConflictException(
-          'User with this email or username already exists',
+          'User with this email or userName already exists',
         );
       }
 
@@ -143,41 +143,41 @@ export class UsersService {
     return this.userModel.findOne({ email }).exec();
   }
 
-  async findByUsername(username: string): Promise<User | null> {
-    this.logger.debug(`Finding user by username: ${username}`, 'UsersService');
-    return this.userModel.findOne({ username }).exec();
+  async findByUserName(userName: string): Promise<User | null> {
+    this.logger.debug(`Finding user by userName: ${userName}`, 'UsersService');
+    return this.userModel.findOne({ userName }).exec();
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     this.logger.info(`Updating user: ${id}`, 'UsersService');
-    const { password, email, username, ...rest } = updateUserDto;
+    const { password, email, userName, ...rest } = updateUserDto;
 
-    // Check if email or username already exists (excluding the current user)
-    if (email || username) {
+    // Check if email or userName already exists (excluding the current user)
+    if (email || userName) {
       const existingUser = await this.userModel.findOne({
         _id: { $ne: id },
         $or: [
           ...(email ? [{ email }] : []),
-          ...(username ? [{ username }] : []),
+          ...(userName ? [{ userName }] : []),
         ],
       });
 
       if (existingUser) {
         this.logger.warn(
-          `Update failed: email or username already exists for user ${id}`,
+          `Update failed: email or userName already exists for user ${id}`,
           'UsersService',
         );
         throw new ConflictException(
-          'User with this email or username already exists',
+          'User with this email or userName already exists',
         );
       }
     }
 
     const updateData: Partial<User> = { ...rest };
 
-    // Add email and username to update data if provided
+    // Add email and userName to update data if provided
     if (email) updateData.email = email;
-    if (username) updateData.username = username;
+    if (userName) updateData.userName = userName;
 
     // Hash password if provided
     if (password) {

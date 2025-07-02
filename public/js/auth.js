@@ -47,12 +47,22 @@ function updateUIForAuthenticatedUser(user) {
     const userFullName = document.querySelector('.user-full-name');
     const userRoleBadge = document.querySelector('.user-role-badge');
 
-    if (userNameDisplay)
-      userNameDisplay.textContent = user.firstName || user.username;
-    if (userFullName)
-      userFullName.textContent = `${user.firstName} ${user.lastName}`;
+    if (userNameDisplay) {
+      // Show username or first name if available
+      userNameDisplay.textContent =
+        user.firstName || user.username || 'Usuario';
+    }
+
+    if (userFullName) {
+      // Construct full name safely
+      const firstName = user.firstName || '';
+      const lastName = user.lastName || '';
+      const fullName = `${firstName} ${lastName}`.trim();
+      userFullName.textContent = fullName || user.username || 'Usuario';
+    }
+
     if (userRoleBadge) {
-      userRoleBadge.textContent = user.role;
+      userRoleBadge.textContent = user.role || 'user';
       userRoleBadge.className = `text-muted user-role-badge badge bg-${user.role === 'admin' ? 'danger' : 'primary'}`;
     }
   }
@@ -62,11 +72,12 @@ function updateUIForAuthenticatedUser(user) {
     .querySelectorAll('.protected')
     .forEach((el) => (el.style.display = 'block'));
 
-  // Show admin elements if user is admin
+  // Handle admin elements based on user role
+  const adminElements = document.querySelectorAll('.admin-only');
   if (user.role === 'admin') {
-    document
-      .querySelectorAll('.admin-only')
-      .forEach((el) => (el.style.display = 'block'));
+    adminElements.forEach((el) => (el.style.display = 'block'));
+  } else {
+    adminElements.forEach((el) => (el.style.display = 'none'));
   }
 }
 
@@ -141,9 +152,9 @@ function bindRegisterForm() {
 
     const formData = new FormData(this);
     const userData = {
-      username: formData.get('username'),
-      firstname: formData.get('firstName'), // Backend expects 'firstname'
-      lastname: formData.get('lastName'), // Backend expects 'lastname'
+      userName: formData.get('userName'),
+      firstName: formData.get('firstName'), // Backend expects 'firstname'
+      lastName: formData.get('lastName'), // Backend expects 'lastname'
       email: formData.get('email'),
       password: formData.get('password'),
       age: parseInt(formData.get('age')),

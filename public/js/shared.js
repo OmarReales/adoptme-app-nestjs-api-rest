@@ -1,5 +1,18 @@
 // ===== SHARED UTILITIES FOR ADOPTME APP =====
 
+// ===== UTILITY FUNCTIONS =====
+const debounce = (func, wait) => {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+};
+
 // ===== NOTIFICATION SYSTEM =====
 class NotificationManager {
   constructor() {
@@ -37,18 +50,30 @@ class NotificationManager {
   createNotification(message, type, duration) {
     const notification = document.createElement('div');
     notification.className = `notification alert alert-${type} alert-dismissible`;
-    notification.innerHTML = `
-      <div class="d-flex align-items-center">
-        <span class="flex-grow-1">${message}</span>
-        <button type="button" class="close-btn" aria-label="Close">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-    `;
+
+    // Create elements safely to prevent XSS
+    const container = document.createElement('div');
+    container.className = 'd-flex align-items-center';
+
+    const messageSpan = document.createElement('span');
+    messageSpan.className = 'flex-grow-1';
+    messageSpan.textContent = message; // Safe text content instead of innerHTML
+
+    const closeButton = document.createElement('button');
+    closeButton.type = 'button';
+    closeButton.className = 'close-btn';
+    closeButton.setAttribute('aria-label', 'Close');
+
+    const closeIcon = document.createElement('i');
+    closeIcon.className = 'fas fa-times';
+    closeButton.appendChild(closeIcon);
+
+    container.appendChild(messageSpan);
+    container.appendChild(closeButton);
+    notification.appendChild(container);
 
     // Add close functionality
-    const closeBtn = notification.querySelector('.close-btn');
-    closeBtn.addEventListener('click', () =>
+    closeButton.addEventListener('click', () =>
       this.removeNotification(notification),
     );
 
@@ -70,20 +95,22 @@ class NotificationManager {
     document.body.appendChild(notification);
     this.notifications.push(notification);
 
-    // Trigger animation
-    setTimeout(() => {
-      notification.classList.add('show');
-    }, 10);
-
-    // Position notifications
+    // Set initial position and trigger animation
     this.repositionNotifications();
+
+    // Use requestAnimationFrame for smoother animations
+    requestAnimationFrame(() => {
+      notification.classList.add('show');
+    });
   }
 
   removeNotification(notification) {
     if (!notification.parentElement) return;
 
     notification.classList.remove('show');
-    setTimeout(() => {
+
+    // Use transition end event for better performance
+    const handleTransitionEnd = () => {
       if (notification.parentElement) {
         notification.remove();
         this.notifications = this.notifications.filter(
@@ -91,13 +118,20 @@ class NotificationManager {
         );
         this.repositionNotifications();
       }
-    }, 300);
+      notification.removeEventListener('transitionend', handleTransitionEnd);
+    };
+
+    notification.addEventListener('transitionend', handleTransitionEnd);
+
+    // Fallback in case transition doesn't fire
+    setTimeout(handleTransitionEnd, 350);
   }
 
   repositionNotifications() {
+    // Use transform instead of changing top property for better performance
     this.notifications.forEach((notification, index) => {
       if (notification.parentElement) {
-        notification.style.top = `${20 + index * 80}px`;
+        notification.style.transform = `translateY(${index * 80}px) translateX(${notification.classList.contains('show') ? '0' : '400px'})`;
       }
     });
   }
@@ -128,16 +162,52 @@ class APIHelper {
 
     try {
       const response = await fetch(`${this.baseURL}${endpoint}`, finalOptions);
-      const data = await response.json();
+
+      // Handle non-JSON responses
+      let data;
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        data = { message: await response.text() };
+      }
 
       if (!response.ok) {
-        throw new Error(data.message || `HTTP Error: ${response.status}`);
+        // Enhanced error handling with status codes
+        const errorMessage =
+          data.message || this.getStatusMessage(response.status);
+        throw new Error(errorMessage);
       }
 
       return { success: true, data, response };
     } catch (error) {
-      return { success: false, error: error.message, originalError: error };
+      // Enhanced error logging and handling
+      console.error(`API Error [${endpoint}]:`, error);
+      return {
+        success: false,
+        error: error.message || 'Network error occurred',
+        originalError: error,
+        endpoint,
+      };
     }
+  }
+
+  // Helper method to get user-friendly status messages
+  getStatusMessage(status) {
+    const statusMessages = {
+      400: 'Solicitud inválida',
+      401: 'No autorizado - inicia sesión',
+      403: 'Acceso denegado',
+      404: 'Recurso no encontrado',
+      409: 'Conflicto con el estado actual',
+      422: 'Datos de entrada inválidos',
+      429: 'Demasiadas solicitudes - intenta más tarde',
+      500: 'Error interno del servidor',
+      502: 'Servidor no disponible',
+      503: 'Servicio no disponible',
+    };
+
+    return statusMessages[status] || `Error HTTP: ${status}`;
   }
 
   // Simplified call method that directly returns data or throws on error
@@ -337,6 +407,7 @@ window.api = window.API; // Alias for convenience
 window.Auth = new AuthHelper();
 window.Loading = LoadingHelper;
 window.Form = FormHelper;
+window.debounce = debounce; // Make debounce available globally
 
 // ===== INITIALIZE ON DOM LOAD =====
 document.addEventListener('DOMContentLoaded', function () {

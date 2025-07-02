@@ -23,11 +23,11 @@ export interface MockPet {
  * Mock user data structure for generation
  */
 export interface MockUser {
-  username: string;
+  userName: string;
   email: string;
   password: string;
-  firstname: string;
-  lastname: string;
+  firstName: string;
+  lastName: string;
   age: number;
   role: UserRole;
   phone?: string;

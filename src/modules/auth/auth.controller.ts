@@ -59,9 +59,9 @@ export class AuthController {
     // Create session user object
     const sessionUser: SessionUser = {
       id: String(result.user._id),
-      username: result.user.username,
-      firstname: result.user.firstname,
-      lastname: result.user.lastname,
+      userName: result.user.userName,
+      firstName: result.user.firstName,
+      lastName: result.user.lastName,
       email: result.user.email,
       role: result.user.role,
     };
@@ -74,7 +74,7 @@ export class AuthController {
       {
         userId: String(result.user._id),
         email: createUserDto.email,
-        username: createUserDto.username,
+        userName: createUserDto.userName,
         role: createUserDto.role,
         clientIp,
         userAgent,
@@ -117,9 +117,9 @@ export class AuthController {
     // Create session user object
     const sessionUser: SessionUser = {
       id: String(result.user._id),
-      username: result.user.username,
-      firstname: result.user.firstname,
-      lastname: result.user.lastname,
+      userName: result.user.userName,
+      firstName: result.user.firstName,
+      lastName: result.user.lastName,
       email: result.user.email,
       role: result.user.role,
     };
@@ -132,7 +132,7 @@ export class AuthController {
       {
         userId: String(result.user._id),
         email: loginDto.email,
-        username: result.user.username,
+        userName: result.user.userName,
         role: result.user.role,
         clientIp,
         userAgent,
@@ -217,7 +217,7 @@ export class AuthController {
 
     return {
       message: 'Hybrid authentication successful!',
-      authMethod: user.firstname ? 'Session' : 'JWT', // Session has firstname, JWT doesn't
+      authMethod: user.firstName ? 'Session' : 'JWT', // Session has firstName, JWT doesn't
       user,
     };
   }

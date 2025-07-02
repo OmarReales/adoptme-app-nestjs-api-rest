@@ -64,9 +64,9 @@ export class TestHelper {
     // Accept both _id and id properties for MongoDB documents
     const hasId = '_id' in user || 'id' in user;
     expect(hasId).to.equal(true);
-    expect(user).to.have.property('username');
-    expect(user).to.have.property('firstname');
-    expect(user).to.have.property('lastname');
+    expect(user).to.have.property('userName');
+    expect(user).to.have.property('firstName');
+    expect(user).to.have.property('lastName');
     expect(user).to.have.property('email');
     expect(user).to.have.property('role');
     expect(user).to.not.have.property('password'); // Password should not be returned
