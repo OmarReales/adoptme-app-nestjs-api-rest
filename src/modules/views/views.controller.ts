@@ -1,32 +1,17 @@
-import { Controller, Get, Render, Query } from '@nestjs/common';
-import { StatsService } from '../stats/stats.service';
-import { PetsService } from '../pets/pets.service';
-import { AdoptionsService } from '../adoptions/adoptions.service';
+import { Controller, Get, Render, Query, UseGuards } from '@nestjs/common';
+import { ViewsService } from './views.service';
+import { HybridAuthGuard } from '../../common/guards/hybrid-auth.guard';
+import { GetUser } from '../../common/decorators/get-user.decorator';
+import { AuthenticatedUser } from '../../common/interfaces/auth.interfaces';
 
 @Controller()
 export class ViewsController {
-  constructor(
-    private readonly statsService: StatsService,
-    private readonly petsService: PetsService,
-    private readonly adoptionsService: AdoptionsService,
-  ) {}
+  constructor(private readonly viewsService: ViewsService) {}
 
   @Get('/')
   @Render('index')
   async home() {
-    const stats = await this.statsService.getAppStats();
-
-    return {
-      title: 'Inicio',
-      currentPage: 'home',
-      stats: {
-        totalPets: stats.totalPets,
-        totalAdoptions: stats.approvedAdoptions,
-        totalUsers: stats.totalUsers,
-        totalNotifications: stats.totalNotifications,
-      },
-      scripts: ['/js/home.js'],
-    };
+    return this.viewsService.prepareHomeData();
   }
 
   @Get('/view-pets')
@@ -38,91 +23,40 @@ export class ViewsController {
     @Query('name') name?: string,
     @Query('ageRange') ageRange?: string,
   ) {
-    const pageNumber = parseInt(page, 10);
-    const limitNumber = parseInt(limit, 10);
-
-    const petsData = await this.petsService.findAll(
-      pageNumber,
-      limitNumber,
-      undefined, // status
-      undefined, // breed
+    return this.viewsService.preparePetsData(
+      page,
+      limit,
       species,
       name,
       ageRange,
     );
-    const stats = await this.statsService.getAppStats();
-
-    return {
-      title: 'Mascotas',
-      currentPage: 'pets',
-      pets: petsData.data,
-      pagination: petsData.pagination,
-      stats: {
-        availablePets: stats.availablePets,
-        adoptedPets: stats.adoptedPets,
-        totalPets: stats.totalPets,
-      },
-      scripts: ['/js/pets.js'],
-    };
   }
 
   @Get('/view-adoptions')
   @Render('adoptions/index')
   async adoptions(@Query('page') page = '1', @Query('limit') limit = '10') {
-    const pageNumber = parseInt(page, 10);
-    const limitNumber = parseInt(limit, 10);
-
-    const adoptionsData = await this.adoptionsService.findAll(
-      pageNumber,
-      limitNumber,
-    );
-    const adoptionStats = await this.statsService.getAdoptionStats();
-    const pendingAdoptions = await this.adoptionsService.getPendingAdoptions();
-
-    // Create pagination object compatible with the view
-    const totalPages = Math.ceil(adoptionsData.total / limitNumber);
-    const pagination = {
-      page: pageNumber,
-      limit: limitNumber,
-      total: adoptionsData.total,
-      totalPages,
-      hasNext: pageNumber < totalPages,
-      hasPrev: pageNumber > 1,
-      nextPage: pageNumber + 1,
-      prevPage: pageNumber - 1,
-    };
-
-    const successStories = await this.adoptionsService.getSuccessStories(3);
-
-    return {
-      title: 'Adopciones',
-      currentPage: 'adoptions',
-      adoptions: adoptionsData.adoptions,
-      pagination,
-      stats: adoptionStats,
-      pendingAdoptions: pendingAdoptions.slice(0, 5), // Show only the first 5
-      successStories, // Real success stories from the DB
-      scripts: ['/js/adoptions.js'],
-    };
+    return this.viewsService.prepareAdoptionsData(page, limit);
   }
 
   @Get('/login')
   @Render('auth/login')
   login() {
-    return {
-      title: 'Iniciar Sesión',
-      currentPage: 'login',
-      scripts: ['/js/auth.js'],
-    };
+    return this.viewsService.prepareLoginData();
   }
 
   @Get('/register')
   @Render('auth/register')
   register() {
-    return {
-      title: 'Registrarse',
-      currentPage: 'register',
-      scripts: ['/js/auth.js'],
-    };
+    return this.viewsService.prepareRegisterData();
+  }
+
+  @Get('/profile')
+  @UseGuards(HybridAuthGuard)
+  @Render('profile/index')
+  async profile(@GetUser() user: AuthenticatedUser | null) {
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+    return this.viewsService.prepareProfileData(user);
   }
 }

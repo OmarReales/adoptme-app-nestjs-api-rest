@@ -94,7 +94,7 @@ export class UsersController {
     return result;
   }
 
-  @Get('profile/me')
+  @Get('profile')
   @ApiOperation({ summary: 'Get current user profile' })
   @ApiResponse({ status: 200, description: 'Profile retrieved successfully' })
   getProfile(@GetUser() user: AuthenticatedUser | null) {
@@ -109,7 +109,7 @@ export class UsersController {
     return this.usersService.findOne(user.userId);
   }
 
-  @Patch('profile/me')
+  @Patch('profile')
   @ApiOperation({ summary: 'Update current user profile' })
   @ApiResponse({ status: 200, description: 'Profile updated successfully' })
   updateCurrentUserProfile(
@@ -121,7 +121,7 @@ export class UsersController {
     return this.usersService.update(userId, updateUserDto);
   }
 
-  @Put('profile/me')
+  @Put('profile')
   @ApiOperation({ summary: 'Update current user profile (PUT)' })
   @ApiResponse({ status: 200, description: 'Profile updated successfully' })
   updateCurrentUserProfilePut(

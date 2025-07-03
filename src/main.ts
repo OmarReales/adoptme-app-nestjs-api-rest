@@ -106,6 +106,7 @@ async function bootstrap() {
       '/',
       '/login',
       '/register',
+      '/profile',
       '/view-pets',
       '/view-adoptions',
       '/view-pets/*',

@@ -257,10 +257,10 @@ describe('Users Integration Tests', () => {
     });
   });
 
-  describe('GET /users/profile/me', () => {
+  describe('GET /users/profile', () => {
     it('should get current user profile', async () => {
       const response = await request(app.getHttpServer())
-        .get('/users/profile/me')
+        .get('/users/profile')
         .set('Authorization', `Bearer ${userToken}`)
         .expect(200);
 
@@ -272,14 +272,14 @@ describe('Users Integration Tests', () => {
 
     it('should deny access without token', async () => {
       const response = await request(app.getHttpServer())
-        .get('/users/profile/me')
+        .get('/users/profile')
         .expect(401);
 
       TestHelper.expectUnauthorized(response);
     });
   });
 
-  describe('PUT /users/profile/me', () => {
+  describe('PUT /users/profile', () => {
     it('should update current user profile', async () => {
       const updateData = {
         firstName: 'UpdatedByMe',
@@ -288,7 +288,7 @@ describe('Users Integration Tests', () => {
       };
 
       const response = await request(app.getHttpServer())
-        .put('/users/profile/me')
+        .put('/users/profile')
         .set('Authorization', `Bearer ${userToken}`)
         .send(updateData)
         .expect(200);
@@ -305,7 +305,7 @@ describe('Users Integration Tests', () => {
       };
 
       const response = await request(app.getHttpServer())
-        .put('/users/profile/me')
+        .put('/users/profile')
         .set('Authorization', `Bearer ${userToken}`)
         .send(invalidData)
         .expect(400);
@@ -315,7 +315,7 @@ describe('Users Integration Tests', () => {
 
     it('should deny access without token', async () => {
       const response = await request(app.getHttpServer())
-        .put('/users/profile/me')
+        .put('/users/profile')
         .send({ firstName: 'Test' })
         .expect(401);
 
@@ -327,7 +327,7 @@ describe('Users Integration Tests', () => {
     it('should upload documents to own profile', async () => {
       // First get user ID from token
       const userProfileResponse = await request(app.getHttpServer())
-        .get('/users/profile/me')
+        .get('/users/profile')
         .set('Authorization', `Bearer ${userToken}`)
         .expect(200);
 
@@ -365,7 +365,7 @@ describe('Users Integration Tests', () => {
     it('should allow admin to upload documents to any user', async () => {
       // Get a regular user's ID
       const userProfileResponse = await request(app.getHttpServer())
-        .get('/users/profile/me')
+        .get('/users/profile')
         .set('Authorization', `Bearer ${userToken}`)
         .expect(200);
 
@@ -396,7 +396,7 @@ describe('Users Integration Tests', () => {
     it('should reject upload to another user profile (non-admin)', async () => {
       // Get admin user ID
       const adminProfileResponse = await request(app.getHttpServer())
-        .get('/users/profile/me')
+        .get('/users/profile')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200);
 
@@ -421,7 +421,7 @@ describe('Users Integration Tests', () => {
 
     it('should reject upload without files', async () => {
       const userProfileResponse = await request(app.getHttpServer())
-        .get('/users/profile/me')
+        .get('/users/profile')
         .set('Authorization', `Bearer ${userToken}`)
         .expect(200);
 
@@ -459,7 +459,7 @@ describe('Users Integration Tests', () => {
 
     it('should handle multiple file uploads', async () => {
       const userProfileResponse = await request(app.getHttpServer())
-        .get('/users/profile/me')
+        .get('/users/profile')
         .set('Authorization', `Bearer ${userToken}`)
         .expect(200);
 

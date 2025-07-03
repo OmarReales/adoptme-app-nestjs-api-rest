@@ -209,7 +209,7 @@ describe('Hybrid Authentication Integration Tests', () => {
         const token = loginResponse.body.access_token as string;
 
         await request(app.getHttpServer())
-          .get('/users/profile/me')
+          .get('/users/profile')
           .set('Authorization', `Bearer ${token}`)
           .expect(200);
       });
@@ -225,7 +225,7 @@ describe('Hybrid Authentication Integration Tests', () => {
           })
           .expect(200);
 
-        await agent.get('/users/profile/me').expect(200);
+        await agent.get('/users/profile').expect(200);
       });
     });
   });
