@@ -1,23 +1,35 @@
 <!-- Register Page -->
-<section class='auth-section'>
+<section
+  style='min-height: 100vh; display: flex; align-items: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem 0;'
+>
   <div class='container'>
     <div class='row justify-content-center'>
       <div class='col-md-8 col-lg-6'>
-        <div class='auth-card'>
-          <div class='auth-header text-center mb-4'>
-            <div class='auth-logo mb-3'>
-              <i class='fas fa-paw fa-3x text-primary'></i>
+        <div
+          style='background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 20px; padding: 2.5rem; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);'
+        >
+          <div class='text-center mb-4'>
+            <div class='mb-3'>
+              <i
+                class='fas fa-paw'
+                style='font-size: 3rem; background: linear-gradient(45deg, #667eea, #764ba2); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;'
+              ></i>
             </div>
-            <h2 class='fw-bold'>Crear Cuenta</h2>
-            <p class='text-muted'>Únete a la comunidad AdoptMe</p>
+            <h2
+              style='font-weight: 700; color: #1e293b; margin-bottom: 0.5rem;'
+            >Crear Cuenta</h2>
+            <p style='color: #64748b;'>Únete a la comunidad AdoptMe</p>
           </div>
 
           <!-- Register Form -->
-          <form id='registerForm' class='auth-form'>
+          <form id='registerForm'>
             <div class='row'>
               <div class='col-md-6 mb-3'>
-                <label for='firstName' class='form-label'>
-                  <i class='fas fa-user me-2'></i>Nombre
+                <label
+                  for='firstName'
+                  style='display: flex; align-items: center; gap: 0.5rem; color: #374151; font-weight: 500; margin-bottom: 0.5rem;'
+                >
+                  <i class='fas fa-user' style='color: #667eea;'></i>Nombre
                 </label>
                 <input
                   type='text'
@@ -26,13 +38,17 @@
                   name='firstName'
                   required
                   placeholder='Tu nombre'
+                  style='border-radius: 12px; border: 2px solid #e9ecef; padding: 12px 16px; transition: all 0.3s ease; background: white;'
                 />
                 <div class='invalid-feedback'></div>
               </div>
 
               <div class='col-md-6 mb-3'>
-                <label for='lastName' class='form-label'>
-                  <i class='fas fa-user me-2'></i>Apellido
+                <label
+                  for='lastName'
+                  style='display: flex; align-items: center; gap: 0.5rem; color: #374151; font-weight: 500; margin-bottom: 0.5rem;'
+                >
+                  <i class='fas fa-user' style='color: #667eea;'></i>Apellido
                 </label>
                 <input
                   type='text'
@@ -41,14 +57,19 @@
                   name='lastName'
                   required
                   placeholder='Tu apellido'
+                  style='border-radius: 12px; border: 2px solid #e9ecef; padding: 12px 16px; transition: all 0.3s ease; background: white;'
                 />
                 <div class='invalid-feedback'></div>
               </div>
             </div>
 
             <div class='mb-3'>
-              <label for='username' class='form-label'>
-                <i class='fas fa-at me-2'></i>Nombre de Usuario
+              <label
+                for='username'
+                style='display: flex; align-items: center; gap: 0.5rem; color: #374151; font-weight: 500; margin-bottom: 0.5rem;'
+              >
+                <i class='fas fa-at' style='color: #667eea;'></i>Nombre de
+                Usuario
               </label>
               <input
                 type='text'
@@ -58,16 +79,21 @@
                 required
                 minlength='3'
                 placeholder='nombreusuario'
+                style='border-radius: 12px; border: 2px solid #e9ecef; padding: 12px 16px; transition: all 0.3s ease; background: white;'
               />
               <div class='invalid-feedback'></div>
-              <small class='form-text text-muted'>
+              <small style='color: #64748b; font-size: 0.875rem;'>
                 Mínimo 3 caracteres, solo letras, números y guiones bajos
               </small>
             </div>
 
             <div class='mb-3'>
-              <label for='email' class='form-label'>
-                <i class='fas fa-envelope me-2'></i>Correo Electrónico
+              <label
+                for='email'
+                style='display: flex; align-items: center; gap: 0.5rem; color: #374151; font-weight: 500; margin-bottom: 0.5rem;'
+              >
+                <i class='fas fa-envelope' style='color: #667eea;'></i>Correo
+                Electrónico
               </label>
               <input
                 type='email'
@@ -76,13 +102,17 @@
                 name='email'
                 required
                 placeholder='tu@email.com'
+                style='border-radius: 12px; border: 2px solid #e9ecef; padding: 12px 16px; transition: all 0.3s ease; background: white;'
               />
               <div class='invalid-feedback'></div>
             </div>
 
             <div class='mb-3'>
-              <label for='age' class='form-label'>
-                <i class='fas fa-birthday-cake me-2'></i>Edad
+              <label
+                for='age'
+                style='display: flex; align-items: center; gap: 0.5rem; color: #374151; font-weight: 500; margin-bottom: 0.5rem;'
+              >
+                <i class='fas fa-birthday-cake' style='color: #667eea;'></i>Edad
               </label>
               <input
                 type='number'
@@ -93,18 +123,22 @@
                 min='18'
                 max='120'
                 placeholder='25'
+                style='border-radius: 12px; border: 2px solid #e9ecef; padding: 12px 16px; transition: all 0.3s ease; background: white;'
               />
               <div class='invalid-feedback'></div>
-              <small class='form-text text-muted'>
+              <small style='color: #64748b; font-size: 0.875rem;'>
                 Debes ser mayor de 18 años para adoptar
               </small>
             </div>
 
             <div class='mb-3'>
-              <label for='password' class='form-label'>
-                <i class='fas fa-lock me-2'></i>Contraseña
+              <label
+                for='password'
+                style='display: flex; align-items: center; gap: 0.5rem; color: #374151; font-weight: 500; margin-bottom: 0.5rem;'
+              >
+                <i class='fas fa-lock' style='color: #667eea;'></i>Contraseña
               </label>
-              <div class='password-input-wrapper'>
+              <div style='position: relative;'>
                 <input
                   type='password'
                   class='form-control'
@@ -113,21 +147,26 @@
                   required
                   minlength='8'
                   placeholder='Contraseña segura'
+                  style='border-radius: 12px; border: 2px solid #e9ecef; padding: 12px 16px; transition: all 0.3s ease; background: white;'
                 />
                 <button
                   type='button'
-                  class='password-toggle'
                   data-target='password'
+                  style='position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #6c757d; cursor: pointer; padding: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;'
                 >
                   <i class='fas fa-eye'></i>
                 </button>
               </div>
               <div class='invalid-feedback'></div>
-              <div class='password-strength mt-2'>
-                <div class='strength-bar'>
-                  <div class='strength-fill'></div>
+              <div style='margin-top: 0.5rem;'>
+                <div
+                  style='height: 4px; background: #e9ecef; border-radius: 2px; overflow: hidden;'
+                >
+                  <div
+                    style='height: 100%; background: #10b981; width: 0%; transition: width 0.3s ease;'
+                  ></div>
                 </div>
-                <small class='strength-text text-muted'>
+                <small style='color: #64748b; font-size: 0.875rem;'>
                   Mínimo 8 caracteres, incluye mayúsculas, minúsculas, números y
                   símbolos
                 </small>
@@ -135,10 +174,14 @@
             </div>
 
             <div class='mb-3'>
-              <label for='confirmPassword' class='form-label'>
-                <i class='fas fa-lock me-2'></i>Confirmar Contraseña
+              <label
+                for='confirmPassword'
+                style='display: flex; align-items: center; gap: 0.5rem; color: #374151; font-weight: 500; margin-bottom: 0.5rem;'
+              >
+                <i class='fas fa-lock' style='color: #667eea;'></i>Confirmar
+                Contraseña
               </label>
-              <div class='password-input-wrapper'>
+              <div style='position: relative;'>
                 <input
                   type='password'
                   class='form-control'
@@ -147,11 +190,12 @@
                   required
                   minlength='8'
                   placeholder='Repite tu contraseña'
+                  style='border-radius: 12px; border: 2px solid #e9ecef; padding: 12px 16px; transition: all 0.3s ease; background: white;'
                 />
                 <button
                   type='button'
-                  class='password-toggle'
                   data-target='confirmPassword'
+                  style='position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #6c757d; cursor: pointer; padding: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;'
                 >
                   <i class='fas fa-eye'></i>
                 </button>
@@ -166,14 +210,27 @@
                 id='terms'
                 name='terms'
                 required
+                style='background-color: #667eea; border-color: #667eea;'
               />
-              <label class='form-check-label' for='terms'>
+              <label
+                class='form-check-label'
+                for='terms'
+                style='color: #374151;'
+              >
                 Acepto los
-                <a href='/terms' target='_blank' class='text-decoration-none'>
+                <a
+                  href='/terms'
+                  target='_blank'
+                  style='color: #667eea; text-decoration: none;'
+                >
                   Términos y Condiciones
                 </a>
                 y la
-                <a href='/privacy' target='_blank' class='text-decoration-none'>
+                <a
+                  href='/privacy'
+                  target='_blank'
+                  style='color: #667eea; text-decoration: none;'
+                >
                   Política de Privacidad
                 </a>
               </label>
@@ -186,22 +243,36 @@
                 class='form-check-input'
                 id='newsletter'
                 name='newsletter'
+                style='background-color: #667eea; border-color: #667eea;'
               />
-              <label class='form-check-label' for='newsletter'>
+              <label
+                class='form-check-label'
+                for='newsletter'
+                style='color: #374151;'
+              >
                 Quiero recibir noticias sobre nuevas mascotas disponibles
               </label>
             </div>
 
-            <button type='submit' class='btn btn-primary w-100 btn-lg mb-3'>
-              <i class='fas fa-user-plus me-2'></i>Crear Cuenta
+            <button
+              type='submit'
+              style='width: 100%; background: linear-gradient(45deg, #667eea, #764ba2); border: none; border-radius: 12px; padding: 12px 24px; font-weight: 600; transition: all 0.3s ease; color: white; font-size: 1.1rem; margin-bottom: 1.5rem;'
+            >
+              <i
+                class='fas fa-user-plus'
+                style='margin-right: 0.5rem;'
+              ></i>Crear Cuenta
             </button>
           </form>
 
           <!-- Auth Links -->
-          <div class='auth-links text-center'>
+          <div class='text-center'>
             <p class='mb-0'>
               ¿Ya tienes cuenta?
-              <a href='/login' class='text-decoration-none fw-bold'>
+              <a
+                href='/login'
+                style='color: #667eea; text-decoration: none; font-weight: 600; transition: color 0.3s ease;'
+              >
                 Inicia sesión aquí
               </a>
             </p>

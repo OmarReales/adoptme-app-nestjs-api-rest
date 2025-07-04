@@ -67,7 +67,9 @@ class PetsAPI {
 
     // Check if user is authenticated
     if (!Auth.isAuthenticated()) {
-      showError('Debes iniciar sesión para solicitar una adopción.');
+      window.Notifications.error(
+        'Debes iniciar sesión para solicitar una adopción.',
+      );
       return;
     }
 
@@ -97,11 +99,15 @@ class PetsAPI {
 
       const result = await response.json();
 
-      showSuccess('¡Solicitud de adopción enviada exitosamente!');
+      window.Notifications.success(
+        '¡Solicitud de adopción enviada exitosamente!',
+      );
       this.updateButtonToRequested(button);
     } catch (error) {
       console.error('Error creating adoption request:', error);
-      showError(`Error al enviar la solicitud: ${error.message}`);
+      window.Notifications.error(
+        `Error al enviar la solicitud: ${error.message}`,
+      );
       this.resetButton(button, '<i class="fas fa-heart me-1"></i>Adoptar');
     }
   }
@@ -114,7 +120,7 @@ class PetsAPI {
 
     // Check if user is authenticated
     if (!Auth.isAuthenticated()) {
-      showError('Debes iniciar sesión para marcar favoritos.');
+      window.Notifications.error('Debes iniciar sesión para marcar favoritos.');
       return;
     }
 
@@ -290,7 +296,7 @@ class PetDetail {
     } else {
       // Fallback - copy to clipboard
       navigator.clipboard.writeText(window.location.href).then(() => {
-        showSuccess('Enlace copiado al portapapeles');
+        window.Notifications.success('Enlace copiado al portapapeles');
       });
     }
   }
@@ -302,7 +308,7 @@ class PetDetail {
 
     // Check if user is authenticated before allowing favorites
     if (!Auth.isAuthenticated()) {
-      showError('Debes iniciar sesión para guardar favoritos');
+      window.Notifications.error('Debes iniciar sesión para guardar favoritos');
       return;
     }
 
@@ -336,175 +342,6 @@ class PetDetail {
   }
 }
 
-// ===== PET CREATION FUNCTIONALITY =====
-
-class PetCreation {
-  constructor() {
-    this.selectedFiles = [];
-    this.init();
-  }
-
-  init() {
-    this.bindEvents();
-  }
-
-  bindEvents() {
-    const form = document.getElementById('createPetForm');
-    const imagesInput = document.getElementById('images');
-
-    if (!form || !imagesInput) return;
-
-    // Image preview functionality
-    imagesInput.addEventListener('change', this.handleImageChange.bind(this));
-
-    // Form submission
-    form.addEventListener('submit', this.handleFormSubmit.bind(this));
-  }
-
-  handleImageChange(e) {
-    const files = Array.from(e.target.files);
-    this.selectedFiles = files;
-    this.displayImagePreviews();
-  }
-
-  displayImagePreviews() {
-    const imagePreview = document.getElementById('imagePreview');
-    if (!imagePreview) return;
-
-    imagePreview.innerHTML = '';
-
-    this.selectedFiles.forEach((file, index) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const previewItem = document.createElement('div');
-        previewItem.className = 'image-preview-item';
-        previewItem.innerHTML = `
-          <img src="${e.target.result}" class="image-preview-img" alt="Preview">
-          <button type="button" class="image-remove-btn" data-index="${index}">
-            <i class="fas fa-times"></i>
-          </button>
-        `;
-
-        // Add remove functionality
-        const removeBtn = previewItem.querySelector('.image-remove-btn');
-        removeBtn.addEventListener('click', () => this.removeImage(index));
-
-        imagePreview.appendChild(previewItem);
-      };
-      reader.readAsDataURL(file);
-    });
-  }
-
-  removeImage(index) {
-    this.selectedFiles.splice(index, 1);
-    this.displayImagePreviews();
-
-    // Update the file input
-    const dt = new DataTransfer();
-    this.selectedFiles.forEach((file) => dt.items.add(file));
-    document.getElementById('images').files = dt.files;
-  }
-
-  handleFormSubmit(e) {
-    e.preventDefault();
-    const form = e.target;
-
-    if (!form.checkValidity()) {
-      e.stopPropagation();
-      form.classList.add('was-validated');
-      return;
-    }
-
-    const submitBtn = document.getElementById('submitBtn');
-    const spinner = submitBtn.querySelector('.spinner-border');
-
-    // Show loading state
-    submitBtn.disabled = true;
-    spinner.classList.remove('d-none');
-
-    // Prepare form data
-    const formData = new FormData();
-
-    // Basic information
-    formData.append('name', document.getElementById('name').value);
-    formData.append('species', document.getElementById('species').value);
-    formData.append('age', document.getElementById('age').value);
-    formData.append('gender', document.getElementById('gender').value);
-    formData.append('weight', document.getElementById('weight').value);
-    formData.append(
-      'description',
-      document.getElementById('description').value,
-    );
-
-    // Characteristics
-    const characteristics = [];
-    document
-      .querySelectorAll('input[name="characteristics"]:checked')
-      .forEach((checkbox) => {
-        characteristics.push(checkbox.value);
-      });
-    formData.append('characteristics', JSON.stringify(characteristics));
-
-    // Health information
-    const healthInfo = {
-      vaccinated: document.getElementById('vaccinated').checked,
-      sterilized: document.getElementById('sterilized').checked,
-      dewormed: document.getElementById('dewormed').checked,
-      notes: document.getElementById('healthNotes').value,
-    };
-    formData.append('healthInfo', JSON.stringify(healthInfo));
-
-    // Contact information
-    formData.append(
-      'contactName',
-      document.getElementById('contactName').value,
-    );
-    formData.append(
-      'contactEmail',
-      document.getElementById('contactEmail').value,
-    );
-    formData.append(
-      'contactPhone',
-      document.getElementById('contactPhone').value,
-    );
-    formData.append('location', document.getElementById('location').value);
-
-    // Images
-    this.selectedFiles.forEach((file) => {
-      formData.append('images', file);
-    });
-
-    // Submit to API
-    fetch('/api/pets', {
-      method: 'POST',
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          // Show success message
-          showSuccess('¡Mascota publicada exitosamente!');
-
-          // Redirect to pet detail page after a short delay
-          setTimeout(() => {
-            window.location.href = `/pets/${data.pet._id}`;
-          }, 2000);
-        } else {
-          throw new Error(data.message || 'Error al crear la mascota');
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        showError('Error al publicar la mascota. Inténtalo de nuevo.');
-      })
-      .finally(() => {
-        // Hide loading state
-        submitBtn.disabled = false;
-        spinner.classList.add('d-none');
-      });
-  }
-}
-
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function () {
   new PetsAPI();
@@ -515,10 +352,5 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelector('.pet-detail-container')
   ) {
     new PetDetail();
-  }
-
-  // Initialize pet creation functionality if on create page
-  if (document.getElementById('createPetForm')) {
-    new PetCreation();
   }
 });

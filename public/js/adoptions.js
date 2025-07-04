@@ -37,7 +37,7 @@ class AdoptionsAPI {
     }
 
     try {
-      showLoading(button, 'Aprobando...');
+      window.Loading.showButtonLoading(button, 'Aprobando...');
 
       const result = await window.api.call(`/adoptions/${adoptionId}/status`, {
         method: 'PATCH',
@@ -47,15 +47,17 @@ class AdoptionsAPI {
         }),
       });
 
-      showSuccess('¡Adopción aprobada exitosamente!');
+      window.Notifications.success('¡Adopción aprobada exitosamente!');
       this.updateCardStatus(button, 'approved');
 
       // Reload page after short delay to show updated data
       setTimeout(() => location.reload(), 2000);
     } catch (error) {
       console.error('Error approving adoption:', error);
-      showError(`Error al aprobar la adopción: ${error.message}`);
-      resetButton(button, '<i class="fas fa-check me-1"></i>Aprobar');
+      window.Notifications.error(
+        `Error al aprobar la adopción: ${error.message}`,
+      );
+      window.Loading.hideButtonLoading(button);
     }
   }
 
@@ -67,7 +69,7 @@ class AdoptionsAPI {
     if (!reason) return;
 
     try {
-      showLoading(button, 'Rechazando...');
+      window.Loading.showButtonLoading(button, 'Rechazando...');
 
       const result = await window.api.call(`/adoptions/${adoptionId}/status`, {
         method: 'PATCH',
@@ -77,15 +79,17 @@ class AdoptionsAPI {
         }),
       });
 
-      showSuccess('Adopción rechazada.');
+      window.Notifications.success('Adopción rechazada.');
       this.updateCardStatus(button, 'rejected');
 
       // Reload page after short delay to show updated data
       setTimeout(() => location.reload(), 2000);
     } catch (error) {
       console.error('Error rejecting adoption:', error);
-      showError(`Error al rechazar la adopción: ${error.message}`);
-      resetButton(button, '<i class="fas fa-times me-1"></i>Rechazar');
+      window.Notifications.error(
+        `Error al rechazar la adopción: ${error.message}`,
+      );
+      window.Loading.hideButtonLoading(button);
     }
   }
 
@@ -115,13 +119,6 @@ class AdoptionsAPI {
     if (btnGroup) {
       btnGroup.style.display = 'none';
     }
-  }
-
-  // Get authentication token from session/storage
-  getAuthToken() {
-    return (
-      localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
-    );
   }
 }
 

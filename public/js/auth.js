@@ -1,7 +1,7 @@
 // Simple authentication for AdoptMe App using sessions
 document.addEventListener('DOMContentLoaded', function () {
-  // Check if user is authenticated on page load
-  checkAuthStatus();
+  // Use the shared auth helper to check status and update UI
+  initializeAuthenticationUI();
 
   // Bind form events
   bindLoginForm();
@@ -12,35 +12,39 @@ document.addEventListener('DOMContentLoaded', function () {
   bindLogoutButton();
 });
 
-// Check authentication status and update UI
-async function checkAuthStatus() {
+// Initialize authentication UI using shared AuthHelper
+async function initializeAuthenticationUI() {
   try {
-    const response = await fetch('/api/auth/profile', {
-      credentials: 'include', // Important for cookies
-    });
-
-    if (response.ok) {
-      const user = await response.json();
+    const user = await window.Auth.checkAuthStatus();
+    if (user) {
       updateUIForAuthenticatedUser(user);
     } else {
       updateUIForUnauthenticatedUser();
     }
   } catch (error) {
-    // User not authenticated - this is expected for non-protected pages
+    console.log('❌ Auth initialization error:', error);
     updateUIForUnauthenticatedUser();
   }
 }
 
 // Update UI for authenticated user
 function updateUIForAuthenticatedUser(user) {
+  console.log('🎯 Updating UI for authenticated user');
+
   // Hide auth buttons
   const authButtons = document.querySelector('.auth-buttons');
-  if (authButtons) authButtons.style.display = 'none';
+  if (authButtons) {
+    authButtons.style.display = 'none';
+    console.log('✅ Auth buttons hidden');
+  } else {
+    console.log('❌ Auth buttons element not found');
+  }
 
   // Show user info
   const userInfo = document.querySelector('.user-info');
   if (userInfo) {
     userInfo.style.display = 'block';
+    console.log('✅ User info shown');
 
     // Update user details in navbar
     const userNameDisplay = document.querySelector('.user-name-display');
@@ -65,6 +69,8 @@ function updateUIForAuthenticatedUser(user) {
       userRoleBadge.textContent = user.role || 'user';
       userRoleBadge.className = `text-muted user-role-badge badge bg-${user.role === 'admin' ? 'danger' : 'primary'}`;
     }
+  } else {
+    console.log('❌ User info element not found');
   }
 
   // Show protected elements
@@ -83,13 +89,25 @@ function updateUIForAuthenticatedUser(user) {
 
 // Update UI for unauthenticated user
 function updateUIForUnauthenticatedUser() {
+  console.log('🎯 Updating UI for unauthenticated user');
+
   // Show auth buttons
   const authButtons = document.querySelector('.auth-buttons');
-  if (authButtons) authButtons.style.display = 'flex';
+  if (authButtons) {
+    authButtons.style.display = 'flex';
+    console.log('✅ Auth buttons shown');
+  } else {
+    console.log('❌ Auth buttons element not found');
+  }
 
   // Hide user info
   const userInfo = document.querySelector('.user-info');
-  if (userInfo) userInfo.style.display = 'none';
+  if (userInfo) {
+    userInfo.style.display = 'none';
+    console.log('✅ User info hidden');
+  } else {
+    console.log('❌ User info element not found');
+  }
 
   // Hide protected elements
   document
@@ -128,13 +146,13 @@ function bindLoginForm() {
       const data = await response.json();
 
       if (response.ok) {
-        showSuccess('¡Login exitoso! Redirigiendo...');
+        window.Notifications.success('¡Login exitoso! Redirigiendo...');
         setTimeout(() => (window.location.href = '/'), 1500);
       } else {
-        showError(data.message || 'Error en el login');
+        window.Notifications.error(data.message || 'Error en el login');
       }
     } catch (error) {
-      showError('Error de conexión');
+      window.Notifications.error('Error de conexión');
     }
 
     submitBtn.disabled = false;
@@ -163,7 +181,7 @@ function bindRegisterForm() {
 
     // Validate password confirmation
     if (userData.password !== formData.get('confirmPassword')) {
-      showError('Las contraseñas no coinciden');
+      window.Notifications.error('Las contraseñas no coinciden');
       return;
     }
 
@@ -183,15 +201,15 @@ function bindRegisterForm() {
       const data = await response.json();
 
       if (response.ok) {
-        showSuccess('¡Registro exitoso! Redirigiendo...');
+        window.Notifications.success('¡Registro exitoso! Redirigiendo...');
         setTimeout(() => (window.location.href = '/'), 1500);
       } else {
-        showError(data.message || 'Error en el registro');
+        window.Notifications.error(data.message || 'Error en el registro');
         console.error('❌ Error en registro:', data);
       }
     } catch (error) {
       console.error('❌ Error de conexión en registro:', error);
-      showError('Error de conexión');
+      window.Notifications.error('Error de conexión');
     }
 
     submitBtn.disabled = false;
@@ -210,7 +228,7 @@ async function logout() {
     showInfo('Sesión cerrada correctamente');
     setTimeout(() => (window.location.href = '/'), 1000);
   } catch (error) {
-    showError('Error al cerrar sesión');
+    window.Notifications.error('Error al cerrar sesión');
   }
 }
 

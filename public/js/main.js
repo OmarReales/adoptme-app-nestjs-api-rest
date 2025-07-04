@@ -6,11 +6,6 @@ document.addEventListener('DOMContentLoaded', function () {
     .querySelectorAll('[data-bs-toggle="tooltip"]')
     .forEach((el) => new bootstrap.Tooltip(el));
 
-  // Initialize modals
-  document
-    .querySelectorAll('[data-bs-toggle="modal"]')
-    .forEach((el) => new bootstrap.Modal(el));
-
   // Auto-dismiss alerts after 5 seconds
   const alerts = document.querySelectorAll('.alert');
   alerts.forEach((alert) => {
@@ -57,11 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // Legacy API alias for backwards compatibility
-  // Use shared API instance and utilities from shared.js
-  window.AdoptMeAPI = window.api;
-
-  // Add some fun animations
+  // Animation observer for scroll effects
   const observerOptions = {
     threshold: 0.1,
     rootMargin: '0px 0px -50px 0px',
@@ -72,17 +63,44 @@ document.addEventListener('DOMContentLoaded', function () {
       if (entry.isIntersecting) {
         entry.target.style.opacity = '1';
         entry.target.style.transform = 'translateY(0)';
+
+        // Animate stat numbers if present
+        const statNumber = entry.target.querySelector(
+          '.stat-number, .footer-stat-number',
+        );
+        if (statNumber) {
+          animateCounter(statNumber);
+        }
       }
     });
   }, observerOptions);
 
-  // Animate cards on scroll
-  document.querySelectorAll('.card, .stat-card').forEach((card) => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(20px)';
-    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    observer.observe(card);
-  });
+  // Apply animation to cards and elements
+  document
+    .querySelectorAll('.card, .stat-card, .footer-stat-card, .pet-card-hover')
+    .forEach((element) => {
+      element.style.opacity = '0';
+      element.style.transform = 'translateY(20px)';
+      element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      observer.observe(element);
+    });
 
   console.log('🐾 AdoptMe API Frontend initialized!');
 });
+
+// Unified counter animation function
+function animateCounter(element) {
+  const target = parseInt(element.textContent.replace(/\D/g, ''));
+  if (isNaN(target)) return;
+
+  let current = 0;
+  const increment = target / 50;
+  const timer = setInterval(() => {
+    current += increment;
+    if (current >= target) {
+      current = target;
+      clearInterval(timer);
+    }
+    element.textContent = Math.floor(current).toLocaleString();
+  }, 40);
+}

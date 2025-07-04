@@ -416,36 +416,18 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // ===== BACKWARDS COMPATIBILITY =====
-// For compatibility with existing code
-window.showNotification = function (message, type) {
-  return window.Notifications.show(message, type);
-};
+// Essential compatibility functions - simplified
+window.showSuccess = (message) => window.Notifications.success(message);
+window.showError = (message) => window.Notifications.error(message);
+window.showInfo = (message) => window.Notifications.info(message);
+window.showWarning = (message) => window.Notifications.warning(message);
+window.showNotification = (message, type) =>
+  window.Notifications.show(message, type);
+window.showMessage = (message, type) =>
+  window.Notifications.show(message, type);
 
-window.showMessage = function (message, type) {
-  return window.Notifications.show(message, type);
-};
-
-window.showSuccess = function (message) {
-  return window.Notifications.success(message);
-};
-
-window.showError = function (message) {
-  return window.Notifications.error(message);
-};
-
-window.showInfo = function (message) {
-  return window.Notifications.info(message);
-};
-
-window.showWarning = function (message) {
-  return window.Notifications.warning(message);
-};
-
-// Global loading functions for compatibility
-window.showLoading = function (button, text) {
-  return window.Loading.showLoading(button, text);
-};
-
-window.resetButton = function (button, originalText) {
-  return window.Loading.resetButton(button, originalText);
-};
+// Loading functions for compatibility
+window.showLoading = (button, text) =>
+  window.Loading.showButtonLoading(button, text);
+window.resetButton = (button, originalText) =>
+  window.Loading.hideButtonLoading(button);

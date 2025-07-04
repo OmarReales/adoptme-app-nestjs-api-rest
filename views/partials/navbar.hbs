@@ -1,12 +1,12 @@
-<nav 
-  class='navbar navbar-expand-lg navbar-dark'
+<nav
   style='background: linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #1e293b 100%); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); position: sticky; top: 0; z-index: 1000;'
+  class='navbar navbar-expand-lg navbar-dark'
 >
   <div class='container-fluid' style='padding: 0.75rem 1.5rem;'>
-    <a 
-      class='navbar-brand fw-bold' 
+    <a
       href='/'
       style='color: white; font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 0.75rem; text-decoration: none; transition: all 0.3s ease;'
+      class='navbar-brand'
     >
       <span
         style='display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(255, 255, 255, 0.1); border-radius: 0.5rem; color: #ec4899; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2);'
@@ -23,39 +23,43 @@
       data-bs-target='#navbarNav'
       style='border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 0.5rem; border-radius: 0.5rem; transition: all 0.3s ease;'
     >
-      <span 
+      <span
         class='navbar-toggler-icon'
-        style='background-image: url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 30 30\'%3e%3cpath stroke=\'rgba%28255, 255, 255, 0.8%29\' stroke-linecap=\'round\' stroke-miterlimit=\'10\' stroke-width=\'2\' d=\'M4 7h22M4 15h22M4 23h22\'/%3e%3c/svg%3e");'
+        style="background-image: url('data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 30 30\'%3e%3cpath stroke=\'rgba%28255, 255, 255, 0.8%29\' stroke-linecap=\'round\' stroke-miterlimit=\'10\' stroke-width=\'2\' d=\'M4 7h22M4 15h22M4 23h22\'/%3e%3c/svg%3e');"
       ></span>
     </button>
 
-    <div class='collapse navbar-collapse' id='navbarNav' style='margin-top: 1rem;'>
+    <div
+      class='collapse navbar-collapse'
+      id='navbarNav'
+      style='margin-top: 1rem;'
+    >
       <ul class='navbar-nav me-auto' style='gap: 0.5rem;'>
         <li class='nav-item'>
-          <a 
-            class='nav-link' 
+          <a
             href='/view-pets'
             style='color: rgba(255, 255, 255, 0.9); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; border-radius: 0.5rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s ease; font-weight: 500;'
+            class='nav-link'
           >
             <i class='fas fa-dog' style='color: #10b981; width: 16px;'></i>
             Mascotas
           </a>
         </li>
         <li class='nav-item'>
-          <a 
-            class='nav-link' 
+          <a
             href='/view-adoptions'
             style='color: rgba(255, 255, 255, 0.9); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; border-radius: 0.5rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s ease; font-weight: 500;'
+            class='nav-link'
           >
             <i class='fas fa-heart' style='color: #ec4899; width: 16px;'></i>
             Adopciones
           </a>
         </li>
         <li class='nav-item'>
-          <a 
-            class='nav-link' 
+          <a
             href='/notifications'
             style='color: rgba(255, 255, 255, 0.9); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; border-radius: 0.5rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s ease; font-weight: 500;'
+            class='nav-link'
           >
             <i class='fas fa-bell' style='color: #3b82f6; width: 16px;'></i>
             Notificaciones
@@ -65,20 +69,26 @@
 
       <ul class='navbar-nav' style='gap: 0.5rem;'>
         <!-- Authentication buttons for non-authenticated users -->
-        <div class='auth-buttons' style='display: flex; gap: 0.5rem; align-items: center;'>
+        <div
+          class='auth-buttons'
+          style='display: flex; gap: 0.5rem; align-items: center;'
+        >
           <li class='nav-item'>
-            <a 
-              class='nav-link' 
+            <a
+              class='nav-link'
               href='/login'
               style='color: rgba(255, 255, 255, 0.9); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; border-radius: 0.5rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s ease; font-weight: 500;'
             >
-              <i class='fas fa-sign-in-alt' style='color: #10b981; width: 16px;'></i>
+              <i
+                class='fas fa-sign-in-alt'
+                style='color: #10b981; width: 16px;'
+              ></i>
               Iniciar Sesión
             </a>
           </li>
           <li class='nav-item'>
-            <a 
-              class='nav-link' 
+            <a
+              class='nav-link'
               href='/register'
               style='color: white; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; border-radius: 0.5rem; background: #ec4899; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); transition: all 0.3s ease; font-weight: 600; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);'
             >
@@ -97,7 +107,7 @@
               role='button'
               data-bs-toggle='dropdown'
               id='userDropdown'
-              style='color: rgba(255, 255, 255, 0.9); text-decoration: none; display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 0.75rem; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); transition: all 0.3s ease; font-weight: 500;'
+              style='color: rgba(255, 255, 255, 0.9); text-decoration: none; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 0.75rem; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); transition: all 0.3s ease; font-weight: 500;'
             >
               <span
                 style='display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; color: #ec4899; border: 1px solid rgba(255, 255, 255, 0.2);'
@@ -106,14 +116,20 @@
               </span>
               <span class='user-name-display'>Usuario</span>
             </a>
-            <ul 
+            <ul
               class='dropdown-menu dropdown-menu-end'
               style='background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 1rem; padding: 0.5rem; margin-top: 0.5rem; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);'
             >
-              <li class='dropdown-header' style='padding: 0.75rem 1rem; border-bottom: 1px solid rgba(0, 0, 0, 0.1); margin-bottom: 0.5rem;'>
+              <li
+                class='dropdown-header'
+                style='padding: 0.75rem 1rem; border-bottom: 1px solid rgba(0, 0, 0, 0.1); margin-bottom: 0.5rem;'
+              >
                 <div class='user-details-dropdown'>
-                  <strong class='user-full-name' style='color: #1e293b; font-weight: 600;'>Nombre Usuario</strong>
-                  <small 
+                  <strong
+                    class='user-full-name'
+                    style='color: #1e293b; font-weight: 600;'
+                  >Nombre Usuario</strong>
+                  <small
                     class='text-muted user-role-badge'
                     style='display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.5rem; background: rgba(99, 102, 241, 0.1); color: #6366f1; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 500; margin-top: 0.25rem;'
                   >
@@ -123,8 +139,8 @@
                 </div>
               </li>
               <li class='protected admin-only' style='display: none;'>
-                <a 
-                  class='dropdown-item' 
+                <a
+                  class='dropdown-item'
                   href='/admin/dashboard'
                   style='color: #1e293b; padding: 0.75rem 1rem; border-radius: 0.5rem; display: flex; align-items: center; gap: 0.75rem; transition: all 0.3s ease; text-decoration: none; margin: 0.25rem 0;'
                 >
@@ -137,8 +153,8 @@
                 </a>
               </li>
               <li class='protected'>
-                <a 
-                  class='dropdown-item' 
+                <a
+                  class='dropdown-item'
                   href='/profile'
                   style='color: #1e293b; padding: 0.75rem 1rem; border-radius: 0.5rem; display: flex; align-items: center; gap: 0.75rem; transition: all 0.3s ease; text-decoration: none; margin: 0.25rem 0;'
                 >
@@ -151,8 +167,8 @@
                 </a>
               </li>
               <li class='protected'>
-                <a 
-                  class='dropdown-item' 
+                <a
+                  class='dropdown-item'
                   href='/my-adoptions'
                   style='color: #1e293b; padding: 0.75rem 1rem; border-radius: 0.5rem; display: flex; align-items: center; gap: 0.75rem; transition: all 0.3s ease; text-decoration: none; margin: 0.25rem 0;'
                 >
@@ -164,9 +180,12 @@
                   Mis Adopciones
                 </a>
               </li>
-              <li><hr class='dropdown-divider' style='margin: 0.5rem 0; border-color: rgba(0, 0, 0, 0.1);' /></li>
+              <li><hr
+                  class='dropdown-divider'
+                  style='margin: 0.5rem 0; border-color: rgba(0, 0, 0, 0.1);'
+                /></li>
               <li>
-                <button 
+                <button
                   class='dropdown-item logout-btn'
                   style='color: #ef4444; padding: 0.75rem 1rem; border-radius: 0.5rem; display: flex; align-items: center; gap: 0.75rem; transition: all 0.3s ease; background: none; border: none; width: 100%; text-align: left; margin: 0.25rem 0; cursor: pointer;'
                 >
@@ -194,14 +213,14 @@
             <i class='fas fa-cog' style='color: #64748b; width: 16px;'></i>
             Más
           </a>
-          <ul 
+          <ul
             class='dropdown-menu dropdown-menu-end'
             style='background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 1rem; padding: 0.5rem; margin-top: 0.5rem; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);'
           >
             <li>
-              <a 
-                class='dropdown-item' 
-                href='/api/docs' 
+              <a
+                class='dropdown-item'
+                href='/api/docs'
                 target='_blank'
                 style='color: #1e293b; padding: 0.75rem 1rem; border-radius: 0.5rem; display: flex; align-items: center; gap: 0.75rem; transition: all 0.3s ease; text-decoration: none; margin: 0.25rem 0;'
               >
@@ -214,8 +233,8 @@
               </a>
             </li>
             <li>
-              <a 
-                class='dropdown-item' 
+              <a
+                class='dropdown-item'
                 href='/help'
                 style='color: #1e293b; padding: 0.75rem 1rem; border-radius: 0.5rem; display: flex; align-items: center; gap: 0.75rem; transition: all 0.3s ease; text-decoration: none; margin: 0.25rem 0;'
               >
@@ -291,6 +310,10 @@
 
       nav .auth-buttons {
         flex-direction: column !important;
+        width: 100% !important;
+      }
+
+      nav .user-info {
         width: 100% !important;
       }
 
