@@ -1,66 +1,435 @@
-<footer class='bg-dark text-light py-4 mt-5'>
-  <div class='container'>
-    <div class='row'>
-      <div class='col-md-6'>
-        <h5 class='fw-bold'>
-          <i class='fas fa-paw me-2'></i>
-          AdoptMe API
-        </h5>
-        <p class='text-muted'>
-          Conectando mascotas con familias amorosas desde 2025
-        </p>
-        <div class='social-links'>
-          <a href='#' class='text-light me-3'>
-            <i class='fab fa-github fa-lg'></i>
-          </a>
-          <a href='/api/docs' class='text-light me-3'>
-            <i class='fas fa-book fa-lg'></i>
-          </a>
+<footer
+  class='modern-footer'
+  style='background: linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #1e293b 100%); color: white; margin-top: auto; position: relative;'
+>
+  <!-- Footer Content -->
+  <section
+    class='footer-content'
+    style='padding: 4rem 0; background: rgba(0, 0, 0, 0.3);'
+  >
+    <div class='container'>
+      <div class='row'>
+        <!-- Brand & Newsletter -->
+        <div class='col-lg-4 col-md-6'>
+          <div class='footer-section'>
+            <h3
+              class='footer-section-title'
+              style='color: white; font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;'
+            >
+              <span
+                class='footer-section-icon'
+                style='display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(255, 255, 255, 0.1); border-radius: 0.5rem; color: #ec4899;'
+              >
+                <i class='fas fa-paw'></i>
+              </span>
+              AdoptMe
+            </h3>
+            <p
+              class='mb-4'
+              style='color: rgba(255, 255, 255, 0.8); line-height: 1.6;'
+            >
+              Plataforma líder en adopción de mascotas, conectando corazones y
+              creando familias felices desde 2025.
+            </p>
+
+            <!-- Newsletter -->
+            <div class='newsletter-section'>
+              <h6
+                style='color: #ec4899; margin-bottom: 1rem; font-weight: 600; font-size: 0.875rem;'
+              >
+                <i class='fas fa-envelope me-2'></i>
+                Mantente Informado
+              </h6>
+              <p
+                style='font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-bottom: 1rem;'
+              >
+                Recibe notificaciones sobre nuevas mascotas disponibles
+              </p>
+              <form
+                class='newsletter-form'
+                id='newsletter-form'
+                style='display: flex; gap: 0.5rem; margin-top: 1rem;'
+              >
+                <input
+                  type='email'
+                  class='newsletter-input'
+                  placeholder='tu@email.com'
+                  required
+                  aria-label='Email para newsletter'
+                  style='flex: 1; padding: 0.75rem 1rem; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 0.5rem; background: rgba(255, 255, 255, 0.1); color: white; font-size: 0.875rem;'
+                />
+                <button
+                  type='submit'
+                  class='newsletter-btn'
+                  style='padding: 0.75rem 1rem; background: #ec4899; color: white; border: none; border-radius: 0.5rem; cursor: pointer; transition: all 0.3s ease;'
+                >
+                  <i class='fas fa-paper-plane'></i>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class='col-lg-2 col-md-6'>
+          <div class='footer-section'>
+            <h4
+              class='footer-section-title'
+              style='color: white; font-size: 1.125rem; font-weight: 600; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;'
+            >
+              <span
+                class='footer-section-icon'
+                style='display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; color: #f59e0b;'
+              >
+                <i class='fas fa-link'></i>
+              </span>
+              Enlaces
+            </h4>
+            <ul
+              class='footer-links'
+              style='list-style: none; padding: 0; margin: 0;'
+            >
+              <li style='margin-bottom: 0.75rem;'>
+                <a
+                  href='/'
+                  class='footer-link'
+                  style='color: rgba(255, 255, 255, 0.8); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; padding: 0.25rem 0;'
+                >
+                  <i
+                    class='fas fa-home'
+                    style='width: 16px; color: rgba(255, 255, 255, 0.6);'
+                  ></i>
+                  Inicio
+                </a>
+              </li>
+              <li style='margin-bottom: 0.75rem;'>
+                <a
+                  href='/view-pets'
+                  class='footer-link'
+                  style='color: rgba(255, 255, 255, 0.8); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; padding: 0.25rem 0;'
+                >
+                  <i
+                    class='fas fa-dog'
+                    style='width: 16px; color: rgba(255, 255, 255, 0.6);'
+                  ></i>
+                  Ver Mascotas
+                </a>
+              </li>
+              <li style='margin-bottom: 0.75rem;'>
+                <a
+                  href='/view-adoptions'
+                  class='footer-link'
+                  style='color: rgba(255, 255, 255, 0.8); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; padding: 0.25rem 0;'
+                >
+                  <i
+                    class='fas fa-heart'
+                    style='width: 16px; color: rgba(255, 255, 255, 0.6);'
+                  ></i>
+                  Adopciones
+                </a>
+              </li>
+              <li style='margin-bottom: 0.75rem;'>
+                <a
+                  href='/register'
+                  class='footer-link'
+                  style='color: rgba(255, 255, 255, 0.8); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; padding: 0.25rem 0;'
+                >
+                  <i
+                    class='fas fa-user-plus'
+                    style='width: 16px; color: rgba(255, 255, 255, 0.6);'
+                  ></i>
+                  Registrarse
+                </a>
+              </li>
+              <li style='margin-bottom: 0.75rem;'>
+                <a
+                  href='/profile'
+                  class='footer-link'
+                  style='color: rgba(255, 255, 255, 0.8); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; padding: 0.25rem 0;'
+                >
+                  <i
+                    class='fas fa-user'
+                    style='width: 16px; color: rgba(255, 255, 255, 0.6);'
+                  ></i>
+                  Mi Perfil
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Support -->
+        <div class='col-lg-3 col-md-6'>
+          <div class='footer-section'>
+            <h4
+              class='footer-section-title'
+              style='color: white; font-size: 1.125rem; font-weight: 600; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;'
+            >
+              <span
+                class='footer-section-icon'
+                style='display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; color: #10b981;'
+              >
+                <i class='fas fa-life-ring'></i>
+              </span>
+              Soporte
+            </h4>
+            <ul
+              class='footer-links'
+              style='list-style: none; padding: 0; margin: 0;'
+            >
+              <li style='margin-bottom: 0.75rem;'>
+                <a
+                  href='/help'
+                  class='footer-link'
+                  style='color: rgba(255, 255, 255, 0.8); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; padding: 0.25rem 0;'
+                >
+                  <i
+                    class='fas fa-question-circle'
+                    style='width: 16px; color: rgba(255, 255, 255, 0.6);'
+                  ></i>
+                  Centro de Ayuda
+                </a>
+              </li>
+              <li style='margin-bottom: 0.75rem;'>
+                <a
+                  href='/contact'
+                  class='footer-link'
+                  style='color: rgba(255, 255, 255, 0.8); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; padding: 0.25rem 0;'
+                >
+                  <i
+                    class='fas fa-envelope'
+                    style='width: 16px; color: rgba(255, 255, 255, 0.6);'
+                  ></i>
+                  Contactanos
+                </a>
+              </li>
+              <li style='margin-bottom: 0.75rem;'>
+                <a
+                  href='/faq'
+                  class='footer-link'
+                  style='color: rgba(255, 255, 255, 0.8); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; padding: 0.25rem 0;'
+                >
+                  <i
+                    class='fas fa-comments'
+                    style='width: 16px; color: rgba(255, 255, 255, 0.6);'
+                  ></i>
+                  Preguntas Frecuentes
+                </a>
+              </li>
+              <li style='margin-bottom: 0.75rem;'>
+                <a
+                  href='/api/docs'
+                  class='footer-link'
+                  target='_blank'
+                  style='color: rgba(255, 255, 255, 0.8); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; padding: 0.25rem 0;'
+                >
+                  <i
+                    class='fas fa-book'
+                    style='width: 16px; color: rgba(255, 255, 255, 0.6);'
+                  ></i>
+                  Documentación API
+                </a>
+              </li>
+              <li style='margin-bottom: 0.75rem;'>
+                <a
+                  href='/feedback'
+                  class='footer-link'
+                  style='color: rgba(255, 255, 255, 0.8); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; padding: 0.25rem 0;'
+                >
+                  <i
+                    class='fas fa-star'
+                    style='width: 16px; color: rgba(255, 255, 255, 0.6);'
+                  ></i>
+                  Dar Feedback
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Community & Social -->
+        <div class='col-lg-3 col-md-6'>
+          <div class='footer-section'>
+            <h4
+              class='footer-section-title'
+              style='color: white; font-size: 1.125rem; font-weight: 600; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;'
+            >
+              <span
+                class='footer-section-icon'
+                style='display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; color: #3b82f6;'
+              >
+                <i class='fas fa-users'></i>
+              </span>
+              Comunidad
+            </h4>
+            <p
+              style='color: rgba(255, 255, 255, 0.8); font-size: 0.875rem; margin-bottom: 1.5rem;'
+            >
+              Síguenos en redes sociales para historias inspiradoras y updates
+              de mascotas
+            </p>
+
+            <div
+              class='social-media'
+              style='display: flex; gap: 1rem; flex-wrap: wrap;'
+            >
+              <a
+                href='https://instagram.com/adoptme'
+                class='social-link'
+                aria-label='Instagram'
+                target='_blank'
+                style='display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.8); border-radius: 0.75rem; text-decoration: none; transition: all 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.2);'
+              >
+                <i class='fab fa-instagram'></i>
+              </a>
+              <a
+                href='https://facebook.com/adoptme'
+                class='social-link'
+                aria-label='Facebook'
+                target='_blank'
+                style='display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.8); border-radius: 0.75rem; text-decoration: none; transition: all 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.2);'
+              >
+                <i class='fab fa-facebook-f'></i>
+              </a>
+              <a
+                href='https://twitter.com/adoptme'
+                class='social-link'
+                aria-label='Twitter'
+                target='_blank'
+                style='display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.8); border-radius: 0.75rem; text-decoration: none; transition: all 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.2);'
+              >
+                <i class='fab fa-twitter'></i>
+              </a>
+              <a
+                href='https://youtube.com/adoptme'
+                class='social-link'
+                aria-label='YouTube'
+                target='_blank'
+                style='display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.8); border-radius: 0.75rem; text-decoration: none; transition: all 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.2);'
+              >
+                <i class='fab fa-youtube'></i>
+              </a>
+              <a
+                href='https://github.com/adoptme'
+                class='social-link'
+                aria-label='GitHub'
+                target='_blank'
+                style='display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.8); border-radius: 0.75rem; text-decoration: none; transition: all 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.2);'
+              >
+                <i class='fab fa-github'></i>
+              </a>
+            </div>
+
+            <!-- Tech Stack -->
+            <div style='margin-top: 2rem;'>
+              <h6
+                style='color: #ec4899; margin-bottom: 1rem; font-size: 0.875rem; font-weight: 600;'
+              >
+                <i class='fas fa-code me-2'></i>
+                Tecnologías
+              </h6>
+              <div style='display: flex; flex-wrap: wrap; gap: 0.5rem;'>
+                <span
+                  class='footer-badge'
+                  title='NestJS Framework'
+                  style='display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.9); border-radius: 1rem; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(255, 255, 255, 0.2);'
+                >
+                  <i class='fab fa-node-js me-1'></i>
+                  NestJS
+                </span>
+                <span
+                  class='footer-badge'
+                  title='MongoDB Database'
+                  style='display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.9); border-radius: 1rem; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(255, 255, 255, 0.2);'
+                >
+                  <i class='fas fa-database me-1'></i>
+                  MongoDB
+                </span>
+                <span
+                  class='footer-badge'
+                  title='TypeScript'
+                  style='display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.9); border-radius: 1rem; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(255, 255, 255, 0.2);'
+                >
+                  <i class='fab fa-js-square me-1'></i>
+                  TypeScript
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class='col-md-3'>
-        <h6 class='fw-bold'>Enlaces Rápidos</h6>
-        <ul class='list-unstyled'>
-          <li><a href='/pets' class='text-muted text-decoration-none'>Ver
-              Mascotas</a></li>
-          <li><a
-              href='/adoptions'
-              class='text-muted text-decoration-none'
-            >Adopciones</a></li>
-          <li><a
-              href='/api/docs'
-              class='text-muted text-decoration-none'
-            >Documentación API</a></li>
-        </ul>
-      </div>
+  <!-- Footer Bottom -->
+  <section
+    class='footer-bottom'
+    style='background: rgba(0, 0, 0, 0.5); padding: 1.5rem 0; border-top: 1px solid rgba(255, 255, 255, 0.1);'
+  >
+    <div class='container'>
+      <div
+        class='footer-bottom-content'
+        style='display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;'
+      >
+        <div class='footer-copyright'>
+          <p
+            style='margin: 0; display: flex; align-items: center; gap: 0.5rem; color: rgba(255, 255, 255, 0.8); font-size: 0.875rem;'
+          >
+            <span>© 2025 AdoptMe API.</span>
+            <span style='color: #ec4899;'>Construido con</span>
+            <i
+              class='fas fa-heart'
+              style='color: #ec4899; animation: heartbeat 2s infinite;'
+            ></i>
+            <span>para las mascotas</span>
+          </p>
+        </div>
 
-      <div class='col-md-3'>
-        <h6 class='fw-bold'>Tecnologías</h6>
-        <ul class='list-unstyled'>
-          <li class='text-muted'><i class='fab fa-node-js me-2'></i>NestJS</li>
-          <li class='text-muted'><i
-              class='fas fa-database me-2'
-            ></i>MongoDB</li>
-          <li class='text-muted'><i class='fas fa-shield-alt me-2'></i>JWT Auth</li>
-        </ul>
+        <div
+          class='footer-badges'
+          style='display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;'
+        >
+          <a
+            href='/terms'
+            class='footer-badge'
+            style='display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.9); border-radius: 1rem; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(255, 255, 255, 0.2); text-decoration: none; transition: all 0.3s ease;'
+          >Términos de Uso</a>
+          <a
+            href='/privacy'
+            class='footer-badge'
+            style='display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.9); border-radius: 1rem; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(255, 255, 255, 0.2); text-decoration: none; transition: all 0.3s ease;'
+          >Privacidad</a>
+          <span
+            class='footer-badge'
+            style='display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.9); border-radius: 1rem; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(255, 255, 255, 0.2);'
+          >
+            <i class='fas fa-shield-alt me-1'></i>
+            Seguro & Confiable
+          </span>
+          <span
+            class='footer-badge'
+            style='background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #10b981; display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 500;'
+          >
+            <i class='fas fa-circle me-1' style='font-size: 6px;'></i>
+            v1.0.0
+          </span>
+        </div>
       </div>
     </div>
-
-    <hr class='my-4' />
-
-    <div class='row align-items-center'>
-      <div class='col-md-6'>
-        <small class='text-muted'>
-          © 2025 AdoptMe API. Construido con ❤️ usando NestJS, TypeScript y
-          MongoDB.
-        </small>
-      </div>
-      <div class='col-md-6 text-end'>
-        <small class='text-muted'>
-          Versión 1.0.0
-        </small>
-      </div>
-    </div>
-  </div>
+  </section>
 </footer>
+
+<!-- Custom animations -->
+<style>
+  @keyframes heartbeat {
+    0%,
+    50%,
+    100% {
+      transform: scale(1);
+    }
+    25%,
+    75% {
+      transform: scale(1.2);
+    }
+  }
+</style>

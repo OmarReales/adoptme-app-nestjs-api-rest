@@ -17,20 +17,28 @@ export class ViewsService {
   ) {}
 
   /**
+   * Gets footer statistics for all views
+   */
+  private async getFooterStats() {
+    const stats = await this.statsService.getAppStats();
+    return {
+      totalPets: stats.totalPets,
+      totalAdoptions: stats.approvedAdoptions,
+      totalUsers: stats.totalUsers,
+      totalNotifications: stats.totalNotifications,
+    };
+  }
+
+  /**
    * Prepares data for the home page
    */
   async prepareHomeData() {
-    const stats = await this.statsService.getAppStats();
+    const stats = await this.getFooterStats();
 
     return {
       title: 'Inicio',
       currentPage: 'home',
-      stats: {
-        totalPets: stats.totalPets,
-        totalAdoptions: stats.approvedAdoptions,
-        totalUsers: stats.totalUsers,
-        totalNotifications: stats.totalNotifications,
-      },
+      stats,
       scripts: ['/js/home.js'],
     };
   }
@@ -77,6 +85,8 @@ export class ViewsService {
       prevPage: pageNumber - 1,
     };
 
+    const stats = await this.getFooterStats();
+
     return {
       title: 'Mascotas',
       currentPage: 'pets',
@@ -87,6 +97,7 @@ export class ViewsService {
         name,
         ageRange,
       },
+      stats,
       scripts: ['/js/pets.js'],
     };
   }
@@ -119,6 +130,7 @@ export class ViewsService {
     };
 
     const successStories = await this.adoptionsService.getSuccessStories(3);
+    const footerStats = await this.getFooterStats();
 
     return {
       title: 'Adopciones',
@@ -126,6 +138,7 @@ export class ViewsService {
       adoptions: adoptionsData.adoptions,
       pagination,
       stats: adoptionStats,
+      footerStats,
       pendingAdoptions: pendingAdoptions.slice(0, 5), // Show only the first 5
       successStories, // Real success stories from the DB
       scripts: ['/js/adoptions.js'],
@@ -135,10 +148,12 @@ export class ViewsService {
   /**
    * Prepares data for the login page
    */
-  prepareLoginData() {
+  async prepareLoginData() {
+    const stats = await this.getFooterStats();
     return {
       title: 'Iniciar Sesión',
       currentPage: 'login',
+      stats,
       scripts: ['/js/auth.js'],
     };
   }
@@ -146,10 +161,12 @@ export class ViewsService {
   /**
    * Prepares data for the register page
    */
-  prepareRegisterData() {
+  async prepareRegisterData() {
+    const stats = await this.getFooterStats();
     return {
       title: 'Registrarse',
       currentPage: 'register',
+      stats,
       scripts: ['/js/auth.js'],
     };
   }
@@ -171,13 +188,15 @@ export class ViewsService {
     );
 
     // Calculate personal statistics
-    const stats = this.calculateUserStats(userAdoptions);
+    const userStats = this.calculateUserStats(userAdoptions);
+    const footerStats = await this.getFooterStats();
 
     return {
       title: 'Mi Perfil',
       currentPage: 'profile',
       user: profileData,
-      stats,
+      stats: userStats,
+      footerStats,
       scripts: ['/js/profile.js'],
     };
   }
